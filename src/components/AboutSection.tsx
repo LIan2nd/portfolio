@@ -4,6 +4,8 @@ import type { Skill, PersonalDetail, SocialLink } from "@/lib/types";
 import { SkillBadge } from "./SkillBadge";
 import { InstagramIcon, GithubIcon, LinkedinIcon } from "./icons/SocialIcons";
 
+import { ProfilePhotoStack } from "./ProfilePhotoStack";
+
 interface AboutSectionProps {
   skills: Skill[];
   details: PersonalDetail[];
@@ -28,14 +30,7 @@ export function AboutSection({ skills, details, socials }: AboutSectionProps) {
     <section id="about" aria-label="About Alfian Nur Usyaid" className="py-10 md:py-14 px-6">
       <div className="max-w-[800px] mx-auto">
         <div className="flex gap-8 max-md:flex-col items-center md:items-start">
-          <Image
-            src="/img/hero.png"
-            alt="Alfian Nur Usyaid - Fullstack Developer"
-            width={300}
-            height={360}
-            priority
-            className="w-[280px] max-md:w-full h-[360px] object-cover rounded-xl opacity-90 shrink-0 border border-[var(--color-bg-tertiary)]/50 shadow-md"
-          />
+          <ProfilePhotoStack />
           <div className="flex flex-col gap-4 justify-between flex-1 min-w-0 w-full">
             <div>
               <span className="text-accent text-xs font-semibold uppercase tracking-widest">Discover</span>
