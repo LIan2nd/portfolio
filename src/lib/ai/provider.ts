@@ -66,7 +66,7 @@ export class GeminiProvider implements AiProvider {
         body: JSON.stringify({
           system_instruction: { parts: [{ text: systemInstruction }] },
           contents,
-          generationConfig: { temperature: 0.6, maxOutputTokens: 650 },
+          generationConfig: { temperature: 0.6, maxOutputTokens: 900 },
         }),
       }
     );
@@ -106,7 +106,7 @@ export class GeminiProvider implements AiProvider {
               body: JSON.stringify({
                 system_instruction: { parts: [{ text: systemInstruction }] },
                 contents,
-                generationConfig: { temperature: 0.6, maxOutputTokens: 650 },
+                generationConfig: { temperature: 0.6, maxOutputTokens: 900 },
               }),
             }
           );
@@ -199,7 +199,7 @@ export class OpenAiProvider implements AiProvider {
         model: this.model,
         messages: formattedMessages,
         temperature: 0.6,
-        max_tokens: 650,
+        max_tokens: 900,
       }),
     });
 
@@ -244,7 +244,7 @@ export class OpenAiProvider implements AiProvider {
               model,
               messages: formattedMessages,
               temperature: 0.6,
-              max_tokens: 650,
+              max_tokens: 900,
               stream: true,
             }),
           });
