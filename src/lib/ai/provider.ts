@@ -385,9 +385,10 @@ export class MockFallbackProvider implements AiProvider {
       msg.includes("cewek") ||
       msg.includes("pacar") ||
       msg.includes("pasangan") ||
+      msg.includes("partner") ||
       msg.includes("distia")
     ) {
-      return "Udah dong, aku punya cewek namanya Distia (Distia Fajar Familiati). Dia juga alumni Teknik Informatika di STT NF! ✨";
+      return "Udah dong, cewekku namanya Distia (Distia Fajar Familiati). Dia juga alumni Teknik Informatika di STT NF! ✨";
     }
 
     if (

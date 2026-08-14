@@ -212,7 +212,7 @@ export function Navbar({ links }: NavbarProps) {
         </ul>
 
         <div className="pt-6 border-t border-[var(--color-bg-tertiary)]/60 text-xs text-[var(--color-text-secondary)]">
-          <p>© 2025 Alfian Nur Usyaid</p>
+          <p>© {new Date().getFullYear()} LIand 🍵</p>
         </div>
       </div>
     </header>
