@@ -2,28 +2,23 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Sparkles, Layers } from "lucide-react";
 
 export const PROFILE_PHOTOS = [
   {
     src: "/img/profile/profile-1.png",
     alt: "Alfian Nur Usyaid - Fullstack Developer",
-    caption: "LIand ⚡",
   },
   {
     src: "/img/profile/profile-2.jpg",
     alt: "Alfian Nur Usyaid - Profile Photo 2",
-    caption: "Moments ✨",
   },
   {
     src: "/img/profile/profile-3.jpg",
     alt: "Alfian Nur Usyaid - Profile Photo 3",
-    caption: "Vibes ☕",
   },
   {
     src: "/img/profile/profile-4.jpg",
     alt: "Alfian Nur Usyaid - Profile Photo 4",
-    caption: "Smile 🌟",
   },
 ];
 
@@ -99,40 +94,10 @@ export function ProfilePhotoStack() {
                 priority={position === 0}
                 className="object-cover pointer-events-none"
               />
-
-              {/* Glossy Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 pointer-events-none" />
-
-              {/* Subtle Photo Caption Pill (Visible on Front Card) */}
-              {position === 0 && (
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                  <span className="px-2.5 py-1 rounded-lg bg-black/50 backdrop-blur-md text-white/90 text-[11px] font-medium border border-white/10 shadow-xs flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-accent" />
-                    {photo.caption}
-                  </span>
-                  <span className="px-2 py-1 rounded-lg bg-black/50 backdrop-blur-md text-white/80 text-[10px] font-mono border border-white/10">
-                    {topIndex + 1}/{total}
-                  </span>
-                </div>
-              )}
             </div>
           );
         })}
       </div>
-
-      {/* Interactive Helper Hint */}
-      <button
-        type="button"
-        onClick={handleNext}
-        className="mt-3 flex items-center gap-1.5 text-[11px] font-medium text-[var(--color-text-secondary)] hover:text-accent transition-colors cursor-pointer focus:outline-none"
-        aria-label="Shuffle next photo"
-      >
-        <Layers className="w-3.5 h-3.5" />
-        <span>Click to shuffle photos</span>
-        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)] border border-[var(--color-bg-tertiary)] font-mono">
-          {topIndex + 1}/{total}
-        </span>
-      </button>
     </div>
   );
 }
