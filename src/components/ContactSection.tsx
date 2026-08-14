@@ -38,7 +38,11 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
       formData.append("name", name);
       formData.append("email", email);
       formData.append("message", message);
-      await fetch(scriptUrl, { method: "POST", body: formData });
+      await fetch(scriptUrl, {
+        method: "POST",
+        mode: "no-cors",
+        body: formData,
+      });
       setSuccess(true);
       setName("");
       setEmail("");
