@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CheckCircle2, AlertCircle, X } from "lucide-react";
 
 interface ContactSectionProps {
   scriptUrl: string;
@@ -73,13 +74,43 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
           </div>
           <div className="flex-1">
             {success && (
-              <div className="bg-accent text-white p-3 rounded-md mb-3 text-sm animate-fade-in transition-all">
-                <strong>Thanks!</strong> Your message has been sent.
+              <div
+                role="alert"
+                className="p-3.5 rounded-lg bg-emerald-500/10 dark:bg-emerald-950/30 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 mb-4 text-sm flex items-center justify-between gap-3 animate-tab-slide shadow-sm"
+              >
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
+                  <span>
+                    <strong className="font-semibold">Thanks!</strong> Your message has been sent.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSuccess(false)}
+                  aria-label="Close notification"
+                  className="text-inherit opacity-60 hover:opacity-100 p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer shrink-0"
+                >
+                  <X size={15} />
+                </button>
               </div>
             )}
             {error && (
-              <div className="bg-red-600 text-white p-3 rounded-md mb-3 text-sm animate-fade-in transition-all">
-                {error}
+              <div
+                role="alert"
+                className="p-3.5 rounded-lg bg-red-500/10 dark:bg-red-950/30 border border-red-500/30 text-red-800 dark:text-red-300 mb-4 text-sm flex items-center justify-between gap-3 animate-tab-slide shadow-sm"
+              >
+                <div className="flex items-center gap-2.5">
+                  <AlertCircle size={18} className="text-red-500 shrink-0" />
+                  <span>{error}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setError("")}
+                  aria-label="Close error notification"
+                  className="text-inherit opacity-60 hover:opacity-100 p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer shrink-0"
+                >
+                  <X size={15} />
+                </button>
               </div>
             )}
             <form onSubmit={handleSubmit} noValidate className="space-y-3">

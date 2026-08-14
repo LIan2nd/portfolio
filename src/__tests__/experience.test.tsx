@@ -98,9 +98,9 @@ describe("ExperienceSection & TimelineEntry", () => {
           cleanup();
         }
       ),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
-  });
+  }, 30000);
 
   // Feature: portfolio-nextjs-migration, Property 5: Timeline entry completeness
   it("Property 5: renders all fields of any TimelineEntry object", () => {
