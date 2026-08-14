@@ -38,6 +38,10 @@
 }
 
 /* Base styles */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body, section, footer, main {
   transition: background-color ease-in-out 0.2s, color ease-in-out 0.2s;
 }

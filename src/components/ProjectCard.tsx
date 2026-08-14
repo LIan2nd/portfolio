@@ -82,7 +82,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {project.url && (
             <ArrowRight
               size={20}
-              className="text-[var(--color-text-primary)] group-hover:text-accent group-hover:-rotate-45 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200 ease-out shrink-0 mt-1"
+              className="text-accent -rotate-45 md:text-[var(--color-text-primary)] md:rotate-0 md:group-hover:text-accent md:group-hover:-rotate-45 md:group-hover:translate-x-0.5 md:group-hover:-translate-y-0.5 transition-all duration-200 ease-out shrink-0 mt-1"
             />
           )}
         </div>
@@ -97,7 +97,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           href={project.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="group rounded-xl overflow-hidden bg-[var(--color-bg-secondary)] border border-transparent flex flex-col no-underline cursor-pointer"
+          className="group rounded-xl overflow-hidden bg-[var(--color-bg-secondary)] border border-transparent hover:border-accent/30 active:scale-[0.98] flex flex-col no-underline cursor-pointer transition-all duration-200"
         >
           {cardContent}
         </a>

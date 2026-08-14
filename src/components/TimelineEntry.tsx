@@ -87,7 +87,7 @@ export function TimelineEntry({ entry }: TimelineEntryProps) {
                     href={entry.link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-accent hover:underline"
+                    className="text-accent underline md:no-underline md:hover:underline active:opacity-75 transition-opacity"
                   >
                     {entry.link.label}
                   </a>
@@ -99,7 +99,7 @@ export function TimelineEntry({ entry }: TimelineEntryProps) {
                   href={entry.certificate.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-accent hover:underline"
+                  className="text-accent underline md:no-underline md:hover:underline active:opacity-75 transition-opacity"
                 >
                   {entry.certificate.label || "Certificate"}
                 </a>

@@ -68,7 +68,7 @@ export function CertificationCard({ certification }: CertificationCardProps) {
           </span>
           <ArrowRight
             size={16}
-            className="text-[var(--color-text-primary)] group-hover:text-accent group-hover:-rotate-45 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200 ease-out"
+            className="text-accent -rotate-45 md:text-[var(--color-text-primary)] md:rotate-0 md:group-hover:text-accent md:group-hover:-rotate-45 md:group-hover:translate-x-0.5 md:group-hover:-translate-y-0.5 transition-all duration-200 ease-out"
           />
         </div>
       )}
@@ -81,7 +81,7 @@ export function CertificationCard({ certification }: CertificationCardProps) {
         href={certification.credentialUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="group p-6 rounded-xl bg-[var(--color-bg-secondary)] border border-transparent hover:border-accent/30 flex flex-col justify-between text-left no-underline transition-all duration-200 cursor-pointer"
+        className="group p-6 rounded-xl bg-[var(--color-bg-secondary)] border border-transparent hover:border-accent/30 active:scale-[0.98] flex flex-col justify-between text-left no-underline transition-all duration-200 cursor-pointer"
       >
         {cardInner}
       </a>
