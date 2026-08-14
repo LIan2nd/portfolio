@@ -6,6 +6,7 @@ import { ProjectsSection } from "@/components/ProjectsSection";
 import { CertificationsSection } from "@/components/CertificationsSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
+import { AiAssistant } from "@/components/AiAssistant";
 import {
   NAV_LINKS,
   SKILLS,
@@ -74,7 +75,7 @@ const jsonLd = {
       sameAs: [
         "https://github.com/LIan2nd/",
         "https://linkedin.com/in/alfian-nur-usyaid/",
-        "https://instagram.com/lforthissielu/",
+        "https://www.instagram.com/wonder__liand",
       ],
       email: "alfiannurusyaid19@gmail.com",
       image: "https://portfolio.liand.web.id/img/hero.png",
@@ -106,6 +107,7 @@ export default function Home() {
         <ContactSection scriptUrl={CONTACT_SCRIPT_URL} />
       </main>
       <Footer socials={SOCIALS} />
+      <AiAssistant />
     </>
   );
 }

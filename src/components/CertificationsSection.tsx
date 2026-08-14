@@ -9,7 +9,7 @@ export function CertificationsSection({
   certifications,
 }: CertificationsSectionProps) {
   return (
-    <section id="certifications" aria-label="Professional certifications" className="py-20 px-6 max-md:py-12 text-center">
+    <section id="certifications" aria-label="Professional certifications" className="py-10 md:py-14 px-6 text-center">
       <div className="max-w-[800px] mx-auto">
         <span className="text-accent text-xs font-semibold uppercase tracking-widest">
           Credentials

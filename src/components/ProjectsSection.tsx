@@ -7,7 +7,7 @@ interface ProjectsSectionProps {
 
 export function ProjectsSection({ projects }: ProjectsSectionProps) {
   return (
-    <section id="project" aria-label="Featured projects" className="py-20 px-6 max-md:py-12 text-center">
+    <section id="project" aria-label="Featured projects" className="py-10 md:py-14 px-6 text-center">
       <div className="max-w-[800px] mx-auto">
         <span className="text-accent text-xs font-semibold uppercase tracking-widest">Overview</span>
         <h2 className="text-3xl max-sm:text-2xl font-bold mt-1 mb-8">

@@ -67,7 +67,7 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
   };
 
   return (
-    <section id="contact" aria-label="Contact form" className="py-20 px-6 max-md:py-12">
+    <section id="contact" aria-label="Contact form" className="py-10 md:py-14 px-6">
       <div className="max-w-[800px] mx-auto">
         <span className="text-accent text-xs font-semibold uppercase tracking-widest">Get in touch</span>
         <h2 className="text-3xl max-sm:text-2xl font-bold mt-1 mb-8">

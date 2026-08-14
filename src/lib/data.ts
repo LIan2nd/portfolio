@@ -35,7 +35,7 @@ export const PERSONAL_DETAILS: PersonalDetail[] = [
 ];
 
 export const SOCIALS: SocialLink[] = [
-  { platform: "instagram", url: "https://instagram.com/lforthissielu/", label: "Instagram" },
+  { platform: "instagram", url: "https://www.instagram.com/wonder__liand", label: "Instagram" },
   { platform: "github", url: "https://github.com/LIan2nd/", label: "GitHub" },
   { platform: "linkedin", url: "https://linkedin.com/in/alfian-nur-usyaid/", label: "LinkedIn" },
 ];
@@ -47,8 +47,9 @@ export const WORK_ENTRIES: TimelineEntry[] = [
     title: "Teaching Assistant (Data Structures & Algorithms)",
     subtitle: "STT Terpadu Nurul Fikri",
     description: [
-      "Mentored 40+ undergraduate students in core Data Structures & Algorithms concepts (Tree, Graph, Sorting, Big-O analysis).",
+      "Mentored students in core Data Structures & Algorithms concepts (Tree, Graph, Sorting, Big-O analysis).",
       "Conducted weekly lab hands-on practicum and assisted in grading algorithmic assignments.",
+      "Provide one-on-one technical assistance and guidance to students in data structures and algorithms concepts, helping them troubleshoot code and understand complex database logic.",
     ],
     certificate: {
       url: "/file/work/Asisten Dosen Struktur Data & Algoritma 2025-2.jpg",
@@ -62,7 +63,9 @@ export const WORK_ENTRIES: TimelineEntry[] = [
     subtitle: "STT Terpadu Nurul Fikri",
     description: [
       "Guided students through Relational Database Management Systems (RDBMS), SQL query optimization, and ERD schema design.",
-      "Facilitated laboratory sessions utilizing PostgreSQL and MySQL databases.",
+      "Facilitated laboratory sessions utilizing MySQL databases.",
+      "Provide one-on-one technical assistance and guidance to students in database concepts, helping them troubleshoot code and understand complex database logic.",
+      "Assisted in grading assignments and provided constructive feedback to help students improve their database skills.",
     ],
     certificate: {
       url: "/file/work/Asisten Dosen Basis Data 2025-2.jpg",
@@ -86,8 +89,8 @@ export const WORK_ENTRIES: TimelineEntry[] = [
     title: "Fullstack Developer",
     subtitle: "Academic Research Project",
     description: [
-      "Engineered ESAO automated essay grading platform with decoupled architecture (Next.js frontend & Flask Python AI backend).",
-      "Implemented NLP scoring pipeline with real-time feedback and responsive interactive dashboard.",
+      "Engineered ESAO (Essay Analytic Online), an AI-driven automated essay grading platform empowering lecturers to assess essay exams in seconds.",
+      "Architected decoupled fullstack system using Next.js for the responsive analytics dashboard and Flask (Python) with LangChain for rubric-based and automated student feedback.",
     ],
     link: { url: "https://esao.nurulfikri.ac.id", label: "ESAO System" },
     certificate: {
@@ -102,7 +105,8 @@ export const WORK_ENTRIES: TimelineEntry[] = [
     subtitle: "STT Terpadu Nurul Fikri",
     description: [
       "Taught backend web architecture, RESTful API design, MVC patterns, and ORM integrations with PHP (Laravel).",
-      "Provided one-on-one debugging sessions and evaluated student code submissions.",
+      "Provide one-on-one technical assistance and guidance to students in backend development concepts, helping them troubleshoot code and understand complex server-side logic.",
+      "Assisted in grading assignments and provided constructive feedback to help students improve their backend skills.",
     ],
     certificate: {
       url: "/file/work/Asisten Dosen Backend 2024-1.jpg",
@@ -119,8 +123,15 @@ export const EDUCATION_ENTRIES: TimelineEntry[] = [
     subtitle: "Bachelor of Computer Science (S.Kom) — Teknik Informatika",
     description: [
       "Graduated with Honors (Cumlaude, GPA 3.94 / 4.00).",
-      "Specialized in Software Engineering, Fullstack Web Development, and Distributed Systems.",
+      "Engaged in faculty-led research internships, developing ESAO (AI Essay Grading) and DigiArc (Web3 Decentralized Storage).",
+      "Served as Teaching Assistant for Data Structures & Algorithms, Databases, and Backend Development.",
+      "Published research paper in MIND Journal on Student Retention Prediction using Genetic Algorithm-optimized Random Forest (GA-RF) with SMOTE.",
+      "Active in internal campus event committees and student competitions.",
     ],
+    link: {
+      url: "https://ejurnal.itenas.ac.id/index.php/mindjournal/article/view/15673",
+      label: "Final Assignment",
+    },
   },
   {
     logo: "/img/logo-ma.png",
@@ -135,6 +146,14 @@ export const EDUCATION_ENTRIES: TimelineEntry[] = [
 
 export const PROJECTS: Project[] = [
   {
+    icon: "map",
+    title: "RoadSense (Smart GIS Navigation)",
+    description:
+      "Web-based Geographic Information System (GIS) mapping road damage through crowdsourcing with smart routing. Powered by T3 Stack (Next.js 15, tRPC), Leaflet, Flask (Shapely), and OSRM.",
+    url: "https://github.com/LIan2nd/RoadSense",
+    image: "/img/projects/roadsense.png",
+  },
+  {
     icon: "shield-lock",
     title: "DigiArc (Web3 Storage)",
     description:
@@ -146,7 +165,7 @@ export const PROJECTS: Project[] = [
     icon: "robot",
     title: "ESAO (AI Grading)",
     description:
-      "Automated essay grading system. Decoupled architecture using Flask (Python) for AI processing and Next.js for the client-side.",
+      "Automated essay grading system. Decoupled architecture using Flask (Python) for Langchain Architecture and Next.js for the client-side.",
     url: "https://esao.nurulfikri.ac.id",
     image: "/img/projects/esao.png",
   },
@@ -159,6 +178,14 @@ export const PROJECTS: Project[] = [
     image: "/img/projects/sistem-pendaftaran-event.png",
   },
   {
+    icon: "server",
+    title: "HRD RESTful API (Express.js)",
+    description:
+      "Modular MVC & OOP backend architecture for HRD management built with Express.js and MySQL. Implements class-based controllers, DAO models, parameterized queries, and RESTful API patterns.",
+    url: "https://github.com/LIan2nd/uas-pemrograman-backend",
+    image: "/img/projects/hrd-api.png",
+  },
+  {
     icon: "gamepad",
     title: "Tetrisn't (Reverse Puzzle Game)",
     description:
@@ -166,22 +193,6 @@ export const PROJECTS: Project[] = [
     url: "https://github.com/LIan2nd/Tetrisn-t",
     image: "/img/projects/tetrisn't.png",
   },
-  // {
-  //   icon: "shop",
-  //   title: "AkuJualin (Omnichannel)",
-  //   description:
-  //     "E-commerce integrator for Shopee & TikTok Shop using T3 Stack (Next.js, tRPC, Prisma) with full type-safety.",
-  // },
-  // {
-  //   icon: "gear",
-  //   title: "Coming Soon",
-  //   description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-  // },
-  // {
-  //   icon: "gear",
-  //   title: "Coming Soon",
-  //   description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-  // },
 ];
 
 export const CERTIFICATIONS: Certification[] = [
@@ -234,7 +245,7 @@ export const CERTIFICATIONS: Certification[] = [
     date: "Dec 2024",
     credentialUrl:
       "/file/certifications/Xpresso 4 - UIUX Design And Development.pdf",
-    skills: ["UI/UX Design", "Web Development"],
+    skills: ["UI/UX Design", "Web Development", "Figma"],
   },
   {
     title: "MBKM Course Batch 7: Full Stack Web Development",
@@ -242,7 +253,7 @@ export const CERTIFICATIONS: Certification[] = [
     date: "Nov 2024",
     credentialUrl:
       "/file/certifications/MBKM Course Batch 7 Full Stack Web Development.pdf",
-    skills: ["Full Stack", "React", "Node.js"],
+    skills: ["Full Stack", "JQuery", "Flask (Python)"],
   },
   {
     title: "Belajar React JS dari Dasar hingga Siap Deployment",

@@ -25,9 +25,9 @@ function SocialIcon({ platform }: { platform: string }) {
 
 export function AboutSection({ skills, details, socials }: AboutSectionProps) {
   return (
-    <section id="about" aria-label="About Alfian Nur Usyaid" className="py-20 px-6 max-md:py-12">
+    <section id="about" aria-label="About Alfian Nur Usyaid" className="py-10 md:py-14 px-6">
       <div className="max-w-[800px] mx-auto">
-        <div className="flex gap-8 max-md:flex-col">
+        <div className="flex gap-8 max-md:flex-col items-center md:items-start">
           <Image
             src="/img/hero.png"
             alt="Alfian Nur Usyaid - Fullstack Developer"
@@ -36,7 +36,7 @@ export function AboutSection({ skills, details, socials }: AboutSectionProps) {
             priority
             className="w-[280px] max-md:w-full h-[360px] object-cover rounded-xl opacity-90 shrink-0 border border-[var(--color-bg-tertiary)]/50 shadow-md"
           />
-          <div className="flex flex-col gap-4 justify-between flex-1">
+          <div className="flex flex-col gap-4 justify-between flex-1 min-w-0 w-full">
             <div>
               <span className="text-accent text-xs font-semibold uppercase tracking-widest">Discover</span>
               <h2 className="text-3xl max-sm:text-2xl font-bold mt-1 mb-3">
@@ -55,13 +55,15 @@ export function AboutSection({ skills, details, socials }: AboutSectionProps) {
               <strong>JavaScript/TypeScript (Next.js)</strong>, <strong>PHP (Laravel)</strong>, <strong>Python (Flask)</strong>, and <strong>PostgreSQL</strong>.
             </p>
             <div className="border border-[var(--color-bg-tertiary)]/50 bg-[var(--color-bg-secondary)]/60 rounded-xl p-4 shadow-xs">
-              <div className="grid grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1 gap-3">
+              <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-x-4 gap-y-3">
                 {details.map((detail) => (
-                  <div key={detail.label}>
-                    <span className="font-semibold text-[11px] text-accent uppercase tracking-wider">
+                  <div key={detail.label} className="min-w-0">
+                    <span className="font-semibold text-[11px] text-accent uppercase tracking-wider block">
                       {detail.label}
                     </span>
-                    <p className="text-sm mt-0.5">{detail.value}</p>
+                    <p className="text-sm mt-0.5 text-[var(--color-text-primary)] truncate" title={detail.value}>
+                      {detail.value}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -71,9 +73,9 @@ export function AboutSection({ skills, details, socials }: AboutSectionProps) {
                 href="/file/myResume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[var(--color-bg-secondary)] hover:bg-accent text-[var(--color-text-primary)] hover:text-white border border-[var(--color-bg-tertiary)]/70 hover:border-accent text-xs font-semibold tracking-wide transition-all duration-200 active:scale-95 cursor-pointer shadow-xs no-underline"
+                className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[var(--color-bg-secondary)] hover:bg-accent text-[var(--color-text-primary)] hover:text-white border border-[var(--color-bg-tertiary)]/70 hover:border-accent text-xs font-semibold tracking-wide transition-all duration-200 active:scale-95 cursor-pointer shadow-xs no-underline"
               >
-                <FileText size={14} className="text-accent" />
+                <FileText size={14} className="text-accent group-hover:text-white transition-colors duration-200" />
                 <span>Resume</span>
               </a>
               <div className="h-4 w-px bg-[var(--color-bg-tertiary)]/60 mx-1 hidden sm:block" />

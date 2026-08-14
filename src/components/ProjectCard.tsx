@@ -7,6 +7,10 @@ import {
   Settings,
   ArrowRight,
   Gamepad2,
+  MapPin,
+  Navigation,
+  Server,
+  Database,
 } from "lucide-react";
 import type { Project } from "@/lib/types";
 
@@ -27,6 +31,14 @@ function ProjectIcon({ icon }: { icon: string }) {
     case "gamepad":
     case "game":
       return <Gamepad2 {...iconProps} />;
+    case "map":
+    case "map-pin":
+    case "navigation":
+      return <Navigation {...iconProps} />;
+    case "server":
+      return <Server {...iconProps} />;
+    case "database":
+      return <Database {...iconProps} />;
     case "shop":
       return <Store {...iconProps} />;
     default:

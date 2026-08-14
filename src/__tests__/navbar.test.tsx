@@ -22,7 +22,8 @@ describe("Navbar & useActiveSection", () => {
     );
 
     NAV_LINKS.forEach((link) => {
-      expect(screen.getByRole("link", { name: link.label })).toBeInTheDocument();
+      const links = screen.getAllByRole("link", { name: link.label });
+      expect(links.length).toBeGreaterThanOrEqual(1);
     });
   });
 

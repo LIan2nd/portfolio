@@ -95,7 +95,7 @@ export function Navbar({ links }: NavbarProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-50 px-6">
       {/* Ultra-smooth glassmorphic background layer */}
       <div
         className={`absolute inset-0 transition-all duration-500 ease-in-out pointer-events-none ${
@@ -105,58 +105,43 @@ export function Navbar({ links }: NavbarProps) {
         }`}
       />
 
-      <div className="max-w-[800px] mx-auto px-6 relative z-10">
+      <div className="max-w-[800px] mx-auto relative z-10">
         <nav
           aria-label="Main navigation"
           className={`flex items-center justify-between transition-all duration-500 ease-in-out ${
-            isScrolled ? "py-3" : "py-6 max-md:py-4"
+            isScrolled ? "py-2.5" : "py-5 max-md:py-3.5"
           }`}
         >
-          <span className="text-2xl font-bold text-[var(--color-text-primary)]">
-            <a
-              href="#home"
-              onClick={(e) => handleLinkClick(e, "#home")}
-              className="cursor-pointer no-underline text-inherit hover:opacity-90 transition-opacity"
+          {/* Left Side: Desktop Nav Links (Desktop) / Mobile Hamburger Button (Mobile) */}
+          <div className="flex items-center">
+            {/* Mobile Animated Hamburger to X (On Left for Mobile) */}
+            <button
+              className="md:hidden relative bg-transparent border-none cursor-pointer p-1.5 -ml-1 focus:outline-none flex items-center justify-center z-50"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle navigation"
+              aria-expanded={menuOpen}
             >
-              Portfolio
-            </a>
-          </span>
+              <div className="w-5 h-[16px] flex flex-col justify-between pointer-events-none">
+                <span
+                  className={`w-full h-0.5 bg-[var(--color-text-primary)] rounded-full transition-all duration-300 ease-in-out origin-center ${
+                    menuOpen ? "rotate-45 translate-y-[7px] !bg-accent" : ""
+                  }`}
+                />
+                <span
+                  className={`w-full h-0.5 bg-[var(--color-text-primary)] rounded-full transition-all duration-300 ease-in-out ${
+                    menuOpen ? "opacity-0 -translate-x-2" : "opacity-100"
+                  }`}
+                />
+                <span
+                  className={`w-full h-0.5 bg-[var(--color-text-primary)] rounded-full transition-all duration-300 ease-in-out origin-center ${
+                    menuOpen ? "-rotate-45 -translate-y-[7px] !bg-accent" : ""
+                  }`}
+                />
+              </div>
+            </button>
 
-          {/* Mobile Animated Hamburger to X (Centered & Clean Transparent) */}
-          <button
-            className="md:hidden relative bg-transparent border-none cursor-pointer p-2 focus:outline-none flex items-center justify-center"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle navigation"
-            aria-expanded={menuOpen}
-          >
-            <div className="w-6 h-[18px] flex flex-col justify-between pointer-events-none">
-              <span
-                className={`w-full h-0.5 bg-[var(--color-text-primary)] rounded-full transition-all duration-200 ease-in-out origin-center ${
-                  menuOpen ? "rotate-45 translate-y-[8px] !bg-accent" : ""
-                }`}
-              />
-              <span
-                className={`w-full h-0.5 bg-[var(--color-text-primary)] rounded-full transition-all duration-200 ease-in-out ${
-                  menuOpen ? "opacity-0 -translate-x-2" : "opacity-100"
-                }`}
-              />
-              <span
-                className={`w-full h-0.5 bg-[var(--color-text-primary)] rounded-full transition-all duration-200 ease-in-out origin-center ${
-                  menuOpen ? "-rotate-45 -translate-y-[8px] !bg-accent" : ""
-                }`}
-              />
-            </div>
-          </button>
-
-          {/* Navigation Links (Desktop & Mobile Dropdown) */}
-          <div
-            className={`absolute md:static top-full left-0 right-0 md:w-auto overflow-hidden md:overflow-visible transition-all duration-200 ease-in-out ${
-              menuOpen
-                ? "max-h-96 opacity-100 translate-y-0"
-                : "max-h-0 md:max-h-none opacity-0 md:opacity-100 -translate-y-2 md:translate-y-0 pointer-events-none md:pointer-events-auto"
-            }`}
-          >
-            <ul className="flex flex-col md:flex-row bg-[var(--color-bg-primary)]/95 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none border-b border-[var(--color-bg-tertiary)]/70 md:border-none shadow-2xl md:shadow-none rounded-b-2xl md:rounded-none p-3 md:p-0 mx-3 md:mx-0 mt-1 md:mt-0 gap-1 md:gap-0 items-stretch md:items-center list-none m-0">
+            {/* Desktop Navigation Links (Left aligned like Ted's) */}
+            <ul className="hidden md:flex items-center gap-6 list-none m-0 p-0">
               {links.map((link) => {
                 const isActive = activeSection === link.href.replace("#", "");
                 return (
@@ -164,13 +149,13 @@ export function Navbar({ links }: NavbarProps) {
                     <a
                       href={link.href}
                       onClick={(e) => handleLinkClick(e, link.href)}
-                      className={`block md:inline-block px-4 md:px-3 py-2.5 md:py-1 text-base md:text-lg rounded-xl md:rounded-none tracking-wide transition-all duration-200 ${
+                      className={`text-sm font-medium tracking-wide transition-colors duration-200 no-underline py-1 relative ${
                         isActive
-                          ? "bg-accent/10 md:bg-transparent text-accent font-semibold md:font-normal after:w-full"
-                          : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)]/60 md:hover:bg-transparent hover:text-accent after:w-0 hover:after:w-full"
-                      } relative md:after:content-[''] md:after:absolute md:after:bg-accent md:after:h-[3px] md:after:left-0 md:after:bottom-[-7px] md:after:rounded-[var(--radius-default)] md:after:transition-all md:after:duration-200`}
+                          ? "text-accent font-semibold after:w-full"
+                          : "text-[var(--color-text-primary)]/80 hover:text-accent after:w-0 hover:after:w-full"
+                      } after:content-[''] after:absolute after:bg-accent after:h-[2px] after:left-0 after:bottom-[-4px] after:rounded-full after:transition-all after:duration-200`}
                     >
-                      <span>{link.label}</span>
+                      {link.label}
                     </a>
                   </li>
                 );
@@ -178,15 +163,57 @@ export function Navbar({ links }: NavbarProps) {
             </ul>
           </div>
 
-          {/* Theme toggle (Right) */}
-          <button
-            onClick={toggleTheme}
-            className="ml-0 md:ml-4 border-2 border-accent rounded-full p-2 bg-transparent cursor-pointer hover:bg-accent hover:scale-105 active:scale-95 group transition-all duration-200 flex items-center justify-center shrink-0"
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-          >
-            <AnimatedThemeIcon isDark={theme === "dark"} />
-          </button>
+          {/* Right side: Theme Toggle (Clean & Borderless) */}
+          <div className="flex items-center">
+            <button
+              onClick={toggleTheme}
+              className="bg-transparent border-none p-1 -mr-1 cursor-pointer text-accent hover:opacity-75 hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center shrink-0"
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+            >
+              <AnimatedThemeIcon isDark={theme === "dark"} />
+            </button>
+          </div>
         </nav>
+      </div>
+
+      {/* Mobile Drawer Backdrop Overlay */}
+      <div
+        onClick={() => setMenuOpen(false)}
+        className={`md:hidden fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300 ${
+          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      />
+
+      {/* Mobile Slide-from-Left Drawer */}
+      <div
+        className={`md:hidden fixed top-0 bottom-0 left-0 w-64 max-w-[80vw] bg-[var(--color-bg-primary)]/95 backdrop-blur-2xl border-r border-[var(--color-bg-tertiary)]/70 shadow-2xl p-6 pt-20 flex flex-col justify-between transition-transform duration-300 ease-out z-40 ${
+          menuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <ul className="flex flex-col gap-1.5 list-none m-0 p-0">
+          {links.map((link) => {
+            const isActive = activeSection === link.href.replace("#", "");
+            return (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  onClick={(e) => handleLinkClick(e, link.href)}
+                  className={`block px-4 py-3 text-sm font-medium rounded-xl tracking-wide transition-all duration-200 no-underline ${
+                    isActive
+                      ? "bg-accent/10 text-accent font-semibold"
+                      : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)]/60 hover:text-accent"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="pt-6 border-t border-[var(--color-bg-tertiary)]/60 text-xs text-[var(--color-text-secondary)]">
+          <p>© 2025 Alfian Nur Usyaid</p>
+        </div>
       </div>
     </header>
   );

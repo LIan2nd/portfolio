@@ -20,7 +20,8 @@ describe("HeroSection & Footer", () => {
   it("renders Footer with copyright notice including emoji and social links", () => {
     render(<Footer socials={SOCIALS} />);
 
-    expect(screen.getByText("© 2025 LIand 🍵")).toBeInTheDocument();
+    const currentYear = new Date().getFullYear();
+    expect(screen.getByText(`© ${currentYear} LIand 🍵`)).toBeInTheDocument();
 
     SOCIALS.forEach((social) => {
       const link = screen.getByLabelText(social.label);
