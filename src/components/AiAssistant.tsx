@@ -74,11 +74,23 @@ function formatMarkdown(text: string) {
   });
 }
 
+const LOADING_PHRASES = [
+  "Sedang berpikir keras... 🤔",
+  "Lagi memasak jawaban lezat... 🍳",
+  "Mencari di memori otak Alfian... 🧠",
+  "Mengompilasi kata-kata... ⚡",
+  "Bentar, lagi ngeracik jawaban... ✍️",
+  "Scanning portofolio & proyek... 🔍",
+  "Menyeduh kopi sebentar... ☕",
+  "Memanggil neuron digital... ✨",
+];
+
 export function AiAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingPhraseIndex, setLoadingPhraseIndex] = useState(0);
   const [aiStatus, setAiStatus] = useState<"active" | "error" | "offline">("active");
   const [providerMode, setProviderMode] = useState<"live" | "simulated">(
     "simulated"
@@ -86,6 +98,15 @@ export function AiAssistant() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLElement>(null);
+
+  // Cycle playful loading phrases
+  useEffect(() => {
+    if (!isLoading) return;
+    const interval = setInterval(() => {
+      setLoadingPhraseIndex((prev) => (prev + 1) % LOADING_PHRASES.length);
+    }, 1400);
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   // Health probe on mount
   useEffect(() => {
@@ -353,11 +374,16 @@ export function AiAssistant() {
                 {messages.map((msg) => {
                   if (msg.role === "assistant" && !msg.content && msg.isStreaming) {
                     return (
-                      <div key={msg.id} className="flex flex-col items-start">
-                        <div className="flex items-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-2xl rounded-tl-xs bg-[var(--color-bg-secondary)] border border-[var(--color-bg-tertiary)]/70 w-fit">
-                          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" />
-                          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:0.2s]" />
-                          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:0.4s]" />
+                      <div key={msg.id} className="flex flex-col items-start animate-in fade-in duration-200">
+                        <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl rounded-tl-xs bg-[var(--color-bg-secondary)] border border-[var(--color-bg-tertiary)]/70 text-[var(--color-text-secondary)] shadow-xs">
+                          <div className="flex items-center gap-1 shrink-0">
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:0.2s]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:0.4s]" />
+                          </div>
+                          <span className="text-[11px] sm:text-xs font-medium italic text-[var(--color-text-secondary)] animate-pulse">
+                            {LOADING_PHRASES[loadingPhraseIndex]}
+                          </span>
                         </div>
                       </div>
                     );
