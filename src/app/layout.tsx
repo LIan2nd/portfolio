@@ -80,6 +80,10 @@ export const metadata: Metadata = {
   verification: {
     google: "5K0Z9r269vfnAcps_OeSx6pAZMDRD4D5iWAWTXV64HU",
   },
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: "/icon.svg",
+  },
   category: "technology",
   formatDetection: {
     email: false,
