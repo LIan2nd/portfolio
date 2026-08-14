@@ -20,7 +20,7 @@ function SocialIcon({ platform }: { platform: string }) {
 
 export function Footer({ socials }: FooterProps) {
   return (
-    <footer className="max-w-[960px] mx-auto flex flex-wrap justify-between items-center py-6 mb-3 mt-12 px-6 max-md:flex-col max-md:text-center max-md:gap-4">
+    <footer className="max-w-[800px] mx-auto flex flex-wrap justify-between items-center py-6 mb-3 mt-12 px-6 max-md:flex-col max-md:text-center max-md:gap-4">
       <div className="flex items-center">
         <span className="text-[var(--color-text-primary)]">© 2025 LIand 🍵</span>
       </div>

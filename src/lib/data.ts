@@ -46,6 +46,10 @@ export const WORK_ENTRIES: TimelineEntry[] = [
     dateRange: "May 2026 - Jul 2026",
     title: "Teaching Assistant (Data Structures & Algorithms)",
     subtitle: "STT Terpadu Nurul Fikri",
+    description: [
+      "Mentored 40+ undergraduate students in core Data Structures & Algorithms concepts (Tree, Graph, Sorting, Big-O analysis).",
+      "Conducted weekly lab hands-on practicum and assisted in grading algorithmic assignments.",
+    ],
     certificate: {
       url: "/file/work/Asisten Dosen Struktur Data & Algoritma 2025-2.jpg",
       label: "Certificate",
@@ -56,6 +60,10 @@ export const WORK_ENTRIES: TimelineEntry[] = [
     dateRange: "May 2026 - Jul 2026",
     title: "Teaching Assistant (Database)",
     subtitle: "STT Terpadu Nurul Fikri",
+    description: [
+      "Guided students through Relational Database Management Systems (RDBMS), SQL query optimization, and ERD schema design.",
+      "Facilitated laboratory sessions utilizing PostgreSQL and MySQL databases.",
+    ],
     certificate: {
       url: "/file/work/Asisten Dosen Basis Data 2025-2.jpg",
       label: "Certificate",
@@ -66,17 +74,25 @@ export const WORK_ENTRIES: TimelineEntry[] = [
     dateRange: "Aug 2025 - Sept 2025",
     title: "Frontend & Blockchain Researcher",
     subtitle: "Joint Research",
-    link: { url: "https://digiarc.vercel.app", label: "DigiArc" },
+    description: [
+      "Researched and built decentralized file storage architectures utilizing Next.js, Wagmi, and IPFS.",
+      "Integrated Solidity smart contracts for cryptographically verified proof-of-storage.",
+    ],
+    link: { url: "https://digiarc.vercel.app", label: "DigiArc Project" },
   },
   {
     logo: "/img/sttnf.png",
     dateRange: "Feb 2025 - Jul 2025",
     title: "Fullstack Developer",
     subtitle: "Academic Research Project",
-    link: { url: "https://esao.nurulfikri.ac.id", label: "ESAO" },
+    description: [
+      "Engineered ESAO automated essay grading platform with decoupled architecture (Next.js frontend & Flask Python AI backend).",
+      "Implemented NLP scoring pipeline with real-time feedback and responsive interactive dashboard.",
+    ],
+    link: { url: "https://esao.nurulfikri.ac.id", label: "ESAO System" },
     certificate: {
       url: "/file/work/Alfian Nur Usyaid - Sertifikat Magang Riset 2024-2.pdf",
-      label: "Certificate",
+      label: "Research Certificate",
     },
   },
   {
@@ -84,6 +100,10 @@ export const WORK_ENTRIES: TimelineEntry[] = [
     dateRange: "Sep 2024 - Jan 2025",
     title: "Lab Teaching Assistant (Backend)",
     subtitle: "STT Terpadu Nurul Fikri",
+    description: [
+      "Taught backend web architecture, RESTful API design, MVC patterns, and ORM integrations with PHP (Laravel).",
+      "Provided one-on-one debugging sessions and evaluated student code submissions.",
+    ],
     certificate: {
       url: "/file/work/Asisten Dosen Backend 2024-1.jpg",
       label: "Certificate",
@@ -96,13 +116,20 @@ export const EDUCATION_ENTRIES: TimelineEntry[] = [
     logo: "/img/sttnf.png",
     dateRange: "2022 - 2026",
     title: "STT Terpadu Nurul Fikri",
-    subtitle: "Teknik Informatika - S.Kom (Cumlaude, IPK 3.94)",
+    subtitle: "Bachelor of Computer Science (S.Kom) — Teknik Informatika",
+    description: [
+      "Graduated with Honors (Cumlaude, GPA 3.94 / 4.00).",
+      "Specialized in Software Engineering, Fullstack Web Development, and Distributed Systems.",
+    ],
   },
   {
     logo: "/img/logo-ma.png",
     dateRange: "2019 - 2022",
     title: "MA Sirojul Athfal 02",
-    subtitle: "IPS",
+    subtitle: "Social Sciences (IPS)",
+    description: [
+      "Active in student organization leadership and extracurricular academic activities.",
+    ],
   },
 ];
 

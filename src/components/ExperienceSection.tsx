@@ -24,12 +24,12 @@ export function ExperienceSection({
 
   return (
     <section id="experience" aria-label="Work and education experience" className="py-20 px-6 max-md:py-12 text-center">
-      <div className="max-w-[960px] mx-auto">
-        <span className="text-accent text-sm uppercase tracking-wider">Follow my</span>
-        <h2 className="text-4xl max-sm:text-3xl font-bold mt-1 mb-8">
+      <div className="max-w-[800px] mx-auto">
+        <span className="text-accent text-xs font-semibold uppercase tracking-widest">Follow my</span>
+        <h2 className="text-3xl max-sm:text-2xl font-bold mt-1 mb-6">
           Experience
         </h2>
-        <div className="text-left w-full max-w-[560px] mx-auto">
+        <div className="text-left w-full max-w-[680px] mx-auto">
           <div
             className="bg-[var(--color-bg-tertiary)] relative flex p-1 rounded-lg mb-4"
             role="tablist"
@@ -82,7 +82,7 @@ export function ExperienceSection({
           </div>
 
           <div
-            className="border border-accent/20 rounded-lg p-6 max-md:p-3"
+            className="border border-[var(--color-bg-tertiary)]/60 bg-[var(--color-bg-secondary)]/30 rounded-xl p-6 max-md:p-4 shadow-xs"
             role="tabpanel"
           >
             <ul key={activeTab} className="list-none p-0 m-0 animate-tab-slide">

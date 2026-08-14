@@ -123,14 +123,14 @@ describe("ExperienceSection & TimelineEntry", () => {
           cleanup();
           const { container } = render(<TimelineEntry entry={entry} />);
 
-          const dateEl = container.querySelector("p.text-sm.opacity-60");
-          expect(dateEl?.textContent).toBe(entry.dateRange);
-
-          const titleEl = container.querySelector("p.text-base.font-bold");
+          const titleEl = container.querySelector("h3");
           expect(titleEl?.textContent).toBe(entry.title);
 
-          const subtitleEl = container.querySelector("p.text-sm.opacity-70");
-          expect(subtitleEl?.textContent).toContain(entry.subtitle);
+          const dateEl = container.querySelector("span");
+          expect(dateEl?.textContent).toBe(entry.dateRange);
+
+          const subtitleEl = container.querySelector("p");
+          expect(subtitleEl?.textContent).toBe(entry.subtitle);
 
           if (entry.link) {
             const linkEl = container.querySelector("a");

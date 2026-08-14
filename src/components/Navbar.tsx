@@ -105,7 +105,7 @@ export function Navbar({ links }: NavbarProps) {
         }`}
       />
 
-      <div className="max-w-[960px] mx-auto px-6 relative z-10">
+      <div className="max-w-[800px] mx-auto px-6 relative z-10">
         <nav
           aria-label="Main navigation"
           className={`flex items-center justify-between transition-all duration-500 ease-in-out ${

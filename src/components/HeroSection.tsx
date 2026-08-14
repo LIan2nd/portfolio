@@ -14,7 +14,7 @@ export function HeroSection() {
         }
       `}</style>
 
-      <div className="w-full max-w-[960px] mx-auto">
+      <div className="w-full max-w-[800px] mx-auto">
         <p className="text-sm opacity-70 mb-1">Hi, there</p>
         <h1 className="text-7xl max-lg:text-5xl max-sm:text-3xl font-bold text-[var(--color-text-primary)] font-sans leading-tight">
           I&apos;m Programmer

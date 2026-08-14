@@ -19,6 +19,7 @@ export interface TimelineEntry {
   dateRange: string;
   title: string;
   subtitle: string;
+  description?: string[];
   link?: { url: string; label: string };
   certificate?: { url: string; label?: string };
 }

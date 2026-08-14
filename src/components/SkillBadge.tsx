@@ -4,7 +4,7 @@ interface SkillBadgeProps {
 
 export function SkillBadge({ name }: SkillBadgeProps) {
   return (
-    <small className="inline-flex px-3 py-2 font-semibold text-white bg-accent border border-accent-dark rounded-[var(--radius-default)] text-sm transition-transform duration-200 hover:scale-105 cursor-default">
+    <small className="inline-flex items-center px-2.5 py-1 text-xs font-medium text-[var(--color-text-primary)] bg-[var(--color-bg-secondary)] border border-[var(--color-bg-tertiary)]/70 hover:border-accent hover:text-accent rounded-md transition-all duration-200 cursor-default select-none shadow-xs">
       {name}
     </small>
   );
