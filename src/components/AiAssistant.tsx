@@ -90,12 +90,12 @@ export function AiAssistant() {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLElement>(null);
 
-  // Cycle playful loading phrases comfortably (every 3.8s)
+  // Cycle playful loading phrases comfortably (every 5.8s)
   useEffect(() => {
     if (!isLoading) return;
     const interval = setInterval(() => {
       setLoadingPhraseIndex(getRandomLoadingIndex());
-    }, 3800);
+    }, 4800);
     return () => clearInterval(interval);
   }, [isLoading]);
 
@@ -250,10 +250,10 @@ export function AiAssistant() {
         prev.map((msg) =>
           msg.id === aiMessageId
             ? {
-                ...msg,
-                content: errorText,
-                isStreaming: false,
-              }
+              ...msg,
+              content: errorText,
+              isStreaming: false,
+            }
             : msg
         )
       );
@@ -270,18 +270,16 @@ export function AiAssistant() {
     <aside
       ref={containerRef}
       aria-label="AI Assistant"
-      className={`fixed z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-2xl border border-[var(--color-bg-tertiary)]/90 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${
-        isOpen
+      className={`fixed z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-2xl border border-[var(--color-bg-tertiary)]/90 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isOpen
           ? "bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:bottom-5 sm:w-[360px] h-[520px] max-h-[85vh]"
           : "bottom-4 right-4 sm:right-5 sm:bottom-5 w-[210px] sm:w-[220px] h-[56px]"
-      }`}
+        }`}
     >
       {/* Header Bar (Always visible & Clickable to toggle) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-3.5 py-2 flex items-center justify-between bg-[var(--color-bg-secondary)]/50 hover:bg-[var(--color-bg-secondary)]/80 transition-colors cursor-pointer text-left focus:outline-none ${
-          isOpen ? "border-b border-[var(--color-bg-tertiary)]/70" : "border-none"
-        }`}
+        className={`w-full px-3.5 py-2 flex items-center justify-between bg-[var(--color-bg-secondary)]/50 hover:bg-[var(--color-bg-secondary)]/80 transition-colors cursor-pointer text-left focus:outline-none ${isOpen ? "border-b border-[var(--color-bg-tertiary)]/70" : "border-none"
+          }`}
         aria-label={isOpen ? "Tutup AI Clone" : "Buka AI Clone"}
       >
         <div className="flex flex-col">
@@ -311,9 +309,8 @@ export function AiAssistant() {
 
         <div className="p-0.5 text-[var(--color-text-secondary)]">
           <ChevronUp
-            className={`w-3.5 h-3.5 transition-transform duration-300 ease-in-out ${
-              isOpen ? "rotate-0" : "rotate-180"
-            }`}
+            className={`w-3.5 h-3.5 transition-transform duration-300 ease-in-out ${isOpen ? "rotate-0" : "rotate-180"
+              }`}
           />
         </div>
       </button>
@@ -375,7 +372,7 @@ export function AiAssistant() {
                           </div>
                           <span
                             key={loadingPhraseIndex}
-                            className="text-[11px] sm:text-xs font-medium italic text-[var(--color-text-secondary)] animate-in fade-in duration-300"
+                            className="text-[11px] sm:text-xs font-medium italic text-[var(--color-text-secondary)] animate-in fade-in duration-500"
                           >
                             {LOADING_PHRASES[loadingPhraseIndex]}
                           </span>
@@ -392,8 +389,8 @@ export function AiAssistant() {
                     >
                       <div
                         className={`max-w-[88%] sm:max-w-[85%] px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-2xl shadow-xs ${msg.role === "user"
-                            ? "bg-accent text-white rounded-tr-xs"
-                            : "bg-[var(--color-bg-secondary)] border border-[var(--color-bg-tertiary)]/70 text-[var(--color-text-primary)] rounded-tl-xs"
+                          ? "bg-accent text-white rounded-tr-xs"
+                          : "bg-[var(--color-bg-secondary)] border border-[var(--color-bg-tertiary)]/70 text-[var(--color-text-primary)] rounded-tl-xs"
                           }`}
                       >
                         <div className="break-words">
