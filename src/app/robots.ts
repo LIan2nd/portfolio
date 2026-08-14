@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
     ],
-    sitemap: "https://lian2nd.github.io/sitemap.xml",
+    sitemap: "https://portfolio.liand.web.id/sitemap.xml",
   };
 }

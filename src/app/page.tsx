@@ -23,8 +23,8 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "WebSite",
-      "@id": "https://lian2nd.github.io/#website",
-      url: "https://lian2nd.github.io",
+      "@id": "https://portfolio.liand.web.id/#website",
+      url: "https://portfolio.liand.web.id",
       name: "Alfian Nur Usyaid Portfolio",
       description:
         "Portfolio of Alfian Nur Usyaid — Fullstack Developer specializing in Next.js, Laravel, Flask, and Blockchain.",
@@ -32,19 +32,19 @@ const jsonLd = {
     },
     {
       "@type": "ProfilePage",
-      "@id": "https://lian2nd.github.io/#profilepage",
-      url: "https://lian2nd.github.io",
+      "@id": "https://portfolio.liand.web.id/#profilepage",
+      url: "https://portfolio.liand.web.id",
       name: "Alfian Nur Usyaid — Fullstack Developer",
-      isPartOf: { "@id": "https://lian2nd.github.io/#website" },
-      mainEntity: { "@id": "https://lian2nd.github.io/#person" },
+      isPartOf: { "@id": "https://portfolio.liand.web.id/#website" },
+      mainEntity: { "@id": "https://portfolio.liand.web.id/#person" },
       inLanguage: "en-US",
     },
     {
       "@type": "Person",
-      "@id": "https://lian2nd.github.io/#person",
+      "@id": "https://portfolio.liand.web.id/#person",
       name: "Alfian Nur Usyaid",
       alternateName: "LIand",
-      url: "https://lian2nd.github.io",
+      url: "https://portfolio.liand.web.id",
       jobTitle: "Fullstack Developer",
       description:
         "Computer Science graduate (Cumlaude, GPA 3.94) specializing in Fullstack Web Development using Next.js, Laravel, Flask, and Blockchain.",
@@ -77,7 +77,7 @@ const jsonLd = {
         "https://instagram.com/lforthissielu/",
       ],
       email: "alfiannurusyaid19@gmail.com",
-      image: "https://lian2nd.github.io/img/hero.png",
+      image: "https://portfolio.liand.web.id/img/hero.png",
     },
   ],
 };

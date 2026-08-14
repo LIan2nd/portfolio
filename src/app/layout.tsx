@@ -18,7 +18,7 @@ const gowunBatang = Gowun_Batang({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lian2nd.github.io"),
+  metadataBase: new URL("https://portfolio.liand.web.id"),
   title: {
     default: "Alfian Nur Usyaid — Fullstack Developer",
     template: "%s | Alfian Nur Usyaid",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     "Portfolio",
     "Software Engineer",
   ],
-  authors: [{ name: "Alfian Nur Usyaid", url: "https://lian2nd.github.io" }],
+  authors: [{ name: "Alfian Nur Usyaid", url: "https://portfolio.liand.web.id" }],
   creator: "Alfian Nur Usyaid",
   publisher: "Alfian Nur Usyaid",
   robots: {
@@ -51,13 +51,13 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://lian2nd.github.io",
+    canonical: "https://portfolio.liand.web.id",
   },
   openGraph: {
     title: "Alfian Nur Usyaid — Fullstack Developer",
     description:
       "Portfolio of Alfian Nur Usyaid — Fullstack Developer specializing in Next.js, Laravel, Flask, and Blockchain. Cumlaude CS graduate (GPA 3.94).",
-    url: "https://lian2nd.github.io",
+    url: "https://portfolio.liand.web.id",
     siteName: "Alfian Nur Usyaid Portfolio",
     type: "website",
     locale: "en_US",
@@ -76,6 +76,9 @@ export const metadata: Metadata = {
     description:
       "Fullstack Developer specializing in Next.js, Laravel, Flask, and Blockchain. Open for work.",
     images: ["/img/hero.png"],
+  },
+  verification: {
+    google: "5K0Z9r269vfnAcps_OeSx6pAZMDRD4D5iWAWTXV64HU",
   },
   category: "technology",
   formatDetection: {
