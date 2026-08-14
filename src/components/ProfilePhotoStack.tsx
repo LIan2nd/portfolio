@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 
 export const PROFILE_PHOTOS = [
@@ -24,140 +24,136 @@ export const PROFILE_PHOTOS = [
 
 export function ProfilePhotoStack() {
   const [topIndex, setTopIndex] = useState(0);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const touchStartRef = useRef<{ x: number; y: number; time: number }>({
-    x: 0,
-    y: 0,
-    time: 0,
-  });
-  const isSwipingRef = useRef(false);
+  const [swipeX, setSwipeX] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+  const touchRef = useRef({ startX: 0, startY: 0, isTouchDevice: false });
   const total = PROFILE_PHOTOS.length;
 
-  const handleNext = () => {
-    setTopIndex((prev) => (prev + 1) % total);
-  };
+  const cycleNext = useCallback(() => {
+    if (isExiting) return;
+    setIsExiting(true);
+    // Brief delay for the exit animation to settle, then swap index
+    setTimeout(() => {
+      setTopIndex((prev) => (prev + 1) % total);
+      setIsExiting(false);
+    }, 280);
+  }, [isExiting, total]);
 
-  // Touch & Swipe Event Handlers for Mobile & Pointer
+  // ─── Touch handlers (mobile only) ───
   const handleTouchStart = (e: React.TouchEvent) => {
-    const clientX = e.touches[0].clientX;
-    const clientY = e.touches[0].clientY;
-    touchStartRef.current = { x: clientX, y: clientY, time: Date.now() };
-    setIsDragging(true);
-    isSwipingRef.current = false;
+    touchRef.current.isTouchDevice = true;
+    touchRef.current.startX = e.touches[0].clientX;
+    touchRef.current.startY = e.touches[0].clientY;
+    setIsSwiping(true);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    const clientX = e.touches[0].clientX;
-    const clientY = e.touches[0].clientY;
-    const dx = clientX - touchStartRef.current.x;
-    const dy = clientY - touchStartRef.current.y;
+    if (!isSwiping) return;
+    const dx = e.touches[0].clientX - touchRef.current.startX;
+    const dy = e.touches[0].clientY - touchRef.current.startY;
 
-    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
-      isSwipingRef.current = true;
-    }
+    // If scrolling vertically more than horizontally, let the page scroll
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dx) < 10) return;
 
-    setDragOffset({ x: dx, y: dy * 0.25 });
+    setSwipeX(dx);
   };
 
   const handleTouchEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
+    if (!isSwiping) return;
+    setIsSwiping(false);
 
-    const dx = dragOffset.x;
-    const elapsedTime = Date.now() - touchStartRef.current.time;
-    const isQuickFlick = Math.abs(dx) > 30 && elapsedTime < 300;
-    const isSignificantSwipe = Math.abs(dx) > 50;
-
-    if (isQuickFlick || isSignificantSwipe) {
-      handleNext();
-    } else if (!isSwipingRef.current && elapsedTime < 250) {
-      // Tap without swipe -> cycle photo
-      handleNext();
+    // Threshold: swipe far enough or flick fast enough → cycle
+    if (Math.abs(swipeX) > 45) {
+      cycleNext();
     }
 
-    setDragOffset({ x: 0, y: 0 });
+    setSwipeX(0);
+  };
+
+  // ─── Click handler (desktop only, ignore if touch device) ───
+  const handleClick = () => {
+    // Prevent double-fire on touch devices (touchEnd already handles it)
+    if (touchRef.current.isTouchDevice) {
+      touchRef.current.isTouchDevice = false;
+      return;
+    }
+    cycleNext();
   };
 
   return (
     <div className="flex flex-col items-center shrink-0 max-md:w-full select-none">
-      {/* Interactive Swipeable Photo Stack Card Deck */}
       <div
         role="button"
         tabIndex={0}
-        onClick={handleNext}
+        onClick={handleClick}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchEnd}
+        onTouchCancel={() => {
+          setIsSwiping(false);
+          setSwipeX(0);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            handleNext();
+            cycleNext();
           }
         }}
         aria-label="Swipe or click to view next profile photo"
-        className="group relative w-[280px] h-[360px] cursor-grab active:cursor-grabbing focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-2xl touch-pan-y"
+        className="group relative w-[280px] h-[360px] max-md:w-full max-md:max-w-[320px] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 rounded-2xl"
       >
         {PROFILE_PHOTOS.map((photo, index) => {
-          // Calculate relative position from current top card (0 = top, 1 = second, etc.)
           const position = (index - topIndex + total) % total;
 
-          let transformClasses = "";
-          let zIndex = 10;
-          let opacity = "opacity-100";
-          let dynamicStyle: React.CSSProperties = { zIndex };
+          // ─── Style per layer ───
+          let style: React.CSSProperties = {};
+          let className = "absolute inset-0 w-full h-full rounded-2xl overflow-hidden bg-[var(--color-bg-secondary)]";
 
           if (position === 0) {
-            // Front / Active Card (follows finger during touch drag)
-            zIndex = 40;
-            opacity = "opacity-100";
-            if (isDragging) {
-              dynamicStyle = {
-                zIndex: 40,
-                transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${dragOffset.x * 0.08
-                  }deg)`,
-                transition: "none",
-              };
-            } else {
-              transformClasses =
-                "rotate-0 translate-x-0 translate-y-0 scale-100 group-hover:-rotate-2 group-hover:-translate-y-1";
-            }
+            // ▸ Top card: full opacity, follows finger on mobile
+            const dragRotate = isSwiping ? swipeX * 0.06 : 0;
+            const dragX = isSwiping ? swipeX : 0;
+            style = {
+              zIndex: 40,
+              transform: `translateX(${dragX}px) rotate(${dragRotate}deg)`,
+              transition: isSwiping ? "none" : "all 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
+            };
+            className += " shadow-2xl border-2 border-white/15 dark:border-white/10";
           } else if (position === 1) {
-            // 2nd Card (Right Fan-Out)
-            zIndex = 30;
-            opacity = "opacity-90";
-            transformClasses =
-              "rotate-[4deg] translate-x-2.5 translate-y-2 scale-[0.98] group-hover:rotate-[9deg] group-hover:translate-x-8 group-hover:translate-y-1 group-hover:scale-100 group-hover:opacity-95";
+            // ▸ 2nd card: subtle peek right
+            style = {
+              zIndex: 30,
+              transform: "rotate(3deg) translateX(8px) translateY(4px) scale(0.97)",
+              transition: "all 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
+            };
+            className += " shadow-lg border border-white/10 dark:border-white/5";
           } else if (position === 2) {
-            // 3rd Card (Left Fan-Out)
-            zIndex = 20;
-            opacity = "opacity-80";
-            transformClasses =
-              "-rotate-[4deg] -translate-x-2.5 translate-y-4 scale-[0.96] group-hover:-rotate-[10deg] group-hover:-translate-x-8 group-hover:translate-y-2 group-hover:scale-100 group-hover:opacity-95";
+            // ▸ 3rd card: subtle peek left
+            style = {
+              zIndex: 20,
+              transform: "rotate(-3deg) translateX(-8px) translateY(6px) scale(0.94)",
+              transition: "all 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
+            };
+            className += " shadow-md border border-white/5 dark:border-white/[0.03]";
           } else {
-            // 4th Card (Bottom / Back Peek)
-            zIndex = 10;
-            opacity = "opacity-60";
-            transformClasses =
-              "rotate-[7deg] translate-x-1 translate-y-5 scale-[0.93] group-hover:rotate-[3deg] group-hover:translate-y-5 group-hover:scale-95 group-hover:opacity-75";
+            // ▸ Hidden behind the stack
+            style = {
+              zIndex: 10,
+              transform: "translateY(8px) scale(0.91)",
+              opacity: 0,
+              transition: "all 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
+            };
+            className += " shadow-sm";
           }
 
           return (
-            <div
-              key={photo.src}
-              style={dynamicStyle}
-              className={`absolute inset-0 w-full h-full rounded-2xl overflow-hidden shadow-xl border-2 border-white/20 dark:border-white/10 bg-[var(--color-bg-secondary)] ${isDragging && position === 0
-                  ? ""
-                  : "transition-all duration-500 ease-out will-change-transform"
-                } ${transformClasses} ${opacity}`}
-            >
+            <div key={photo.src} style={style} className={className}>
               <Image
                 src={photo.src}
                 alt={photo.alt}
                 fill
-                sizes="280px"
+                sizes="(max-width: 768px) 320px, 280px"
                 priority={position === 0}
                 className="object-cover pointer-events-none"
               />
