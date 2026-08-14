@@ -51,6 +51,21 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
     }
   };
 
+  const handleNameChange = (val: string) => {
+    setName(val);
+    if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+  };
+
+  const handleEmailChange = (val: string) => {
+    setEmail(val);
+    if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+  };
+
+  const handleMessageChange = (val: string) => {
+    setMessage(val);
+    if (errors.message) setErrors((prev) => ({ ...prev, message: undefined }));
+  };
+
   return (
     <section id="contact" aria-label="Contact form" className="py-20 px-6 max-md:py-12">
       <div className="max-w-[960px] mx-auto">
@@ -122,12 +137,16 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
                   type="text"
                   autoComplete="name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => handleNameChange(e.target.value)}
                   placeholder="Name"
                   maxLength={100}
-                  className="w-full bg-[var(--color-bg-tertiary)] border border-transparent text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] rounded-md px-4 py-3 text-sm font-sans outline-none focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30 transition-all duration-200 ease-out"
+                  className={`w-full bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] rounded-md px-4 py-3 text-sm font-sans outline-none transition-all duration-200 ease-out ${
+                    errors.name
+                      ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
+                      : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
+                  }`}
                 />
-                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                {errors.name && <p className="text-red-400 text-xs mt-1.5 animate-tab-slide">{errors.name}</p>}
               </div>
               <div>
                 <label htmlFor="contact-email" className="sr-only">Email address</label>
@@ -137,12 +156,16 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
                   type="email"
                   autoComplete="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => handleEmailChange(e.target.value)}
                   placeholder="Email address"
                   maxLength={254}
-                  className="w-full bg-[var(--color-bg-tertiary)] border border-transparent text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] rounded-md px-4 py-3 text-sm font-sans outline-none focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30 transition-all duration-200 ease-out"
+                  className={`w-full bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] rounded-md px-4 py-3 text-sm font-sans outline-none transition-all duration-200 ease-out ${
+                    errors.email
+                      ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
+                      : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
+                  }`}
                 />
-                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                {errors.email && <p className="text-red-400 text-xs mt-1.5 animate-tab-slide">{errors.email}</p>}
               </div>
               <div>
                 <label htmlFor="contact-message" className="sr-only">Message</label>
@@ -150,13 +173,17 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
                   id="contact-message"
                   name="message"
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={(e) => handleMessageChange(e.target.value)}
                   placeholder="Leave a message here"
                   maxLength={1000}
                   rows={6}
-                  className="w-full bg-[var(--color-bg-tertiary)] border border-transparent text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] rounded-md px-4 py-3 text-sm font-sans outline-none focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30 transition-all duration-200 ease-out resize-none"
+                  className={`w-full bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] rounded-md px-4 py-3 text-sm font-sans outline-none transition-all duration-200 ease-out resize-none ${
+                    errors.message
+                      ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
+                      : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
+                  }`}
                 />
-                {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
+                {errors.message && <p className="text-red-400 text-xs mt-1.5 animate-tab-slide">{errors.message}</p>}
               </div>
               <button
                 type="submit"
