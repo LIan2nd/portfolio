@@ -164,16 +164,13 @@ export function Navbar({ links }: NavbarProps) {
                     <a
                       href={link.href}
                       onClick={(e) => handleLinkClick(e, link.href)}
-                      className={`flex items-center justify-between md:inline-block px-4 md:px-3 py-2.5 md:py-1 text-base md:text-lg rounded-xl md:rounded-none tracking-wide transition-all duration-200 ${
+                      className={`block md:inline-block px-4 md:px-3 py-2.5 md:py-1 text-base md:text-lg rounded-xl md:rounded-none tracking-wide transition-all duration-200 ${
                         isActive
                           ? "bg-accent/10 md:bg-transparent text-accent font-semibold md:font-normal after:w-full"
                           : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)]/60 md:hover:bg-transparent hover:text-accent after:w-0 hover:after:w-full"
                       } relative md:after:content-[''] md:after:absolute md:after:bg-accent md:after:h-[3px] md:after:left-0 md:after:bottom-[-7px] md:after:rounded-[var(--radius-default)] md:after:transition-all md:after:duration-200`}
                     >
                       <span>{link.label}</span>
-                      {isActive && (
-                        <span className="md:hidden w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_rgba(235,54,120,0.8)]" />
-                      )}
                     </a>
                   </li>
                 );
