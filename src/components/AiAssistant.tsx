@@ -90,12 +90,12 @@ export function AiAssistant() {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLElement>(null);
 
-  // Cycle playful loading phrases randomly
+  // Cycle playful loading phrases comfortably (every 3.8s)
   useEffect(() => {
     if (!isLoading) return;
     const interval = setInterval(() => {
       setLoadingPhraseIndex(getRandomLoadingIndex());
-    }, 1400);
+    }, 3800);
     return () => clearInterval(interval);
   }, [isLoading]);
 
@@ -373,7 +373,10 @@ export function AiAssistant() {
                             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:0.2s]" />
                             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:0.4s]" />
                           </div>
-                          <span className="text-[11px] sm:text-xs font-medium italic text-[var(--color-text-secondary)] animate-pulse">
+                          <span
+                            key={loadingPhraseIndex}
+                            className="text-[11px] sm:text-xs font-medium italic text-[var(--color-text-secondary)] animate-in fade-in duration-300"
+                          >
                             {LOADING_PHRASES[loadingPhraseIndex]}
                           </span>
                         </div>
