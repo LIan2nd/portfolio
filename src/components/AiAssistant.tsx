@@ -74,16 +74,7 @@ function formatMarkdown(text: string) {
   });
 }
 
-const LOADING_PHRASES = [
-  "Sedang berpikir keras... 🤔",
-  "Lagi memasak jawaban lezat... 🍳",
-  "Mencari di memori otak Alfian... 🧠",
-  "Mengompilasi kata-kata... ⚡",
-  "Bentar, lagi ngeracik jawaban... ✍️",
-  "Scanning portofolio & proyek... 🔍",
-  "Menyeduh kopi sebentar... ☕",
-  "Memanggil neuron digital... ✨",
-];
+import { LOADING_PHRASES, getRandomLoadingIndex } from "@/lib/loadingPhrases";
 
 export function AiAssistant() {
   const [isOpen, setIsOpen] = useState(false);
@@ -99,11 +90,11 @@ export function AiAssistant() {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLElement>(null);
 
-  // Cycle playful loading phrases
+  // Cycle playful loading phrases randomly
   useEffect(() => {
     if (!isLoading) return;
     const interval = setInterval(() => {
-      setLoadingPhraseIndex((prev) => (prev + 1) % LOADING_PHRASES.length);
+      setLoadingPhraseIndex(getRandomLoadingIndex());
     }, 1400);
     return () => clearInterval(interval);
   }, [isLoading]);
@@ -177,6 +168,7 @@ export function AiAssistant() {
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
     setInputValue("");
+    setLoadingPhraseIndex(getRandomLoadingIndex());
     setIsLoading(true);
 
     const aiMessageId = `ai-${Date.now()}`;
