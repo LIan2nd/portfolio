@@ -310,28 +310,57 @@ export class MockFallbackProvider implements AiProvider {
   name = "Simulated Portfolio AI";
 
   private getFullResponse(lastUserMessage: string): string {
+    const msg = lastUserMessage.toLowerCase().trim();
+
     if (
-      lastUserMessage.includes("esao") ||
-      lastUserMessage.includes("ai grading") ||
-      lastUserMessage.includes("langchain")
+      msg.includes("roadsense") ||
+      msg.includes("gis") ||
+      msg.includes("jalan") ||
+      msg.includes("navigasi")
     ) {
       return (
-        "🤖 **ESAO (Essay Analytic Online)** adalah proyek riset akademik unggulan yang dibangun oleh Alfian Nur Usyaid bersama tim dosen di STT Terpadu Nurul Fikri.\n\n" +
+        "🗺️ **RoadSense (Smart Road Safety Navigation)** adalah platform GIS partisipatif yang kubangun untuk memetakan titik kerusakan jalan secara crowdsourcing.\n\n" +
+        "- **Tech Stack:** T3 Stack (Next.js 15, tRPC, Prisma), Leaflet, Flask (Shapely), dan OSRM.\n" +
+        "- **Fitur Utama:** Peta sebaran bahaya jalan interaktif, crowdsourced hazard reporting (4 level keparahan), dan kalkulasi navigasi rute aman (safe routing).\n" +
+        "- **Repository:** [github.com/LIan2nd/RoadSense](https://github.com/LIan2nd/RoadSense)"
+      );
+    }
+
+    if (
+      msg.includes("hrd") ||
+      msg.includes("uas") ||
+      msg.includes("employee") ||
+      msg.includes("express")
+    ) {
+      return (
+        "⚙️ **HRD RESTful API** adalah proyek backend manajemen kepegawaian yang kubuat untuk UAS Pemrograman Backend di STT NF.\n\n" +
+        "- **Arsitektur & Konsep:** Arsitektur modular MVC dan konsep OOP (Class-based Controllers & DAO Models) menggunakan **Node.js, Express.js, dan MySQL**.\n" +
+        "- **Fitur:** Full CRUD pegawai, filter status (active/inactive/terminated), name search, parameterized SQL queries, dan standar HTTP RESTful codes.\n" +
+        "- **Repository:** [github.com/LIan2nd/uas-pemrograman-backend](https://github.com/LIan2nd/uas-pemrograman-backend)"
+      );
+    }
+
+    if (
+      msg.includes("esao") ||
+      msg.includes("ai grading") ||
+      msg.includes("langchain")
+    ) {
+      return (
+        "🤖 **ESAO (Essay Analytic Online)** adalah proyek riset akademik unggulan yang kubangun bersama dosen di STT Terpadu Nurul Fikri (sudah selesai).\n\n" +
         "- **Fungsi Utama:** Platform koreksi soal esai otomatis berbasis AI untuk dosen yang mampu menilai jawaban uraian dalam hitungan detik (hemat 80% waktu koreksi).\n" +
-        "- **Arsitektur:** Decoupled Architecture menggunakan **Next.js** untuk dashboard interaktif dan **Flask (Python) + LangChain** untuk evaluasi NLP berbasis rubrik.\n" +
-        "- **Fitur Unggulan:** Penilaian multimodal (teks & gambar), feedback AI detail per soal, dan ekspor nilai ke Excel.\n" +
+        "- **Arsitektur:** Decoupled Architecture menggunakan **Next.js** untuk dashboard dan **Flask (Python) + LangChain** untuk evaluasi NLP berbasis rubrik.\n" +
         "- **Live URL:** [esao.nurulfikri.ac.id](https://esao.nurulfikri.ac.id)"
       );
     }
 
     if (
-      lastUserMessage.includes("digiarc") ||
-      lastUserMessage.includes("blockchain") ||
-      lastUserMessage.includes("web3") ||
-      lastUserMessage.includes("ipfs")
+      msg.includes("digiarc") ||
+      msg.includes("blockchain") ||
+      msg.includes("web3") ||
+      msg.includes("ipfs")
     ) {
       return (
-        "🛡️ **DigiArc (Web3 Storage)** adalah platform penyimpanan file terdesentralisasi yang terinspirasi dari Google Drive.\n\n" +
+        "🛡️ **DigiArc (Web3 Storage)** adalah platform penyimpanan file terdesentralisasi yang terinspirasi dari Google Drive (sudah selesai dikembangkan).\n\n" +
         "- **Tech Stack:** Next.js, Wagmi, Solidity Smart Contracts, dan IPFS.\n" +
         "- **Fitur:** Penyimpanan file terdistribusi dengan verifikasi integritas data berbasis blockchain (proof-of-storage).\n" +
         "- **Live Demo:** [digiarc.vercel.app](https://digiarc.vercel.app)"
@@ -339,61 +368,92 @@ export class MockFallbackProvider implements AiProvider {
     }
 
     if (
-      lastUserMessage.includes("skill") ||
-      lastUserMessage.includes("tech") ||
-      lastUserMessage.includes("bahasa") ||
-      lastUserMessage.includes("stack")
+      msg.includes("sekarang") ||
+      msg.includes("lagi apa") ||
+      msg.includes("ngapain") ||
+      msg.includes("pantona") ||
+      msg.includes("bootcamp") ||
+      msg.includes("kesibukan")
     ) {
       return (
-        "💻 **Tech Stack & Keahlian Alfian:**\n\n" +
+        "Saat ini aku sudah **lulus kuliah S.Kom dari STT Terpadu Nurul Fikri (IPK 3.94 Cumlaude)**.\n\n" +
+        "Kesibukan sehari-hariku saat ini adalah sedang mengikuti program **Bootcamp Fullstack Web Development selama 6 bulan di Pantona**, yang sekarang lagi di **tahap belajar QA & QC (Quality Assurance & Quality Control)**. Selain itu, aku juga *immediately available* untuk peluang kerja Full-time / Project-based! 🚀"
+      );
+    }
+
+    if (
+      msg.includes("cewek") ||
+      msg.includes("pacar") ||
+      msg.includes("pasangan") ||
+      msg.includes("distia")
+    ) {
+      return "Udah dong, aku punya cewek namanya Distia (Distia Fajar Familiati). Dia juga alumni Teknik Informatika di STT NF! ✨";
+    }
+
+    if (
+      msg.includes("skill") ||
+      msg.includes("tech") ||
+      msg.includes("bahasa") ||
+      msg.includes("stack")
+    ) {
+      return (
+        "💻 **Tech Stack & Keahlian Utamaku:**\n\n" +
         "- **Languages:** JavaScript, TypeScript, PHP, Python, Solidity, SQL\n" +
-        "- **Frontend & Frameworks:** Next.js (React), TailwindCSS, Bootstrap, jQuery\n" +
-        "- **Backend & API:** Laravel (PHP), Flask (Python), Node.js, RESTful APIs, OOP & SOLID Principles\n" +
-        "- **Databases:** PostgreSQL, MySQL, MongoDB\n" +
-        "- **AI & Web3:** LangChain, Google Gemini API, Wagmi, IPFS, Smart Contracts"
+        "- **Frontend & Frameworks:** Next.js 15 (React), Tailwind CSS v4, HTML5/CSS3\n" +
+        "- **Backend & Architecture:** Laravel (PHP), Flask (Python), Express.js (Node.js), RESTful API, MVC & OOP\n" +
+        "- **Databases:** PostgreSQL, MySQL, Supabase\n" +
+        "- **AI & Web3:** LangChain, LLM APIs, Wagmi, IPFS, Smart Contracts"
       );
     }
 
     if (
-      lastUserMessage.includes("kuliah") ||
-      lastUserMessage.includes("pendidikan") ||
-      lastUserMessage.includes("education") ||
-      lastUserMessage.includes("gpa") ||
-      lastUserMessage.includes("skripsi") ||
-      lastUserMessage.includes("jurnal")
+      msg.includes("kuliah") ||
+      msg.includes("pendidikan") ||
+      msg.includes("education") ||
+      msg.includes("gpa") ||
+      msg.includes("skripsi") ||
+      msg.includes("jurnal")
     ) {
       return (
-        "🎓 **Pendidikan & Prestasi Akademik Alfian:**\n\n" +
-        "- **STT Terpadu Nurul Fikri (2022 - 2026)**: Sarjana Komputer (S.Kom) - Teknik Informatika.\n" +
-        "- **Predikat:** Lulus dengan predikat **Cumlaude (IPK 3.94 / 4.00)**.\n" +
-        "- **Publikasi Jurnal Ilmiah:** Mempublikasikan tugas akhir di *MIND Journal (Itenas)* mengenai otomatisasi penilaian esai.\n" +
-        "- **Pengalaman Mengajar:** Asisten Dosen untuk mata kuliah Struktur Data & Algoritma, Basis Data, dan Pemrograman Backend."
+        "🎓 **Pendidikan & Publikasi Ilmiahku:**\n\n" +
+        "- **STT Terpadu Nurul Fikri (2022 - 2026)**: Sarjana Komputer (S.Kom) Teknik Informatika — **Cumlaude (IPK 3.94 / 4.00)**.\n" +
+        "- **Publikasi Jurnal Ilmiah:** Paper di *MIND Journal (Itenas Bandung)* mengenai *Prediksi Retensi Mahasiswa Menggunakan Random Forest & Algoritma Genetika (SMOTE)*.\n" +
+        "- **Teaching Assistant:** Asisten Dosen untuk Struktur Data & Algoritma, Basis Data, dan Backend Laravel."
       );
     }
 
     if (
-      lastUserMessage.includes("kontak") ||
-      lastUserMessage.includes("email") ||
-      lastUserMessage.includes("hubungi") ||
-      lastUserMessage.includes("contact")
+      msg.includes("kontak") ||
+      msg.includes("email") ||
+      msg.includes("hubungi") ||
+      msg.includes("contact")
     ) {
       return (
-        "📫 **Informasi Kontak Alfian Nur Usyaid:**\n\n" +
+        "📫 **Informasi Kontakku:**\n\n" +
         "- **Email:** [alfiannurusyaid19@gmail.com](mailto:alfiannurusyaid19@gmail.com)\n" +
         "- **LinkedIn:** [linkedin.com/in/alfian-nur-usyaid](https://linkedin.com/in/alfian-nur-usyaid/)\n" +
         "- **GitHub:** [github.com/LIan2nd](https://github.com/LIan2nd/)\n" +
-        "- **Lokasi:** Bogor, Indonesia (Terbuka untuk posisi Remote & Onsite)."
+        "- **Instagram:** [@wonder__liand](https://www.instagram.com/wonder__liand)"
       );
     }
 
+    if (
+      msg.includes("halo") ||
+      msg.includes("hai") ||
+      msg.includes("p") ||
+      msg.includes("tes") ||
+      msg.includes("test")
+    ) {
+      return (
+        "Halo! Aku kloningan digital dari **Alfian Nur Usyaid (LIand)**.\n\n" +
+        "Kamu bisa tanya-tanya seputar riset AI **ESAO**, Web3 **DigiArc**, GIS **RoadSense**, backend **HRD API**, publikasi jurnal, atau tech stack-ku. Mau kepoin yang mana nih? 😎"
+      );
+    }
+
+    // Default witty / sarcastic out-of-context response
     return (
-      "Halo! Saya adalah **AI Assistant Portofolio Alfian Nur Usyaid**.\n\n" +
-      "Saya bisa membantu Anda mengetahui lebih dalam mengenai:\n" +
-      "1. 🚀 **Proyek Unggulan**: ESAO (AI Essay Grading), DigiArc (Web3 Storage), Event Registration.\n" +
-      "2. 💻 **Tech Stack & Skills**: Next.js, Laravel, Flask, Python/LangChain, PostgreSQL.\n" +
-      "3. 🎓 **Latar Belakang Akademik**: Lulusan Cumlaude IPK 3.94 & Publikasi Jurnal Ilmiah.\n" +
-      "4. 💼 **Pengalaman Kerja & Riset**: Fullstack Developer & Asisten Dosen.\n\n" +
-      "*Ada yang ingin Anda ketahui lebih detail?*"
+      "Dih, si tau tuh aku... Tanya yang berbobot seputar proyek atau portofolioku kek, misal ESAO, RoadSense, atau DigiArc 🗿\n\n" +
+      "Atau mau tanya seputar tech stack dan pengalamanku? Tanyain aja ya!"
     );
   }
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAiProvider, ChatMessage } from "@/lib/ai/provider";
+import { getAiProvider, ChatMessage, MockFallbackProvider } from "@/lib/ai/provider";
 
 // In-memory rate limiting map with short-term (1 min) and hourly limits
 interface RateLimitRecord {
@@ -21,7 +21,13 @@ function isRateLimited(ip: string): { limited: boolean; reason?: string } {
 
   const record = rateLimitMap.get(ip);
 
-  if (!record) {
+  if (
+    !record ||
+    typeof record.minuteCount !== "number" ||
+    typeof record.minuteExpiresAt !== "number" ||
+    typeof record.hourCount !== "number" ||
+    typeof record.hourExpiresAt !== "number"
+  ) {
     rateLimitMap.set(ip, {
       minuteCount: 1,
       minuteExpiresAt: now + MINUTE_MS,
@@ -108,18 +114,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { provider, mode } = getAiProvider();
-    const stream = provider.generateStream(sanitizedMessages);
+    try {
+      const { provider, mode } = getAiProvider();
+      const stream = provider.generateStream(sanitizedMessages);
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-cache, no-transform",
-        "X-AI-Mode": mode,
-        "X-AI-Provider": encodeURIComponent(provider.name),
-      },
-    });
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Cache-Control": "no-cache, no-transform",
+          "X-AI-Mode": mode,
+          "X-AI-Provider": encodeURIComponent(provider.name),
+        },
+      });
+    } catch (providerError) {
+      console.error("[Chat Provider Error, falling back to simulated engine]:", providerError);
+      const fallback = new MockFallbackProvider();
+      const stream = fallback.generateStream(sanitizedMessages);
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Cache-Control": "no-cache, no-transform",
+          "X-AI-Mode": "simulated",
+          "X-AI-Provider": "Simulated Portfolio AI",
+        },
+      });
+    }
   } catch (error) {
+    console.error("[Chat API Fatal Error]:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Terjadi kesalahan pada server AI.";
     return NextResponse.json(
