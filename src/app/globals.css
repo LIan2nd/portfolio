@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  /* Fonts */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-gowun-batang), ui-serif, Georgia, serif;
+
+  /* Colors - Accent */
+  --color-accent: #EB3678;
+  --color-accent-dark: #c91456;
+
+  /* Colors - Dark theme (default) */
+  --color-bg-primary: #021526;
+  --color-bg-secondary: #051829;
+  --color-bg-tertiary: #405566;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #94a3b8;
+  --color-text-dark: #cbd5e1;
+
+  /* Spacing */
+  --radius-default: 6px;
+
+  /* Transitions */
+  --transition-default: all ease-in-out 0.2s;
+
+  /* Container - narrower centered layout */
+  --container-max-width: 960px;
+}
+
+/* Light theme overrides via data attribute */
+[data-theme="light"] {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-tertiary: #e9ecef;
+  --color-text-primary: #212529;
+  --color-text-secondary: #495057;
+  --color-text-dark: #212529;
+}
+
+/* Base styles */
+body, section, footer, main {
+  transition: background-color ease-in-out 0.2s, color ease-in-out 0.2s;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Constrained container for minimalist centered layout */
+.container {
+  max-width: 960px;
+}
+
+@keyframes tabSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-tab-slide {
+  animation: tabSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

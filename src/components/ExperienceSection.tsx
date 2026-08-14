@@ -1,0 +1,102 @@
+"use client";
+
+import { useState } from "react";
+import type { TimelineEntry as TimelineEntryType } from "@/lib/types";
+import { TimelineEntry } from "./TimelineEntry";
+
+interface ExperienceSectionProps {
+  workEntries: TimelineEntryType[];
+  educationEntries: TimelineEntryType[];
+}
+
+export function ExperienceSection({
+  workEntries,
+  educationEntries,
+}: ExperienceSectionProps) {
+  const [activeTab, setActiveTab] = useState<"work" | "education">("work");
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      e.preventDefault();
+      setActiveTab((prev) => (prev === "work" ? "education" : "work"));
+    }
+  };
+
+  return (
+    <section id="experience" aria-label="Work and education experience" className="py-20 px-6 max-md:py-12 text-center">
+      <div className="max-w-[960px] mx-auto">
+        <span className="text-accent text-sm uppercase tracking-wider">Follow my</span>
+        <h2 className="text-4xl max-sm:text-3xl font-bold mt-1 mb-8">
+          Experience
+        </h2>
+        <div className="text-left w-full max-w-[560px] mx-auto">
+          <div
+            className="bg-[var(--color-bg-tertiary)] relative flex p-1 rounded-lg mb-4"
+            role="tablist"
+            onKeyDown={handleKeyDown}
+          >
+            {/* Sliding active indicator */}
+            <div
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-[var(--color-bg-secondary)] rounded-md shadow-sm transition-transform duration-200 ease-out pointer-events-none ${
+                activeTab === "work" ? "left-1 translate-x-0" : "left-1 translate-x-full"
+              }`}
+            />
+            <button
+              role="tab"
+              aria-selected={activeTab === "work"}
+              tabIndex={activeTab === "work" ? 0 : -1}
+              onClick={() => setActiveTab("work")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setActiveTab("work");
+                }
+              }}
+              className={`relative z-10 w-1/2 text-center rounded-md cursor-pointer py-1.5 px-2 text-sm font-medium transition-colors duration-200 ${
+                activeTab === "work"
+                  ? "text-[var(--color-text-primary)]"
+                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+              }`}
+            >
+              Work
+            </button>
+            <button
+              role="tab"
+              aria-selected={activeTab === "education"}
+              tabIndex={activeTab === "education" ? 0 : -1}
+              onClick={() => setActiveTab("education")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setActiveTab("education");
+                }
+              }}
+              className={`relative z-10 w-1/2 text-center rounded-md cursor-pointer py-1.5 px-2 text-sm font-medium transition-colors duration-200 ${
+                activeTab === "education"
+                  ? "text-[var(--color-text-primary)]"
+                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+              }`}
+            >
+              Education
+            </button>
+          </div>
+
+          <div
+            className="border border-accent/20 rounded-lg p-6 max-md:p-3"
+            role="tabpanel"
+          >
+            <ul key={activeTab} className="list-none p-0 m-0 animate-tab-slide">
+              {activeTab === "work"
+                ? workEntries.map((entry, i) => (
+                    <TimelineEntry key={i} entry={entry} />
+                  ))
+                : educationEntries.map((entry, i) => (
+                    <TimelineEntry key={i} entry={entry} />
+                  ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
