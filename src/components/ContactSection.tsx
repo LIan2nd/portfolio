@@ -84,12 +84,15 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
               <br />
               Feel free to contact me!
             </p>
-            <a
-              href="mailto:alfiannurusyaid19@gmail.com"
-              className="inline-block px-5 py-2.5 rounded-md bg-accent text-white text-sm font-medium hover:bg-accent-dark hover:scale-105 active:scale-95 transition-all duration-200 no-underline cursor-pointer shadow-sm"
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = `mailto:${["alfiannurusyaid19", "gmail.com"].join("@")}`;
+              }}
+              className="inline-block px-5 py-2.5 rounded-md bg-accent text-white text-sm font-medium hover:bg-accent-dark hover:scale-105 active:scale-95 transition-all duration-200 no-underline cursor-pointer shadow-sm border-none"
             >
               Hire Me
-            </a>
+            </button>
           </div>
           <div className="flex-1">
             {success && (

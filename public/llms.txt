@@ -1,0 +1,50 @@
+# Alfian Nur Usyaid — Fullstack Developer Portfolio
+
+> Portfolio and professional background of Alfian Nur Usyaid (LIand), a Computer Science graduate (Cumlaude, GPA 3.94) and Fullstack Developer specializing in Next.js, React, TypeScript, Laravel, Flask, and Blockchain / Web3 technologies.
+
+## About Alfian Nur Usyaid
+- **Full Name**: Alfian Nur Usyaid
+- **Known as / Alias**: LIand
+- **Role**: Fullstack Web Developer, Software Engineer, Frontend & Blockchain Researcher
+- **Location**: Bogor, West Java, Indonesia
+- **Education**: Bachelor of Computer Science (S.Kom), STT Terpadu Nurul Fikri (GPA 3.94 / 4.00, Cumlaude Honors)
+- **Email**: alfiannurusyaid19@gmail.com
+- **Website**: https://portfolio.liand.web.id
+- **Availability**: Open for work, freelance, and full-time software engineering roles
+
+## Core Technical Skills
+- **Frontend**: Next.js, React, TypeScript, JavaScript, Tailwind CSS, HTML5, CSS3, Responsive Design
+- **Backend & APIs**: Laravel (PHP), Flask (Python), Express.js (Node.js), RESTful APIs, MVC, LangChain
+- **Databases**: MySQL, PostgreSQL, MongoDB, ORM / Query Optimization, ERD Schema Design
+- **Blockchain & Web3**: Solidity, Wagmi, Ethers.js, IPFS, Decentralized File Storage, Smart Contracts
+- **Tools & Workflow**: Git, GitHub, Turbopack, Vitest, Docker, Figma, Linux
+
+## Key Sections & Links
+- [Home & Hero](https://portfolio.liand.web.id/#home): Quick overview, tagline, and introductory summary.
+- [About Me](https://portfolio.liand.web.id/#about): Biography, comprehensive skill matrix, and personal details.
+- [Work Experience](https://portfolio.liand.web.id/#experience): Teaching assistantships, blockchain research, and fullstack engineering projects.
+- [Education](https://portfolio.liand.web.id/#experience): Academic background at STT Terpadu Nurul Fikri and scientific publications.
+- [Featured Projects](https://portfolio.liand.web.id/#project): Showcase of web applications, AI tools, GIS systems, and Web3 projects.
+- [Certifications](https://portfolio.liand.web.id/#certifications): Verified professional certificates from Udemy, RevoU, IBM SkillsBuild, and LearningX.
+- [Contact Form](https://portfolio.liand.web.id/#contact): Direct contact channel with Google Sheets integration.
+- [AI Portfolio Assistant](https://portfolio.liand.web.id/): Embedded RAG AI chatbot trained on Alfian's background and projects.
+
+## Featured Projects
+- [RoadSense](https://github.com/LIan2nd/RoadSense): Smart GIS road damage mapping & navigation using Next.js 15, Leaflet, Flask (Shapely), and OSRM routing.
+- [DigiArc](https://digiarc.vercel.app): Decentralized Web3 file storage on IPFS with Solidity smart contracts and Next.js / Wagmi.
+- [ESAO](https://esao.nurulfikri.ac.id): Automated AI essay grading platform for university lecturers using Next.js, Flask, and LangChain.
+- [Event Management System](https://github.com/LIan2nd/sistem-pendaftaran-event): Event registration platform built with Laravel MVC, authentication, and role management.
+- [HRD RESTful API](https://github.com/LIan2nd/uas-pemrograman-backend): Modular MVC/OOP backend in Express.js and MySQL.
+- [Tetrisn't](https://github.com/LIan2nd/Tetrisn-t): Reverse puzzle game built in Unity (C#) where lines only clear when left with one gap.
+
+## Published Academic Research
+- [MIND Journal (2026)](https://ejurnal.itenas.ac.id/index.php/mindjournal/article/view/15673): "Model Prediksi Retensi Mahasiswa Berbasis Random Forest Yang Dioptimasi Dengan Algoritma Genetika" (Student Retention Prediction with GA-RF and SMOTE).
+
+## Professional Profiles & Socials
+- [GitHub](https://github.com/LIan2nd/): Open-source repositories and code contributions.
+- [LinkedIn](https://linkedin.com/in/alfian-nur-usyaid/): Professional network, endorsements, and career history.
+- [Instagram](https://www.instagram.com/wonder__liand): Personal and tech updates.
+
+## Optional Documents & Downloads
+- [Download Resume / CV (PDF)](https://portfolio.liand.web.id/file/myResume.pdf): Official resume of Alfian Nur Usyaid.
+- [Full LLM Context (Markdown)](https://portfolio.liand.web.id/llms-full.txt): Comprehensive plain-text knowledge document for AI agents and LLMs.

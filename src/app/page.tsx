@@ -26,16 +26,16 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": "https://portfolio.liand.web.id/#website",
       url: "https://portfolio.liand.web.id",
-      name: "Alfian Nur Usyaid Portfolio",
+      name: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
       description:
-        "Portfolio of Alfian Nur Usyaid — Fullstack Developer specializing in Next.js, Laravel, Flask, and Blockchain.",
+        "Portfolio of Alfian Nur Usyaid — Fullstack Developer in Next.js, Laravel, and Blockchain. Cumlaude CS graduate (GPA 3.94) based in Bogor, Indonesia.",
       inLanguage: "en-US",
     },
     {
       "@type": "ProfilePage",
       "@id": "https://portfolio.liand.web.id/#profilepage",
       url: "https://portfolio.liand.web.id",
-      name: "Alfian Nur Usyaid — Fullstack Developer",
+      name: "Alfian Nur Usyaid — Fullstack Web Developer",
       isPartOf: { "@id": "https://portfolio.liand.web.id/#website" },
       mainEntity: { "@id": "https://portfolio.liand.web.id/#person" },
       inLanguage: "en-US",
@@ -79,6 +79,36 @@ const jsonLd = {
       ],
       email: "alfiannurusyaid19@gmail.com",
       image: "https://portfolio.liand.web.id/img/hero.png",
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://portfolio.liand.web.id/#service",
+      name: "Alfian Nur Usyaid — Fullstack Web Development & Software Engineering",
+      url: "https://portfolio.liand.web.id",
+      image: "https://portfolio.liand.web.id/img/hero.png",
+      description:
+        "Professional fullstack web development and software engineering services specializing in Next.js, React, TypeScript, Laravel, and Blockchain solutions.",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Bogor",
+        addressRegion: "Jawa Barat",
+        addressCountry: "ID",
+      },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: -6.5971,
+        longitude: 106.806,
+      },
+      priceRange: "$$",
+      openingHoursSpecification: {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "08:00",
+        closes: "18:00",
+      },
+      provider: {
+        "@id": "https://portfolio.liand.web.id/#person",
+      },
     },
   ],
 };

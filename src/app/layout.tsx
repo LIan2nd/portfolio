@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Gowun_Batang } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import "./globals.css";
 
 const inter = Inter({
@@ -20,11 +21,11 @@ const gowunBatang = Gowun_Batang({
 export const metadata: Metadata = {
   metadataBase: new URL("https://portfolio.liand.web.id"),
   title: {
-    default: "Alfian Nur Usyaid — Fullstack Developer",
+    default: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
     template: "%s | Alfian Nur Usyaid",
   },
   description:
-    "Portfolio of Alfian Nur Usyaid — Fullstack Developer specializing in Next.js, Laravel, Flask, and Blockchain. Cumlaude CS graduate (GPA 3.94) based in Bogor, Indonesia.",
+    "Portfolio of Alfian Nur Usyaid — Fullstack Developer in Next.js, Laravel, and Blockchain. Cumlaude CS graduate (GPA 3.94) based in Bogor, Indonesia.",
   keywords: [
     "Alfian Nur Usyaid",
     "Fullstack Developer",
@@ -54,9 +55,9 @@ export const metadata: Metadata = {
     canonical: "https://portfolio.liand.web.id",
   },
   openGraph: {
-    title: "Alfian Nur Usyaid — Fullstack Developer",
+    title: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
     description:
-      "Portfolio of Alfian Nur Usyaid — Fullstack Developer specializing in Next.js, Laravel, Flask, and Blockchain. Cumlaude CS graduate (GPA 3.94).",
+      "Portfolio of Alfian Nur Usyaid — Fullstack Developer in Next.js, Laravel, and Blockchain. Cumlaude CS graduate (GPA 3.94) based in Bogor, Indonesia.",
     url: "https://portfolio.liand.web.id",
     siteName: "Alfian Nur Usyaid Portfolio",
     type: "website",
@@ -72,17 +73,27 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Alfian Nur Usyaid — Fullstack Developer",
+    title: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
     description:
-      "Fullstack Developer specializing in Next.js, Laravel, Flask, and Blockchain. Open for work.",
+      "Portfolio of Alfian Nur Usyaid — Fullstack Developer in Next.js, Laravel, and Blockchain. Cumlaude CS graduate (GPA 3.94).",
     images: ["/img/hero.png"],
   },
   verification: {
     google: "5K0Z9r269vfnAcps_OeSx6pAZMDRD4D5iWAWTXV64HU",
   },
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: "/icon.svg",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.svg", type: "image/png", sizes: "48x48" },
+      { url: "/icon.svg", type: "image/png", sizes: "96x96" },
+      { url: "/icon.svg", type: "image/png", sizes: "192x192" },
+      { url: "/icon.svg", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [
+      { url: "/icon.svg", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
   },
   category: "technology",
   formatDetection: {
@@ -105,6 +116,7 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>
+        <GoogleAnalytics />
       </body>
     </html>
   );

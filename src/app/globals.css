@@ -61,6 +61,15 @@ html {
   max-width: 960px;
 }
 
+/* Hero Section Backgrounds */
+#home {
+  background-image: linear-gradient(0deg, rgba(2, 21, 38, 0.98), rgba(2, 21, 38, 0.06)), url('/img/hero-bg.jpg');
+}
+
+[data-theme="light"] #home {
+  background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1)), url('https://images.unsplash.com/photo-1519904981063-b0cf448d479e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') !important;
+}
+
 @keyframes tabSlideIn {
   from {
     opacity: 0;

@@ -439,6 +439,14 @@ export class MockFallbackProvider implements AiProvider {
     }
 
     if (
+      msg.includes("google") ||
+      msg.includes("pencarian") ||
+      (msg.includes("portfolio") && (msg.includes("keren") || msg.includes("bagus") || msg.includes("nongol") || msg.includes("nemu")))
+    ) {
+      return "Wah makasih bro/sis! 😎 Seneng banget portofolioku udah mulai nongol di Google. Kamu bisa langsung scroll ke bawah buat eksplor proyek-proyek kayak ESAO, DigiArc, atau RoadSense di web ini ya hehe 🚀";
+    }
+
+    if (
       msg.includes("halo") ||
       msg.includes("hai") ||
       msg.includes("p") ||

@@ -8,10 +8,10 @@ describe("HeroSection & Footer", () => {
   it("renders HeroSection with greeting, heading, tagline, and photo credit", () => {
     render(<HeroSection />);
 
-    expect(screen.getByText("Hi, there")).toBeInTheDocument();
-    expect(screen.getByText("I'm Programmer")).toBeInTheDocument();
+    expect(screen.getByText("Hi, there, I'm")).toBeInTheDocument();
+    expect(screen.getByText("Alfian Nur Usyaid")).toBeInTheDocument();
     expect(
-      screen.getByText("Specializing in Next.js, Laravel & Blockchain Ecosystem")
+      screen.getByText("Fullstack Web Developer — Next.js, Laravel & Blockchain")
     ).toBeInTheDocument();
     expect(screen.getByText("Slava Auchynnikau")).toBeInTheDocument();
     expect(screen.getByText("Unsplash")).toBeInTheDocument();
