@@ -44,7 +44,7 @@ export function AboutSection({ skills, details, socials }: AboutSectionProps) {
               </div>
             </div>
             <p className="font-serif leading-7 text-sm opacity-90">
-              Computer Science graduate (<strong>Cumlaude, GPA 3.94</strong>) with a strong focus on{" "}
+              Computer Science (<em>fresh</em>) graduate with a strong focus on{" "}
               <strong>Fullstack Web Development &amp; Software Engineering</strong>. Experienced in building scalable, maintainable applications applying{" "}
               <strong>SOLID principles</strong>, <strong>OOP</strong>, and <strong>Clean Code</strong> practices using{" "}
               <strong>JavaScript/TypeScript (Next.js)</strong>, <strong>PHP (Laravel)</strong>, <strong>Python (Flask)</strong>, and <strong>PostgreSQL</strong>.
