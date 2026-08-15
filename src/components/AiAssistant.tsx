@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageSquareCode, ChevronUp, Send, Trash2 } from "lucide-react";
+import { MessageSquareCode, ChevronUp, Send, Trash2, ShieldCheck } from "lucide-react";
+import { PrivacyPolicyModal } from "./PrivacyPolicyModal";
 
 interface Message {
   id: string;
@@ -86,6 +87,7 @@ export function AiAssistant() {
   const [providerMode, setProviderMode] = useState<"live" | "simulated">(
     "simulated"
   );
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLElement>(null);
@@ -453,8 +455,29 @@ export function AiAssistant() {
               <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </form>
+
+          {/* Privacy Note Footer */}
+          <div className="px-3 py-1.5 border-t border-[var(--color-bg-tertiary)]/40 bg-[var(--color-bg-secondary)]/60 flex items-center justify-between text-[10px] text-[var(--color-text-secondary)]/70 select-none">
+            <span className="flex items-center gap-1 truncate">
+              <span className="text-[11px]">🔒</span>
+              <span className="truncate">Pertanyaan disimpan anonim</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowPrivacyModal(true)}
+              className="text-accent hover:underline bg-transparent border-none p-0 cursor-pointer text-[10px] font-medium shrink-0 ml-1.5"
+            >
+              Privasi
+            </button>
+          </div>
         </div>
       )}
+
+      {/* Privacy Policy Modal */}
+      <PrivacyPolicyModal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+      />
     </aside>
   );
 }

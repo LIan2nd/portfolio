@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAiProvider, ChatMessage, MockFallbackProvider } from "@/lib/ai/provider";
+import { logUserQuestion } from "@/lib/ai/logger";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 // In-memory rate limiting map with short-term (1 min) and hourly limits
 interface RateLimitRecord {
@@ -114,8 +118,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const latestUserQuery = sanitizedMessages
+      .filter((m) => m.role === "user")
+      .pop()?.content;
+
     try {
       const { provider, mode } = getAiProvider();
+
+      if (latestUserQuery) {
+        void logUserQuestion({
+          question: latestUserQuery,
+          provider: provider.name,
+          mode,
+          ip,
+        });
+      }
+
       const stream = provider.generateStream(sanitizedMessages);
 
       return new Response(stream, {
@@ -129,6 +147,16 @@ export async function POST(req: NextRequest) {
     } catch (providerError) {
       console.error("[Chat Provider Error, falling back to simulated engine]:", providerError);
       const fallback = new MockFallbackProvider();
+
+      if (latestUserQuery) {
+        void logUserQuestion({
+          question: latestUserQuery,
+          provider: fallback.name,
+          mode: "simulated",
+          ip,
+        });
+      }
+
       const stream = fallback.generateStream(sanitizedMessages);
       return new Response(stream, {
         headers: {
