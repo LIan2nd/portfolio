@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { ShieldCheck, X, Database, Lock, UserX, Info } from "lucide-react";
 
 interface PrivacyPolicyModalProps {
@@ -9,6 +10,12 @@ interface PrivacyPolicyModalProps {
 }
 
 export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -25,18 +32,18 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="privacy-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-tab-slide"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-tab-slide"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg bg-[var(--color-bg-primary)] border border-[var(--color-bg-tertiary)]/70 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+        className="w-full max-w-lg bg-[var(--color-bg-primary)] border border-[var(--color-bg-tertiary)]/70 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] relative z-10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -123,6 +130,7 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
