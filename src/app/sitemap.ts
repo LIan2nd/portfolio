@@ -7,6 +7,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
+      images: [
+        "https://portfolio.liand.web.id/img/profile/profile-1.png",
+        "https://portfolio.liand.web.id/img/profile/profile-2.jpg",
+        "https://portfolio.liand.web.id/img/profile/profile-3.jpg",
+        "https://portfolio.liand.web.id/img/profile/profile-4.jpg",
+      ],
     },
     {
       url: "https://portfolio.liand.web.id/llms.txt",

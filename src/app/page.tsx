@@ -38,6 +38,12 @@ const jsonLd = {
       name: "Alfian Nur Usyaid — Fullstack Web Developer",
       isPartOf: { "@id": "https://portfolio.liand.web.id/#website" },
       mainEntity: { "@id": "https://portfolio.liand.web.id/#person" },
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        "url": "https://portfolio.liand.web.id/img/profile/profile-1.png",
+        "caption": "Alfian Nur Usyaid — Fullstack Web Developer",
+        "representativeOfPage": true
+      },
       inLanguage: "en-US",
     },
     {
@@ -78,14 +84,19 @@ const jsonLd = {
         "https://www.instagram.com/wonder__liand",
       ],
       email: "alfiannurusyaid19@gmail.com",
-      image: "https://portfolio.liand.web.id/img/hero.png",
+      image: {
+        "@type": "ImageObject",
+        "url": "https://portfolio.liand.web.id/img/profile/profile-1.png",
+        "caption": "Alfian Nur Usyaid",
+        "representativeOfPage": true
+      },
     },
     {
       "@type": "ProfessionalService",
       "@id": "https://portfolio.liand.web.id/#service",
       name: "Alfian Nur Usyaid — Fullstack Web Development & Software Engineering",
       url: "https://portfolio.liand.web.id",
-      image: "https://portfolio.liand.web.id/img/hero.png",
+      image: "https://portfolio.liand.web.id/img/profile/profile-1.png",
       description:
         "Professional fullstack web development and software engineering services specializing in Next.js, React, TypeScript, Laravel, and Blockchain solutions.",
       address: {

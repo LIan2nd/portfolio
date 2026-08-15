@@ -1,11 +1,21 @@
 import crypto from "crypto";
+import { ObjectId } from "mongodb";
 import { getMongoDb } from "@/lib/mongodb";
 
 export interface LogQuestionParams {
+  queryId?: ObjectId;
   question: string;
   provider?: string;
   mode?: string;
   ip?: string;
+}
+
+export interface LogResponseParams {
+  queryId?: ObjectId;
+  response: string;
+  provider?: string;
+  mode?: string;
+  durationMs?: number;
 }
 
 /**
@@ -20,31 +30,28 @@ function createAnonymousId(rawIdentifier?: string): string {
 }
 
 /**
- * Non-blocking, asynchronous logger for user questions.
- * Saves questions anonymously to MongoDB Atlas.
+ * Non-blocking, asynchronous logger for user questions (stored in 'user_queries' collection).
  */
 export async function logUserQuestion({
+  queryId = new ObjectId(),
   question,
   provider = "Unknown",
   mode = "live",
   ip = "anonymous",
-}: LogQuestionParams): Promise<void> {
-  // Run asynchronously in the background
+}: LogQuestionParams): Promise<ObjectId | null> {
   try {
     const trimmed = question.trim();
-    if (!trimmed) return;
+    if (!trimmed) return null;
 
     const db = await getMongoDb();
-    if (!db) {
-      // MongoDB URI not configured or connection failed
-      return;
-    }
+    if (!db) return null;
 
     const anonymousId = createAnonymousId(ip);
     const now = new Date();
 
     const collection = db.collection("user_queries");
     await collection.insertOne({
+      _id: queryId,
       question: trimmed,
       characterCount: trimmed.length,
       anonymousId,
@@ -53,8 +60,45 @@ export async function logUserQuestion({
       createdAt: now,
       createdAtIso: now.toISOString(),
     });
+
+    return queryId;
   } catch (err) {
-    // Silently log to server console to prevent user-facing errors
-    console.error("[MongoDB Query Logger Error]:", err);
+    console.error("[MongoDB User Query Logger Error - Silently Handled]:", err);
+    return null;
+  }
+}
+
+/**
+ * Non-blocking, asynchronous logger for AI responses (stored in separate 'bot_responses' collection).
+ */
+export async function logBotResponse({
+  queryId,
+  response,
+  provider = "Unknown",
+  mode = "live",
+  durationMs = 0,
+}: LogResponseParams): Promise<void> {
+  try {
+    const trimmed = response.trim();
+    if (!trimmed) return;
+
+    const db = await getMongoDb();
+    if (!db) return;
+
+    const now = new Date();
+    const collection = db.collection("bot_responses");
+
+    await collection.insertOne({
+      queryId: queryId || null,
+      response: trimmed,
+      characterCount: trimmed.length,
+      provider,
+      mode,
+      durationMs,
+      createdAt: now,
+      createdAtIso: now.toISOString(),
+    });
+  } catch (err) {
+    console.error("[MongoDB Bot Response Logger Error - Silently Handled]:", err);
   }
 }

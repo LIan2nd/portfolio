@@ -13,10 +13,10 @@ interface Message {
 }
 
 const INITIAL_SUGGESTIONS = [
-  "Ceritakan tentang proyek riset ESAO 🤖",
-  "Apa saja tech stack & skill utama Alfian? 💻",
-  "Bagaimana publikasi jurnal skripsi Alfian? 📄",
-  "Bagaimana cara menghubungi / hire Alfian? 📫",
+  "Tell me about the ESAO research project 🤖",
+  "What are Alfian's main tech stack & skills? 💻",
+  "Tell me about Alfian's journal publication 📄",
+  "How can I contact or hire Alfian? 📫",
 ];
 
 // Helper to format basic Markdown (bold, lists, and links)
@@ -111,11 +111,18 @@ export function AiAssistant() {
       .catch(() => setAiStatus("offline"));
   }, []);
 
-  // Close on Escape key and Click Outside
+  // Ref to always have the latest showPrivacyModal value (avoids stale closures)
+  const showPrivacyModalRef = useRef(showPrivacyModal);
+  useEffect(() => {
+    showPrivacyModalRef.current = showPrivacyModal;
+  }, [showPrivacyModal]);
+
+  // Close on Escape key and Click Outside with modal hierarchy
   useEffect(() => {
     if (!isOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
+      if (showPrivacyModalRef.current) return;
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
@@ -125,6 +132,7 @@ export function AiAssistant() {
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (showPrivacyModalRef.current) return;
       if (event.key === "Escape") {
         setIsOpen(false);
       }
@@ -138,6 +146,26 @@ export function AiAssistant() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen]);
+
+  // Mobile & browser back button handler for chat widget (popstate)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Push history state to capture mobile back button
+    window.history.pushState({ aiChat: true }, "");
+
+    const handlePopState = () => {
+      // If privacy modal is open, let the modal's own handler deal with it
+      if (showPrivacyModalRef.current) return;
+      setIsOpen(false);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isOpen]); // Only depend on isOpen — NOT showPrivacyModal
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -273,8 +301,8 @@ export function AiAssistant() {
       ref={containerRef}
       aria-label="AI Assistant"
       className={`fixed z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-2xl border border-[var(--color-bg-tertiary)]/90 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isOpen
-          ? "bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:bottom-5 sm:w-[360px] h-[520px] max-h-[85vh]"
-          : "bottom-4 right-4 sm:right-5 sm:bottom-5 w-[210px] sm:w-[220px] h-[56px]"
+        ? "bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:bottom-5 sm:w-[360px] h-[520px] max-h-[85vh]"
+        : "bottom-4 right-4 sm:right-5 sm:bottom-5 w-[210px] sm:w-[220px] h-[56px]"
         }`}
     >
       {/* Header Bar (Always visible & Clickable to toggle) */}
@@ -282,7 +310,7 @@ export function AiAssistant() {
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full px-3.5 py-2 flex items-center justify-between bg-[var(--color-bg-secondary)]/50 hover:bg-[var(--color-bg-secondary)]/80 transition-colors cursor-pointer text-left focus:outline-none ${isOpen ? "border-b border-[var(--color-bg-tertiary)]/70" : "border-none"
           }`}
-        aria-label={isOpen ? "Tutup AI Clone" : "Buka AI Clone"}
+        aria-label={isOpen ? "Close AI Clone" : "Open AI Clone"}
       >
         <div className="flex flex-col">
           <span className="text-[10px] text-[var(--color-text-secondary)] leading-tight">
@@ -299,7 +327,7 @@ export function AiAssistant() {
               ) : (
                 <span
                   className="relative inline-flex rounded-full h-2 w-2 bg-zinc-400 dark:bg-zinc-500/80 shadow-xs transition-colors"
-                  title={aiStatus === "offline" ? "AI Offline" : "Koneksi Terkendala"}
+                  title={aiStatus === "offline" ? "AI Offline" : "Connection Issue"}
                 />
               )}
             </span>
@@ -330,14 +358,14 @@ export function AiAssistant() {
                 </div>
 
                 <h4 className="text-xs sm:text-sm font-bold text-[var(--color-text-primary)] mb-1">
-                  Tanya Apapun Tentang Alfian
+                  Ask Anything About Alfian
                 </h4>
                 <p className="text-[10px] sm:text-[11px] text-[var(--color-text-secondary)] max-w-[260px] mb-3 leading-relaxed">
-                  AI Twin ini siap menjawab seputar riset <strong>ESAO</strong>, Web3 <strong>DigiArc</strong>, tugas akhir, dan tech stack saya!
+                  This AI Twin is ready to answer questions about the <strong>ESAO</strong> research, Web3 <strong>DigiArc</strong>, thesis, and my tech stack!
                 </p>
 
                 <span className="text-[9px] sm:text-[10px] text-[var(--color-text-secondary)] mb-1.5 font-medium tracking-wide uppercase">
-                  Topik Populer:
+                  Popular Topics:
                 </span>
 
                 <div className="w-full flex flex-col gap-1.5 mb-2.5">
@@ -428,7 +456,7 @@ export function AiAssistant() {
               disabled={messages.length === 0}
               title="Reset chat"
               className="p-2 sm:p-2.5 rounded-xl border border-[var(--color-bg-tertiary)] bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] hover:text-red-400 hover:border-red-400/40 disabled:opacity-30 disabled:hover:text-[var(--color-text-secondary)] disabled:hover:border-[var(--color-bg-tertiary)] transition-all cursor-pointer disabled:cursor-not-allowed shrink-0 shadow-xs"
-              aria-label="Reset percakapan"
+              aria-label="Reset conversation"
             >
               <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
@@ -439,7 +467,7 @@ export function AiAssistant() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Tanya seputar ESAO, skill Alfian..."
+              placeholder="Ask about ESAO, Alfian's skills..."
               disabled={isLoading}
               maxLength={280}
               className="min-w-0 flex-1 bg-[var(--color-bg-primary)] border border-[var(--color-bg-tertiary)]/80 focus:border-accent focus:ring-1 focus:ring-accent/40 rounded-xl px-2.5 py-2 sm:px-3.5 sm:py-2.5 text-xs text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/60 outline-none transition-all"
@@ -450,7 +478,7 @@ export function AiAssistant() {
               type="submit"
               disabled={isLoading || !inputValue.trim()}
               className="p-2 sm:p-2.5 rounded-xl bg-accent text-white flex items-center justify-center hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all shrink-0 cursor-pointer shadow-xs"
-              aria-label="Kirim pesan"
+              aria-label="Send message"
             >
               <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
@@ -460,14 +488,14 @@ export function AiAssistant() {
           <div className="px-3 py-1.5 border-t border-[var(--color-bg-tertiary)]/40 bg-[var(--color-bg-secondary)]/60 flex items-center justify-between text-[10px] text-[var(--color-text-secondary)]/70 select-none">
             <span className="flex items-center gap-1 truncate">
               <span className="text-[11px]">🔒</span>
-              <span className="truncate">Pertanyaan disimpan anonim</span>
+              <span className="truncate">Questions saved anonymously</span>
             </span>
             <button
               type="button"
               onClick={() => setShowPrivacyModal(true)}
               className="text-accent hover:underline bg-transparent border-none p-0 cursor-pointer text-[10px] font-medium shrink-0 ml-1.5"
             >
-              Privasi
+              Privacy?
             </button>
           </div>
         </div>

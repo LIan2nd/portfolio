@@ -64,10 +64,10 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/img/hero.png",
-        width: 1200,
-        height: 630,
-        alt: "Alfian Nur Usyaid — Fullstack Developer Portfolio",
+        url: "/img/profile/profile-1.png",
+        width: 800,
+        height: 800,
+        alt: "Alfian Nur Usyaid — Fullstack Web Developer",
       },
     ],
   },
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
     title: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
     description:
       "Portfolio of Alfian Nur Usyaid — Fullstack Developer in Next.js, Laravel, and Blockchain. Cumlaude CS graduate (GPA 3.94).",
-    images: ["/img/hero.png"],
+    images: ["/img/profile/profile-1.png"],
   },
   verification: {
     google: "5K0Z9r269vfnAcps_OeSx6pAZMDRD4D5iWAWTXV64HU",
