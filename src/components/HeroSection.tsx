@@ -27,8 +27,8 @@ export function HeroSection() {
         priority
         quality={80}
         sizes="100vw"
-        className="object-cover hero-bg-light"
-        style={{ zIndex: -2, objectPosition: "center 38%" }}
+        className="object-cover object-bottom hero-bg-light"
+        style={{ zIndex: -2 }}
         aria-hidden="true"
       />
       {/* Theme-aware Gradient Overlay (styled via globals.css) */}
