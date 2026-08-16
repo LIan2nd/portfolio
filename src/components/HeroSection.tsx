@@ -28,7 +28,7 @@ export function HeroSection() {
         quality={80}
         sizes="100vw"
         className="object-cover hero-bg-light"
-        style={{ zIndex: -2, objectPosition: "center 22%" }}
+        style={{ zIndex: -2, objectPosition: "center 38%" }}
         aria-hidden="true"
       />
       {/* Theme-aware Gradient Overlay (styled via globals.css) */}
