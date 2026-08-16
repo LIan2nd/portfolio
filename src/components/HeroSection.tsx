@@ -7,7 +7,7 @@ export function HeroSection() {
       aria-label="Hero introduction"
       className="h-screen flex flex-col items-center justify-end px-6 pb-20 max-sm:justify-center max-sm:text-center relative overflow-hidden"
     >
-      {/* Optimized Background Image via Next.js Image */}
+      {/* Dark Theme Background Image */}
       <Image
         src="/img/hero-bg.jpg"
         alt=""
@@ -15,7 +15,19 @@ export function HeroSection() {
         priority
         quality={75}
         sizes="100vw"
-        className="object-cover object-bottom"
+        className="object-cover object-bottom hero-bg-dark"
+        style={{ zIndex: -2 }}
+        aria-hidden="true"
+      />
+      {/* Light Theme Background Image */}
+      <Image
+        src="/img/hero-bg-light.jpg"
+        alt=""
+        fill
+        priority
+        quality={75}
+        sizes="100vw"
+        className="object-cover object-bottom hero-bg-light"
         style={{ zIndex: -2 }}
         aria-hidden="true"
       />
