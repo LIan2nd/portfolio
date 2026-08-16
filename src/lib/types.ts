@@ -5,6 +5,7 @@ export interface Skill {
 export interface PersonalDetail {
   label: string;
   value: string;
+  isEmail?: boolean;
 }
 
 export interface SocialLink {

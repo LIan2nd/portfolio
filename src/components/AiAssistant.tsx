@@ -101,15 +101,18 @@ export function AiAssistant() {
     return () => clearInterval(interval);
   }, [isLoading]);
 
-  // Health probe on mount
+  // Health probe — delayed until widget is first opened (avoid blocking initial page load)
+  const hasProbed = useRef(false);
   useEffect(() => {
+    if (!isOpen || hasProbed.current) return;
+    hasProbed.current = true;
     fetch("/api/chat")
       .then((res) => {
         if (!res.ok) setAiStatus("error");
         else setAiStatus("active");
       })
       .catch(() => setAiStatus("offline"));
-  }, []);
+  }, [isOpen]);
 
   // Ref to always have the latest showPrivacyModal value (avoids stale closures)
   const showPrivacyModalRef = useRef(showPrivacyModal);

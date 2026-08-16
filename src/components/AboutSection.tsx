@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { FileText } from "lucide-react";
 import type { Skill, PersonalDetail, SocialLink } from "@/lib/types";
@@ -37,6 +39,7 @@ export function AboutSection({ skills, details, socials }: AboutSectionProps) {
               <h2 className="text-3xl max-sm:text-2xl font-bold mt-1 mb-3">
                 About Me
               </h2>
+              <h3 className="sr-only">Fullstack Web Developer & Software Engineer</h3>
               <div className="flex flex-wrap gap-1.5 mb-2">
                 {skills.map((skill) => (
                   <SkillBadge key={skill.name} name={skill.name} />
@@ -56,7 +59,11 @@ export function AboutSection({ skills, details, socials }: AboutSectionProps) {
                     <span className="font-semibold text-[11px] text-accent uppercase tracking-wider block">
                       {detail.label}
                     </span>
-                    <p className="text-sm mt-0.5 text-[var(--color-text-primary)] truncate" title={detail.value}>
+                    <p 
+                      className={`text-sm mt-0.5 text-[var(--color-text-primary)] truncate ${detail.isEmail ? "cursor-pointer hover:text-accent transition-colors" : ""}`} 
+                      title={detail.value}
+                      onClick={detail.isEmail ? () => window.location.href = `mailto:${detail.value.replace("[at]", "@")}` : undefined}
+                    >
                       {detail.value}
                     </p>
                   </div>

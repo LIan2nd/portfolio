@@ -31,7 +31,7 @@ export const PERSONAL_DETAILS: PersonalDetail[] = [
   { label: "Location", value: "Bogor, Indonesia" },
   { label: "Focus", value: "Web & Web3" },
   { label: "Availability", value: "Open for Work" },
-  { label: "Email", value: "alfiannurusyaid19@gmail.com" },
+  { label: "Email", value: "alfiannurusyaid19[at]gmail.com", isEmail: true },
 ];
 
 export const SOCIALS: SocialLink[] = [

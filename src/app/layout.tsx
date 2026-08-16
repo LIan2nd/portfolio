@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s | Alfian Nur Usyaid",
   },
   description:
-    "Portfolio of Alfian Nur Usyaid — Fullstack Developer in Next.js, Laravel, and Blockchain. Cumlaude CS graduate (GPA 3.94) based in Bogor, Indonesia.",
+    "Portfolio of Alfian Nur Usyaid — Fullstack Web Developer & Software Engineer specializing in Next.js, React, Laravel, and Blockchain development. Cumlaude CS graduate (GPA 3.94).",
   keywords: [
     "Alfian Nur Usyaid",
     "Fullstack Developer",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
     description:
-      "Portfolio of Alfian Nur Usyaid — Fullstack Developer in Next.js, Laravel, and Blockchain. Cumlaude CS graduate (GPA 3.94) based in Bogor, Indonesia.",
+      "Portfolio of Alfian Nur Usyaid — Fullstack Web Developer & Software Engineer specializing in Next.js, React, Laravel, and Blockchain development. Cumlaude CS graduate (GPA 3.94).",
     url: "https://portfolio.liand.web.id",
     siteName: "Alfian Nur Usyaid Portfolio",
     type: "website",
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
     description:
-      "Portfolio of Alfian Nur Usyaid — Fullstack Developer in Next.js, Laravel, and Blockchain. Cumlaude CS graduate (GPA 3.94).",
+      "Portfolio of Alfian Nur Usyaid — Fullstack Web Developer & Software Engineer specializing in Next.js, React, Laravel, and Blockchain development. Cumlaude CS graduate (GPA 3.94).",
     images: ["/img/profile/profile-1.png"],
   },
   verification: {

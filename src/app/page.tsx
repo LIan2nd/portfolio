@@ -6,7 +6,7 @@ import { ProjectsSection } from "@/components/ProjectsSection";
 import { CertificationsSection } from "@/components/CertificationsSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
-import { AiAssistant } from "@/components/AiAssistant";
+import { LazyAiAssistant } from "@/components/LazyAiAssistant";
 import {
   NAV_LINKS,
   SKILLS,
@@ -83,13 +83,27 @@ const jsonLd = {
         "https://linkedin.com/in/alfian-nur-usyaid/",
         "https://www.instagram.com/wonder__liand",
       ],
-      email: "alfiannurusyaid19@gmail.com",
+      email: "alfiannurusyaid19[at]gmail.com",
       image: {
         "@type": "ImageObject",
         "url": "https://portfolio.liand.web.id/img/profile/profile-1.png",
         "caption": "Alfian Nur Usyaid",
         "representativeOfPage": true
       },
+      award: "Cumlaude (GPA 3.94/4.00)",
+      knowsLanguage: ["Indonesian", "English"],
+      hasCredential: [
+        {
+          "@type": "EducationalOccupationalCredential",
+          name: "Bachelor of Computer Science (S.Kom)",
+          credentialCategory: "degree",
+          educationalLevel: "Bachelor's Degree",
+          recognizedBy: {
+            "@type": "CollegeOrUniversity",
+            name: "STT Terpadu Nurul Fikri",
+          },
+        },
+      ],
     },
     {
       "@type": "ProfessionalService",
@@ -121,6 +135,66 @@ const jsonLd = {
         "@id": "https://portfolio.liand.web.id/#person",
       },
     },
+    {
+      "@type": "ScholarlyArticle",
+      "@id": "https://portfolio.liand.web.id/#publication-mind-journal",
+      headline:
+        "Model Prediksi Retensi Mahasiswa Berbasis Random Forest Yang Dioptimasi Dengan Algoritma Genetika",
+      alternativeHeadline:
+        "Student Retention Prediction with Genetic Algorithm-Optimized Random Forest and SMOTE",
+      author: [
+        { "@type": "Person", name: "Pudy Prima" },
+        { "@type": "Person", name: "Ahmad Rio Adriansyah" },
+        { "@id": "https://portfolio.liand.web.id/#person" },
+      ],
+      datePublished: "2026",
+      isPartOf: {
+        "@type": "Periodical",
+        name: "MIND Journal",
+        publisher: {
+          "@type": "Organization",
+          name: "Institut Teknologi Nasional Bandung",
+        },
+      },
+      url: "https://ejurnal.itenas.ac.id/index.php/mindjournal/article/view/15673",
+      about: [
+        "Random Forest",
+        "Genetic Algorithm",
+        "SMOTE",
+        "Student Retention",
+        "Machine Learning",
+      ],
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://portfolio.liand.web.id/#project-roadsense",
+      name: "RoadSense",
+      description:
+        "Smart GIS road damage mapping and navigation with crowdsourced reporting and intelligent alternative routing.",
+      applicationCategory: "WebApplication",
+      author: { "@id": "https://portfolio.liand.web.id/#person" },
+      url: "https://github.com/LIan2nd/RoadSense",
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://portfolio.liand.web.id/#project-digiarc",
+      name: "DigiArc",
+      description:
+        "Decentralized Web3 file storage platform on IPFS with Solidity smart contracts.",
+      applicationCategory: "WebApplication",
+      author: { "@id": "https://portfolio.liand.web.id/#person" },
+      url: "https://digiarc.vercel.app",
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://portfolio.liand.web.id/#project-esao",
+      name: "ESAO",
+      description:
+        "AI-powered automated essay grading system for university lecturers using LangChain and rubric-based semantic evaluation.",
+      applicationCategory: "WebApplication",
+      author: { "@id": "https://portfolio.liand.web.id/#person" },
+      url: "https://esao.nurulfikri.ac.id",
+    },
   ],
 };
 
@@ -148,7 +222,7 @@ export default function Home() {
         <ContactSection scriptUrl={CONTACT_SCRIPT_URL} />
       </main>
       <Footer socials={SOCIALS} />
-      <AiAssistant />
+      <LazyAiAssistant />
     </>
   );
 }

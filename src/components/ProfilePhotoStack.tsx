@@ -88,7 +88,7 @@ export function ProfilePhotoStack() {
                 alt={photo.alt}
                 fill
                 sizes="(max-width: 768px) 320px, 280px"
-                priority={position === 0}
+                priority={false}
                 className="object-cover pointer-events-none"
               />
             </div>
