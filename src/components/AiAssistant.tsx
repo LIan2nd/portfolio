@@ -303,7 +303,7 @@ export function AiAssistant() {
     <aside
       ref={containerRef}
       aria-label="AI Assistant"
-      className={`fixed z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-2xl border border-[var(--color-bg-tertiary)]/90 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isOpen
+      className={`fixed z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-md border border-black/[0.08] dark:border-white/[0.08] rounded-2xl shadow-lg shadow-black/8 dark:shadow-2xl dark:shadow-black/60 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isOpen
         ? "bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:bottom-5 sm:w-[360px] h-[520px] max-h-[85vh]"
         : "bottom-4 right-4 sm:right-5 sm:bottom-5 w-[210px] sm:w-[220px] h-[56px]"
         }`}
