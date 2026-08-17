@@ -361,11 +361,13 @@ export class MockFallbackProvider implements AiProvider {
         ? "🗺️ **RoadSense (Smart Road Safety Navigation)** is a participatory GIS platform I built to crowdsource road damage and hazard points.\n\n" +
           "- **Tech Stack:** T3 Stack (Next.js 15, tRPC, Prisma), Leaflet, Flask (Shapely), and OSRM.\n" +
           "- **Key Features:** Interactive hazard density map, crowdsourced hazard reporting (4 severity levels), and safe route calculation.\n" +
-          "- **Repository:** [github.com/LIan2nd/RoadSense](https://github.com/LIan2nd/RoadSense)"
+          "- **Repository:** [github.com/LIan2nd/RoadSense](https://github.com/LIan2nd/RoadSense)\n\n" +
+          "[NAV:project:📍 View Projects]"
         : "🗺️ **RoadSense (Smart Road Safety Navigation)** adalah platform GIS partisipatif yang kubangun untuk memetakan titik kerusakan jalan secara crowdsourcing.\n\n" +
           "- **Tech Stack:** T3 Stack (Next.js 15, tRPC, Prisma), Leaflet, Flask (Shapely), dan OSRM.\n" +
           "- **Fitur Utama:** Peta sebaran bahaya jalan interaktif, crowdsourced hazard reporting (4 level keparahan), dan kalkulasi navigasi rute aman (safe routing).\n" +
-          "- **Repository:** [github.com/LIan2nd/RoadSense](https://github.com/LIan2nd/RoadSense)";
+          "- **Repository:** [github.com/LIan2nd/RoadSense](https://github.com/LIan2nd/RoadSense)\n\n" +
+          "[NAV:project:📍 View Projects]";
     }
 
     if (
@@ -378,11 +380,13 @@ export class MockFallbackProvider implements AiProvider {
         ? "⚙️ **HRD RESTful API** is an employee management backend project I developed for the Backend Programming exam at STT NF.\n\n" +
           "- **Architecture & Concepts:** Modular MVC architecture and OOP concepts (Class-based Controllers & DAO Models) using **Node.js, Express.js, and MySQL**.\n" +
           "- **Features:** Full employee CRUD, status filtering (active/inactive/terminated), name search, parameterized SQL queries, and standard HTTP REST codes.\n" +
-          "- **Repository:** [github.com/LIan2nd/uas-pemrograman-backend](https://github.com/LIan2nd/uas-pemrograman-backend)"
+          "- **Repository:** [github.com/LIan2nd/uas-pemrograman-backend](https://github.com/LIan2nd/uas-pemrograman-backend)\n\n" +
+          "[NAV:project:📍 View Projects]"
         : "⚙️ **HRD RESTful API** adalah proyek backend manajemen kepegawaian yang kubuat untuk UAS Pemrograman Backend di STT NF.\n\n" +
           "- **Arsitektur & Konsep:** Arsitektur modular MVC dan konsep OOP (Class-based Controllers & DAO Models) menggunakan **Node.js, Express.js, dan MySQL**.\n" +
           "- **Fitur:** Full CRUD pegawai, filter status (active/inactive/terminated), name search, parameterized SQL queries, dan standar HTTP RESTful codes.\n" +
-          "- **Repository:** [github.com/LIan2nd/uas-pemrograman-backend](https://github.com/LIan2nd/uas-pemrograman-backend)";
+          "- **Repository:** [github.com/LIan2nd/uas-pemrograman-backend](https://github.com/LIan2nd/uas-pemrograman-backend)\n\n" +
+          "[NAV:project:📍 View Projects]";
     }
 
     if (
@@ -395,11 +399,13 @@ export class MockFallbackProvider implements AiProvider {
         ? "🤖 **ESAO (Essay Analytic Online)** is my flagship academic AI research project developed with faculty at STT Terpadu Nurul Fikri (completed).\n\n" +
           "- **Core Function:** Automated AI essay grading platform for educators that evaluates open-ended responses in seconds (saving up to 80% grading time).\n" +
           "- **Architecture:** Decoupled Architecture with **Next.js** for the dashboard and **Flask (Python) + LangChain** for rubric-based NLP evaluation.\n" +
-          "- **Live URL:** [esao.nurulfikri.ac.id](https://esao.nurulfikri.ac.id)"
+          "- **Live URL:** [esao.nurulfikri.ac.id](https://esao.nurulfikri.ac.id)\n\n" +
+          "[NAV:project:📍 View Projects]"
         : "🤖 **ESAO (Essay Analytic Online)** adalah proyek riset akademik unggulan yang kubangun bersama dosen di STT Terpadu Nurul Fikri (sudah selesai).\n\n" +
           "- **Fungsi Utama:** Platform koreksi soal esai otomatis berbasis AI untuk dosen yang mampu menilai jawaban uraian dalam hitungan detik (hemat 80% waktu koreksi).\n" +
           "- **Arsitektur:** Decoupled Architecture menggunakan **Next.js** untuk dashboard dan **Flask (Python) + LangChain** untuk evaluasi NLP berbasis rubrik.\n" +
-          "- **Live URL:** [esao.nurulfikri.ac.id](https://esao.nurulfikri.ac.id)";
+          "- **Live URL:** [esao.nurulfikri.ac.id](https://esao.nurulfikri.ac.id)\n\n" +
+          "[NAV:project:📍 View Projects]";
     }
 
     if (
@@ -413,11 +419,32 @@ export class MockFallbackProvider implements AiProvider {
         ? "🛡️ **DigiArc (Web3 Storage)** is a decentralized file storage platform inspired by Google Drive (completed).\n\n" +
           "- **Tech Stack:** Next.js, Wagmi, Solidity Smart Contracts, and IPFS.\n" +
           "- **Features:** Distributed file storage with blockchain-verified data integrity (proof-of-storage).\n" +
-          "- **Live Demo:** [digiarc.vercel.app](https://digiarc.vercel.app)"
+          "- **Live Demo:** [digiarc.vercel.app](https://digiarc.vercel.app)\n\n" +
+          "[NAV:project:📍 View Projects]"
         : "🛡️ **DigiArc (Web3 Storage)** adalah platform penyimpanan file terdesentralisasi yang terinspirasi dari Google Drive (sudah selesai dikembangkan).\n\n" +
           "- **Tech Stack:** Next.js, Wagmi, Solidity Smart Contracts, dan IPFS.\n" +
           "- **Fitur:** Penyimpanan file terdistribusi dengan verifikasi integritas data berbasis blockchain (proof-of-storage).\n" +
-          "- **Live Demo:** [digiarc.vercel.app](https://digiarc.vercel.app)";
+          "- **Live Demo:** [digiarc.vercel.app](https://digiarc.vercel.app)\n\n" +
+          "[NAV:project:📍 View Projects]";
+    }
+
+    if (
+      msg.includes("lmovie") ||
+      msg.includes("l-movie") ||
+      msg.includes("movie") ||
+      msg.includes("film") ||
+      msg.includes("tmdb") ||
+      msg.includes("imdb")
+    ) {
+      return isEn
+        ? "🎬 **L-Movie (Cinema & Movie Discovery)** is a frontend web application I built for the Frontend Programming midterm exam (UTS) at STT NF.\n\n" +
+          "- **Core Learning:** Client-side asynchronous REST API fetching and dynamic JSON catalog rendering (using movie database APIs).\n" +
+          "- **Live Demo:** [lmovie.liand.web.id](https://lmovie.liand.web.id)\n\n" +
+          "[NAV:project:📍 View Projects]"
+        : "🎬 **L-Movie (Cinema & Movie Discovery)** adalah web eksplorasi film yang kubuat untuk UTS mata kuliah Pemrograman Frontend di STT NF.\n\n" +
+          "- **Fokus Utama:** Belajar integrasi & *data fetching* asinkron dari REST API backend/third-party (katalog database film) ke tampilan antarmuka secara dinamis.\n" +
+          "- **Live Demo:** [lmovie.liand.web.id](https://lmovie.liand.web.id)\n\n" +
+          "[NAV:project:📍 View Projects]";
     }
 
     if (
@@ -477,13 +504,15 @@ export class MockFallbackProvider implements AiProvider {
           "- **Frontend & Frameworks:** Next.js 15 (React), Tailwind CSS v4, HTML5/CSS3\n" +
           "- **Backend & Architecture:** Laravel (PHP), Flask (Python), Express.js (Node.js), RESTful APIs, MVC & OOP\n" +
           "- **Databases:** PostgreSQL, MySQL, Supabase\n" +
-          "- **AI & Web3:** LangChain, LLM APIs, Wagmi, IPFS, Smart Contracts"
+          "- **AI & Web3:** LangChain, LLM APIs, Wagmi, IPFS, Smart Contracts\n\n" +
+          "[NAV:about:📍 View About & Skills]"
         : "💻 **Tech Stack & Keahlian Utamaku:**\n\n" +
           "- **Languages:** JavaScript, TypeScript, PHP, Python, Solidity, SQL\n" +
           "- **Frontend & Frameworks:** Next.js 15 (React), Tailwind CSS v4, HTML5/CSS3\n" +
           "- **Backend & Architecture:** Laravel (PHP), Flask (Python), Express.js (Node.js), RESTful API, MVC & OOP\n" +
           "- **Databases:** PostgreSQL, MySQL, Supabase\n" +
-          "- **AI & Web3:** LangChain, LLM APIs, Wagmi, IPFS, Smart Contracts";
+          "- **AI & Web3:** LangChain, LLM APIs, Wagmi, IPFS, Smart Contracts\n\n" +
+          "[NAV:about:📍 View About & Skills]";
     }
 
     if (
@@ -500,11 +529,13 @@ export class MockFallbackProvider implements AiProvider {
         ? "📄 **Education & Scientific Publications:**\n\n" +
           "- **STT Terpadu Nurul Fikri (2022 - 2026):** Bachelor of Computer Science (S.Kom) in Informatics — **Cumlaude (GPA 3.94 / 4.00)**.\n" +
           "- **Scientific Journal Publication:** Published paper in *MIND Journal (Itenas Bandung)* on *Student Retention Prediction using Random Forest & Genetic Algorithm (SMOTE)*.\n" +
-          "- **Teaching Assistant:** Data Structures & Algorithms, Databases, and Laravel Backend."
+          "- **Teaching Assistant:** Data Structures & Algorithms, Databases, and Laravel Backend.\n\n" +
+          "[NAV:experience:📍 View Experience]"
         : "🎓 **Pendidikan & Publikasi Ilmiahku:**\n\n" +
           "- **STT Terpadu Nurul Fikri (2022 - 2026)**: Sarjana Komputer (S.Kom) Teknik Informatika — **Cumlaude (IPK 3.94 / 4.00)**.\n" +
           "- **Publikasi Jurnal Ilmiah:** Paper di *MIND Journal (Itenas Bandung)* mengenai *Prediksi Retensi Mahasiswa Menggunakan Random Forest & Algoritma Genetika (SMOTE)*.\n" +
-          "- **Teaching Assistant:** Asisten Dosen untuk Struktur Data & Algoritma, Basis Data, dan Backend Laravel.";
+          "- **Teaching Assistant:** Asisten Dosen untuk Struktur Data & Algoritma, Basis Data, dan Backend Laravel.\n\n" +
+          "[NAV:experience:📍 View Experience]";
     }
 
     if (
@@ -520,13 +551,15 @@ export class MockFallbackProvider implements AiProvider {
           "- **LinkedIn:** [linkedin.com/in/alfian-nur-usyaid](https://linkedin.com/in/alfian-nur-usyaid/)\n" +
           "- **GitHub:** [github.com/LIan2nd](https://github.com/LIan2nd/)\n" +
           "- **Instagram:** [@wonder__liand](https://www.instagram.com/wonder__liand)\n\n" +
-          "I am **open for work**—available for full-time, freelance, and project-based opportunities. Let's connect! 🚀"
+          "I am **open for work**—available for full-time, freelance, and project-based opportunities. Let's connect! 🚀\n\n" +
+          "[NAV:contact:📍 Go to Contact Section]"
         : "📫 **Informasi Kontakku:**\n\n" +
           "- **Email:** [alfiannurusyaid19@gmail.com](mailto:alfiannurusyaid19@gmail.com)\n" +
           "- **LinkedIn:** [linkedin.com/in/alfian-nur-usyaid](https://linkedin.com/in/alfian-nur-usyaid/)\n" +
           "- **GitHub:** [github.com/LIan2nd](https://github.com/LIan2nd/)\n" +
           "- **Instagram:** [@wonder__liand](https://www.instagram.com/wonder__liand)\n\n" +
-          "Aku *open for work*—baik full-time, freelance, maupun project-based. Yuk diskusi lebih lanjut! 🚀";
+          "Aku *open for work*—baik full-time, freelance, maupun project-based. Yuk diskusi lebih lanjut! 🚀\n\n" +
+          "[NAV:contact:📍 Go to Contact Section]";
     }
 
     if (
@@ -535,8 +568,27 @@ export class MockFallbackProvider implements AiProvider {
       (msg.includes("portfolio") && (msg.includes("keren") || msg.includes("bagus") || msg.includes("nongol") || msg.includes("nemu") || msg.includes("found")))
     ) {
       return isEn
-        ? "Thank you so much! 😎 I'm thrilled to see my portfolio showing up on Google. Feel free to scroll down to explore projects like ESAO, DigiArc, or RoadSense on this page! 🚀"
-        : "Wah makasih bro/sis! 😎 Seneng banget portofolioku udah mulai nongol di Google. Kamu bisa langsung scroll ke bawah buat eksplor proyek-proyek kayak ESAO, DigiArc, atau RoadSense di web ini ya hehe 🚀";
+        ? "Thank you so much! 😎 I'm thrilled to see my portfolio showing up on Google. Feel free to scroll down to explore projects like ESAO, DigiArc, or RoadSense on this page! 🚀\n\n[NAV:project:📍 View Projects]"
+        : "Wah makasih bro/sis! 😎 Seneng banget portofolioku udah mulai nongol di Google. Kamu bisa langsung scroll ke bawah buat eksplor proyek-proyek kayak ESAO, DigiArc, atau RoadSense di web ini ya hehe 🚀\n\n[NAV:project:📍 View Projects]";
+    }
+
+    if (
+      (msg.includes("buka") || msg.includes("tips") || msg.includes("open") || msg.includes("akses")) &&
+      (msg.includes("windows") || msg.includes("mac") || msg.includes("hp") || msg.includes("browser") || msg.includes("portfolio") || msg.includes("web"))
+    ) {
+      return isEn
+        ? "Haha, you've actually already opened it and are chatting with my clone right now! 😄\n\n" +
+          "If you'd like some tips to explore my portfolio:\n" +
+          "- Toggle **Dark / Light mode** in the top-right navbar\n" +
+          "- Scroll down to check out **ESAO**, **DigiArc**, and **RoadSense**\n" +
+          "- Click on project cards to see live demos and repositories!\n\n" +
+          "[NAV:project:📍 View Projects]"
+        : "Loh, kan sekarang kamu udah berhasil membukanya dan lagi ngobrol sama klon-ku di sini haha! 😄\n\n" +
+          "Kalau mau tips eksplor portofolio ini:\n" +
+          "- Coba ganti tema **Dark / Light mode** di navbar kanan atas\n" +
+          "- Scroll ke bawah buat kepoin detail proyek kayak **ESAO**, **DigiArc**, dan **RoadSense**\n" +
+          "- Klik kartu proyek untuk lihat demo langsung atau repository di GitHub!\n\n" +
+          "[NAV:project:📍 View Projects]";
     }
 
     if (

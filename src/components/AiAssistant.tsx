@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageSquareCode, ChevronUp, Send, Trash2, ShieldCheck } from "lucide-react";
+import { MessageSquareCode, ChevronUp, Send, Trash2, ShieldCheck, MapPin } from "lucide-react";
 import { PrivacyPolicyModal } from "./PrivacyPolicyModal";
+import { useAiVisibility } from "./AiVisibilityContext";
 
 interface Message {
   id: string;
@@ -14,21 +15,32 @@ interface Message {
 
 const INITIAL_SUGGESTIONS = [
   "Tell me about the ESAO research project 🤖",
-  "What are Alfian's main tech stack & skills? 💻",
-  "Tell me about Alfian's journal publication 📄",
-  "How can I contact or hire Alfian? 📫",
+  "What are your main tech stack & skills? 💻",
+  "Tell me about your journal publication 📄",
+  "How can I contact or hire you? 📫",
 ];
 
-// Helper to format basic Markdown (bold, lists, and links)
+// Helper to format basic Markdown (bold, inline code, lists, and links)
 function formatMarkdown(text: string) {
   const parts = text.split("\n");
   return parts.map((line, lineIndex) => {
-    const boldFormatted = line.split(/(\*\*.*?\*\*)/g).map((chunk, i) => {
-      if (chunk.startsWith("**") && chunk.endsWith("**")) {
+    const isList = line.startsWith("• ") || line.startsWith("- ") || line.startsWith("* ");
+    const cleanLine = isList ? line.slice(2).trimStart() : line;
+
+    const formattedChunks = cleanLine.split(/(\*\*.*?\*\*|`.*?`)/g).map((chunk, i) => {
+      if (chunk.startsWith("**") && chunk.endsWith("**") && chunk.length >= 4) {
         return (
           <strong key={i} className="font-semibold text-[var(--color-text-primary)]">
             {chunk.slice(2, -2)}
           </strong>
+        );
+      }
+
+      if (chunk.startsWith("`") && chunk.endsWith("`") && chunk.length >= 2) {
+        return (
+          <code key={i} className="px-1 py-0.5 rounded bg-[var(--color-bg-tertiary)] font-mono text-[10px] sm:text-[11px] text-accent">
+            {chunk.slice(1, -1)}
+          </code>
         );
       }
 
@@ -55,10 +67,10 @@ function formatMarkdown(text: string) {
       return chunk;
     });
 
-    if (line.startsWith("• ") || line.startsWith("- ")) {
+    if (isList) {
       return (
         <li key={lineIndex} className="ml-4 list-disc text-inherit my-0.5">
-          {boldFormatted}
+          {formattedChunks}
         </li>
       );
     }
@@ -69,15 +81,33 @@ function formatMarkdown(text: string) {
 
     return (
       <p key={lineIndex} className="my-1 leading-relaxed">
-        {boldFormatted}
+        {formattedChunks}
       </p>
     );
   });
 }
 
+// Helper: extract [NAV:sectionId:label] action marker from AI response content
+const NAV_ACTION_REGEX = /\[NAV:(\w+):(.+?)\]/;
+
+function extractNavAction(content: string): {
+  cleanContent: string;
+  navAction?: { sectionId: string; label: string };
+} {
+  const match = content.match(NAV_ACTION_REGEX);
+  if (match) {
+    return {
+      cleanContent: content.replace(NAV_ACTION_REGEX, "").trimEnd(),
+      navAction: { sectionId: match[1], label: match[2] },
+    };
+  }
+  return { cleanContent: content };
+}
+
 import { LOADING_PHRASES, getRandomLoadingIndex } from "@/lib/loadingPhrases";
 
 export function AiAssistant() {
+  const { isAiVisible } = useAiVisibility();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -299,6 +329,21 @@ export function AiAssistant() {
     setMessages([]);
   };
 
+  // Navigation handler: minimize chat + smooth scroll to section
+  const handleNavAction = (sectionId: string) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      setIsOpen(false);
+      // Delay scroll until close animation finishes (~300ms transition)
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 350);
+    }
+  };
+
+  // Hide completely when toggled off via navbar
+  if (!isAiVisible) return null;
+
   return (
     <aside
       ref={containerRef}
@@ -361,7 +406,7 @@ export function AiAssistant() {
                 </div>
 
                 <h4 className="text-xs sm:text-sm font-bold text-[var(--color-text-primary)] mb-1">
-                  Ask Anything About Alfian
+                  Ask Me Anything
                 </h4>
                 <p className="text-[10px] sm:text-[11px] text-[var(--color-text-secondary)] max-w-[260px] mb-3 leading-relaxed">
                   This AI Twin is ready to answer questions about the <strong>ESAO</strong> research, Web3 <strong>DigiArc</strong>, thesis, and my tech stack!
@@ -414,6 +459,12 @@ export function AiAssistant() {
                     );
                   }
 
+                  // Parse nav action marker from assistant messages
+                  const { cleanContent, navAction } =
+                    msg.role === "assistant"
+                      ? extractNavAction(msg.content)
+                      : { cleanContent: msg.content, navAction: undefined };
+
                   return (
                     <div
                       key={msg.id}
@@ -427,12 +478,25 @@ export function AiAssistant() {
                           }`}
                       >
                         <div className="break-words">
-                          {formatMarkdown(msg.content)}
+                          {formatMarkdown(cleanContent)}
                           {msg.isStreaming && (
                             <span className="inline-block w-1.5 h-3.5 ml-0.5 bg-accent animate-pulse align-middle" />
                           )}
                         </div>
                       </div>
+
+                      {/* Navigation Action Button (rendered below bubble after streaming completes) */}
+                      {navAction && !msg.isStreaming && (
+                        <button
+                          onClick={() => handleNavAction(navAction.sectionId)}
+                          className="mt-1.5 ml-0.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent/10 border border-accent/30 text-accent text-[10px] sm:text-[11px] font-medium hover:bg-accent/20 hover:border-accent/50 active:scale-[0.97] transition-all duration-200 cursor-pointer shadow-xs animate-in fade-in slide-in-from-bottom-1 duration-300"
+                          aria-label={`Navigate to ${navAction.sectionId} section`}
+                        >
+                          <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                          {navAction.label}
+                        </button>
+                      )}
+
                       <span className="text-[9px] sm:text-[10px] text-[var(--color-text-secondary)]/60 px-1 mt-1">
                         {msg.timestamp}
                       </span>
@@ -470,7 +534,7 @@ export function AiAssistant() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask about ESAO, Alfian's skills..."
+              placeholder="Ask about ESAO, your skills, projects..."
               disabled={isLoading}
               maxLength={280}
               className="min-w-0 flex-1 bg-[var(--color-bg-primary)] border border-[var(--color-bg-tertiary)]/80 focus:border-accent focus:ring-1 focus:ring-accent/40 rounded-xl px-2.5 py-2 sm:px-3.5 sm:py-2.5 text-xs text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/60 outline-none transition-all"
