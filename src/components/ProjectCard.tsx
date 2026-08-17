@@ -11,6 +11,8 @@ import {
   Navigation,
   Server,
   Database,
+  Film,
+  Clapperboard,
 } from "lucide-react";
 import type { Project } from "@/lib/types";
 
@@ -39,6 +41,11 @@ function ProjectIcon({ icon }: { icon: string }) {
       return <Server {...iconProps} />;
     case "database":
       return <Database {...iconProps} />;
+    case "film":
+    case "movie":
+      return <Film {...iconProps} />;
+    case "clapperboard":
+      return <Clapperboard {...iconProps} />;
     case "shop":
       return <Store {...iconProps} />;
     default:

@@ -178,6 +178,14 @@ export const PROJECTS: Project[] = [
     image: "/img/projects/sistem-pendaftaran-event.png",
   },
   {
+    icon: "film",
+    title: "L-Movie (Movie Discovery)",
+    description:
+      "Frontend movie discovery and exploration web application developed for the Frontend Programming midterm exam (UTS). Implements client-side REST API fetching to consume and render movie database catalogs dynamically.",
+    url: "https://lmovie.liand.web.id",
+    image: "/img/projects/l-movie.png",
+  },
+  {
     icon: "server",
     title: "HRD RESTful API (Express.js)",
     description:
