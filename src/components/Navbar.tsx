@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import type { NavLink } from "@/lib/types";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { useTheme } from "@/components/ThemeProvider";
+import { useAiVisibility } from "@/components/AiVisibilityContext";
+import { Bot, BotOff } from "lucide-react";
 
 interface NavbarProps {
   links: NavLink[];
@@ -70,6 +72,7 @@ export function Navbar({ links }: NavbarProps) {
   const sectionIds = links.map((l) => l.href.replace("#", ""));
   const activeSection = useActiveSection(sectionIds);
   const { theme, toggleTheme } = useTheme();
+  const { isAiVisible, toggleAiVisibility } = useAiVisibility();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -163,12 +166,28 @@ export function Navbar({ links }: NavbarProps) {
             </ul>
           </div>
 
-          {/* Right side: Theme Toggle (Clean & Borderless) */}
-          <div className="flex items-center">
+          {/* Right side: AI Chat Toggle & Theme Toggle (Clean & Borderless) */}
+          <div className="flex items-center gap-2.5">
+            {/* AI Assistant Visibility Toggle */}
+            <button
+              onClick={toggleAiVisibility}
+              className="bg-transparent border-none p-1 cursor-pointer text-accent hover:opacity-80 hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center shrink-0"
+              aria-label={isAiVisible ? "Hide AI Assistant" : "Show AI Assistant"}
+              title={isAiVisible ? "Hide AI Assistant" : "Show AI Assistant"}
+            >
+              {isAiVisible ? (
+                <Bot className="w-5 h-5 transition-transform duration-200" />
+              ) : (
+                <BotOff className="w-5 h-5 text-[var(--color-text-secondary)] opacity-50 hover:opacity-100 transition-transform duration-200" />
+              )}
+            </button>
+
+            {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
               className="bg-transparent border-none p-1 -mr-1 cursor-pointer text-accent hover:opacity-75 hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center shrink-0"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+              title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
             >
               <AnimatedThemeIcon isDark={theme === "dark"} />
             </button>

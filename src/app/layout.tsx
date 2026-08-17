@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Gowun_Batang } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AiVisibilityProvider } from "@/components/AiVisibilityContext";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import "./globals.css";
 
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
     description:
       "Portfolio of Alfian Nur Usyaid — Fullstack Web Developer & Software Engineer specializing in Next.js, React, Laravel, and Blockchain development. Cumlaude CS graduate (GPA 3.94).",
     url: "https://portfolio.liand.web.id",
-    siteName: "Alfian Nur Usyaid Portfolio",
+    siteName: "LIand",
     type: "website",
     locale: "en_US",
     images: [
@@ -81,20 +82,9 @@ export const metadata: Metadata = {
   verification: {
     google: "5K0Z9r269vfnAcps_OeSx6pAZMDRD4D5iWAWTXV64HU",
   },
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/icon-48x48.png", type: "image/png", sizes: "48x48" },
-      { url: "/icon-96x96.png", type: "image/png", sizes: "96x96" },
-      { url: "/icon-192x192.png", type: "image/png", sizes: "192x192" },
-      { url: "/icon-512x512.png", type: "image/png", sizes: "512x512" },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-    shortcut: "/favicon.ico",
-  },
+  /* Icons are auto-detected by Next.js App Router file convention:
+     src/app/favicon.ico, src/app/icon.svg, src/app/apple-icon.png
+     Additional PWA sizes served from public/ via manifest.ts */
   category: "technology",
   formatDetection: {
     email: false,
@@ -115,7 +105,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <AiVisibilityProvider>{children}</AiVisibilityProvider>
+        </ThemeProvider>
         <GoogleAnalytics />
       </body>
     </html>

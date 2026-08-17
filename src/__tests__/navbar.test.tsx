@@ -4,6 +4,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as fc from "fast-check";
 import { Navbar } from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AiVisibilityProvider } from "@/components/AiVisibilityContext";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { NAV_LINKS } from "@/lib/data";
 
@@ -17,7 +18,9 @@ describe("Navbar & useActiveSection", () => {
   it("renders navigation links in correct order", () => {
     render(
       <ThemeProvider>
-        <Navbar links={NAV_LINKS} />
+        <AiVisibilityProvider>
+          <Navbar links={NAV_LINKS} />
+        </AiVisibilityProvider>
       </ThemeProvider>
     );
 
@@ -31,7 +34,9 @@ describe("Navbar & useActiveSection", () => {
     const user = userEvent.setup();
     render(
       <ThemeProvider>
-        <Navbar links={NAV_LINKS} />
+        <AiVisibilityProvider>
+          <Navbar links={NAV_LINKS} />
+        </AiVisibilityProvider>
       </ThemeProvider>
     );
 
@@ -51,7 +56,9 @@ describe("Navbar & useActiveSection", () => {
 
     render(
       <ThemeProvider>
-        <Navbar links={NAV_LINKS} />
+        <AiVisibilityProvider>
+          <Navbar links={NAV_LINKS} />
+        </AiVisibilityProvider>
       </ThemeProvider>
     );
 
@@ -60,6 +67,24 @@ describe("Navbar & useActiveSection", () => {
 
     await user.click(themeBtn);
     expect(localStorage.getItem("theme")).toBe("light");
+  });
+
+  it("renders AI assistant toggle button and toggles state", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ThemeProvider>
+        <AiVisibilityProvider>
+          <Navbar links={NAV_LINKS} />
+        </AiVisibilityProvider>
+      </ThemeProvider>
+    );
+
+    const aiBtn = screen.getByLabelText(/Hide AI Assistant|Show AI Assistant/i);
+    expect(aiBtn).toBeInTheDocument();
+
+    await user.click(aiBtn);
+    expect(localStorage.getItem("ai_assistant_visible")).toBe("false");
   });
 
   it("adapts navbar styling and blur when scrolled", () => {
