@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Alfian Nur Usyaid — Portfolio",
-    short_name: "Alfian Portfolio",
+    name: "LIand — Alfian Nur Usyaid",
+    short_name: "LIand",
     description:
-      "Portfolio of Alfian Nur Usyaid — Fullstack Developer in Next.js, Laravel, and Blockchain.",
+      "Portfolio of Alfian Nur Usyaid (LIand) — Fullstack Developer in Next.js, Laravel, and Blockchain.",
     start_url: "/",
     display: "standalone",
     background_color: "#021526",

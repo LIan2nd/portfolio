@@ -15,6 +15,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       ],
     },
     {
+      url: "https://portfolio.liand.web.id/file/resume.pdf",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: "https://portfolio.liand.web.id/resume.pdf",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
       url: "https://portfolio.liand.web.id/llms.txt",
       lastModified: new Date(),
       changeFrequency: "monthly",

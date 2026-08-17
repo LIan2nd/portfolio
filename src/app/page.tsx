@@ -26,9 +26,14 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": "https://portfolio.liand.web.id/#website",
       url: "https://portfolio.liand.web.id",
-      name: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
+      name: "LIand",
+      alternateName: [
+        "Alfian Nur Usyaid",
+        "LIand Portfolio",
+        "Alfian"
+      ],
       description:
-        "Portfolio of Alfian Nur Usyaid — Fullstack Developer in Next.js, Laravel, and Blockchain. Cumlaude CS graduate (GPA 3.94) based in Bogor, Indonesia.",
+        "Portfolio of Alfian Nur Usyaid (LIand) — Fullstack Developer in Next.js, Laravel, and Blockchain. Cumlaude CS graduate (GPA 3.94) based in Bogor, Indonesia.",
       inLanguage: "en-US",
     },
     {

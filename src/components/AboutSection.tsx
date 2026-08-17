@@ -72,7 +72,7 @@ export function AboutSection({ skills, details, socials }: AboutSectionProps) {
             </div>
             <div className="flex flex-wrap items-center gap-2.5 mt-1">
               <a
-                href="/file/myResume.pdf"
+                href="/file/resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[var(--color-bg-secondary)] hover:bg-accent text-[var(--color-text-primary)] hover:text-white border border-[var(--color-bg-tertiary)]/70 hover:border-accent text-xs font-semibold tracking-wide transition-all duration-200 active:scale-95 cursor-pointer shadow-xs no-underline"

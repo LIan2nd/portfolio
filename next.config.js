@@ -12,6 +12,18 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/resume.pdf",
+        destination: "/file/resume.pdf",
+      },
+      {
+        source: "/resume",
+        destination: "/file/resume.pdf",
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
