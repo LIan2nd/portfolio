@@ -99,6 +99,13 @@ He holds a Bachelor's degree in Computer Science from STT Terpadu Nurul Fikri wi
 - **Key Responsibilities**:
   - Guided students in backend web development using PHP (Laravel), RESTful API design, database migrations, and authentication.
 
+### 6. Software Engineering Participant — MSIB Batch 7
+- **Organization**: Magang & Studi Independen Bersertifikat (MSIB) — PT Global Investment Institusi
+- **Period**: Sep 2024 – Dec 2024
+- **Key Responsibilities**:
+  - Participated in an intensive technical upskilling framework, culminating in the development of "Chicken Yasaka", a full-stack e-commerce platform utilizing Python (Flask), jQuery (AJAX), and MongoDB.
+  - Developed robust business logic including secure user authentication, dynamic cart management, and an admin dashboard, culminating in multiple position offers from technical partners.
+
 ---
 
 ## 5. Featured Projects
@@ -123,7 +130,12 @@ He holds a Bachelor's degree in Computer Science from STT Terpadu Nurul Fikri wi
 - **Repository**: https://github.com/LIan2nd/sistem-pendaftaran-event
 - **Description**: Multi-role event registration and participant ticketing platform with secure user authentication, CRUD operations, and event analytics.
 
-### 5. HRD RESTful API
+### 5. Chicken Yasaka (E-Commerce Web)
+- **Tech Stack**: Python (Flask), jQuery (AJAX), Bootstrap 5, Jinja2, MongoDB/MySQL
+- **Repository**: https://github.com/MuhamadMudrikaRidho/web_chicken_yaska
+- **Description**: Full-stack e-commerce web platform for poultry sales developed as the final project for MSIB Kampus Merdeka with LearningX. Features product catalogs, dynamic cart management, user authentication, and an admin dashboard.
+
+### 6. HRD RESTful API
 - **Tech Stack**: Express.js, Node.js, MySQL
 - **Repository**: https://github.com/LIan2nd/uas-pemrograman-backend
 - **Description**: Enterprise-grade human resources backend service utilizing clean MVC and OOP architectures, class-based controllers, DAO models, and parameterized SQL queries.
