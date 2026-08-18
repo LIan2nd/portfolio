@@ -47,6 +47,9 @@ function ProjectIcon({ icon }: { icon: string }) {
     case "clapperboard":
       return <Clapperboard {...iconProps} />;
     case "shop":
+    case "store":
+    case "shopping-cart":
+    case "ecommerce":
       return <Store {...iconProps} />;
     default:
       return <Settings {...iconProps} />;

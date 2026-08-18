@@ -192,6 +192,14 @@ export const PROJECTS: Project[] = [
     image: "/img/projects/sistem-pendaftaran-event.png",
   },
   {
+    icon: "shop",
+    title: "Chicken Yasaka (E-Commerce Web)",
+    description:
+      "Full-stack e-commerce web platform for poultry sales developed with Python (Flask), jQuery (AJAX), Bootstrap 5, and Jinja2. Features product catalogs, dynamic cart management, and an admin dashboard.",
+    url: "https://github.com/MuhamadMudrikaRidho/web_chicken_yaska",
+    image: "/img/projects/chicken-yasaka.png",
+  },
+  {
     icon: "film",
     title: "L-Movie (Movie Discovery)",
     description:
