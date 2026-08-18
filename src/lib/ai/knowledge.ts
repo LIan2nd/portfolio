@@ -17,14 +17,16 @@ export function buildPortfolioKnowledge(): string {
   
   const workHistory = WORK_ENTRIES.map((w) => {
     const desc = w.description ? `\n    - ${w.description.join("\n    - ")}` : "";
-    const link = w.link ? ` (Link: ${w.link.url})` : "";
-    return `• ${w.title} at ${w.subtitle} (${w.dateRange})${link}${desc}`;
+    const link = w.link ? ` (Project Link: ${w.link.url})` : "";
+    const cert = w.certificate ? ` (Certificate File: ${w.certificate.url})` : "";
+    return `• ${w.title} at ${w.subtitle} (${w.dateRange})${link}${cert}${desc}`;
   }).join("\n\n");
 
   const educationHistory = EDUCATION_ENTRIES.map((e) => {
     const desc = e.description ? `\n    - ${e.description.join("\n    - ")}` : "";
     const link = e.link ? ` (Paper/Link: ${e.link.url})` : "";
-    return `• ${e.title} - ${e.subtitle} (${e.dateRange})${link}${desc}`;
+    const cert = e.certificate ? ` (Certificate File: ${e.certificate.url})` : "";
+    return `• ${e.title} - ${e.subtitle} (${e.dateRange})${link}${cert}${desc}`;
   }).join("\n\n");
 
   const projectsList = PROJECTS.map((p) => {
@@ -33,7 +35,8 @@ export function buildPortfolioKnowledge(): string {
 
   const certsList = CERTIFICATIONS.map((c) => {
     const skills = c.skills ? ` [Skills: ${c.skills.join(", ")}]` : "";
-    return `• ${c.title} by ${c.issuer} (${c.date})${skills}`;
+    const certUrl = c.credentialUrl ? ` (Certificate File: ${c.credentialUrl})` : "";
+    return `• ${c.title} by ${c.issuer} (${c.date})${skills}${certUrl}`;
   }).join("\n");
 
   const socialsList = SOCIALS.map((s) => `• ${s.label}: ${s.url}`).join("\n");
@@ -166,10 +169,16 @@ Email: alfiannurusyaid19@gmail.com
      * User: "bawa aku ke projects" → Jawab singkat + \`[NAV:project:📍 Go to Projects]\`
      * User: "tell me about your skills" → Jawab skill singkat + \`[NAV:about:📍 View About & Skills]\`
      * User: "pengalaman kerjamu apa aja?" → Jawab pengalaman + \`[NAV:experience:📍 View Experience]\`
-   - **ATURAN KETAT:**
-     * HANYA sisipkan **1 marker per respon**, dan **SELALU di baris paling terakhir**.
-     * **JANGAN sisipkan marker** jika pertanyaan TIDAK berhubungan dengan section manapun (misal: tanya soal pacar/cewek, gaji, hal umum, atau pertanyaan di luar konteks).
-     * Marker harus berdiri sendiri di baris terakhir, TANPA teks lain di baris yang sama.
-     * Gunakan label berbahasa Inggris untuk konsistensi UI.
+    - **ATURAN KETAT:**
+      * HANYA sisipkan **1 marker per respon**, dan **SELALU di baris paling terakhir**.
+      * **JANGAN sisipkan marker** jika pertanyaan TIDAK berhubungan dengan section manapun (misal: tanya soal pacar/cewek, gaji, hal umum, atau pertanyaan di luar konteks).
+      * Marker harus berdiri sendiri di baris terakhir, TANPA teks lain di baris yang sama.
+      * Gunakan label berbahasa Inggris untuk konsistensi UI.
+
+10. **📎 LAMPIRAN BUKTI & SERTIFIKAT (CERTIFICATE & PROOF ATTACHMENTS)**:
+    - Jika user bertanya tentang bukti sertifikat, keikutsertaan program (misal: MSIB, asisten dosen, bootcamp, riset), atau meminta melihat sertifikat:
+    - Lampirkan tautan link sertifikat resminya dalam format Markdown link \`[Label Teks](/file/...)\`.
+    - Contoh jika ditanya soal MSIB: *"Pernah dong! Waktu Sep – Dec 2024 aku ikut MSIB Batch 7 di PT Global Investment Institusi (Learning X Academy) sebagai Software Engineering Participant dan ngebangun e-commerce 'Chicken Yasaka'. Ini bukti sertifikatnya kalau mau lihat: [Lihat Sertifikat MSIB](/file/work/msib.pdf) 📄"*
+    - Tetap jawab dengan ringkas, ramah, dan natural!
 `;
 }

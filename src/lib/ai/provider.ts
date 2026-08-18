@@ -448,6 +448,27 @@ export class MockFallbackProvider implements AiProvider {
     }
 
     if (
+      msg.includes("msib") ||
+      msg.includes("studi independen") ||
+      msg.includes("chicken yasaka") ||
+      msg.includes("yasaka") ||
+      msg.includes("learning x") ||
+      msg.includes("learningx")
+    ) {
+      return isEn
+        ? "🍗 **MSIB Batch 7 — Software Engineering Participant:**\n\n" +
+          "- **Role & Organization:** Software Engineering Participant at PT Global Investment Institusi (Learning X Academy), Sep – Dec 2024.\n" +
+          "- **Final Project:** Built **Chicken Yasaka**, a full-stack e-commerce platform using Python (Flask), jQuery (AJAX), and MongoDB.\n" +
+          "- **Official Certificate:** [View MSIB Certificate](/file/work/msib.pdf) 📄\n\n" +
+          "[NAV:experience:📍 View Experience]"
+        : "🍗 **MSIB Batch 7 — Software Engineering Participant:**\n\n" +
+          "- **Program & Mitra:** Magang & Studi Independen Bersertifikat (MSIB) di PT Global Investment Institusi (Learning X Academy), Sep – Des 2024.\n" +
+          "- **Final Project:** Mengembangkan **Chicken Yasaka**, web e-commerce ayam potong menggunakan Python (Flask), jQuery (AJAX), dan MongoDB.\n" +
+          "- **Bukti Sertifikat:** [Lihat Sertifikat MSIB](/file/work/msib.pdf) 📄\n\n" +
+          "[NAV:experience:📍 View Experience]";
+    }
+
+    if (
       msg.includes("sekarang") ||
       msg.includes("lagi apa") ||
       msg.includes("ngapain") ||
