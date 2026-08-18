@@ -113,6 +113,20 @@ export const WORK_ENTRIES: TimelineEntry[] = [
       label: "Certificate",
     },
   },
+  {
+    logo: "/img/learning-x-academy.png",
+    dateRange: "Sep 2024 - Dec 2024",
+    title: "Software Engineering Participant",
+    subtitle: "Magang & Studi Independen Bersertifikat (MSIB) - PT Global Investment Institusi (Learning X Academy)",
+    description: [
+      'Participated in an intensive technical upskilling framework, culminating in the development of "Chicken Yasaka", a full-stack e-commerce platform utilizing Python (Flask), jQuery (AJAX), and MongoDB.',
+      "Developed robust business logic including secure user authentication, dynamic cart management, and an admin dashboard, culminating in multiple position offers from technical partners.",
+    ],
+    certificate: {
+      url: "/file/work/msib.pdf",
+      label: "Certificate",
+    },
+  },
 ];
 
 export const EDUCATION_ENTRIES: TimelineEntry[] = [
