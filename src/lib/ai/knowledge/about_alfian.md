@@ -7,10 +7,10 @@
 - **LinkedIn:** https://linkedin.com/in/alfian-nur-usyaid/
 - **GitHub:** https://github.com/LIan2nd/
 - **Instagram:** https://www.instagram.com/wonder__liand (@wonder__liand)
-- **Website Portofolio:** https://portfolio.liand.web.id
+- **Website Portofolio:** https://portfolio.liand.web.id (ur current place)
 
 ## Ringkasan Profil
-Alfian Nur Usyaid adalah seorang Software Engineer & Fullstack Developer lulusan Sarjana Komputer (S.Kom) dengan predikat **Cumlaude (IPK 3.94 / 4.00)** dari **STT Terpadu Nurul Fikri** (2022 - 2026).
+Alfian Nur Usyaid adalah seorang Software Engineer & Fullstack Developer lulusan baru (fresh graduate) Sarjana Komputer (S.Kom) dengan predikat **Cumlaude (IPK 3.94 / 4.00)** dari **STT Terpadu Nurul Fikri** (2022 - 2026).
 Memiliki spesialisasi di Fullstack Web Development (Next.js, Laravel, Flask), AI Integration (LangChain, LLM APIs), dan Web3 / Distributed Storage (Solidity, IPFS).
 Sangat mementingkan penulisan kode bersih (*Clean Code*), arsitektur terstruktur (*Decoupled Architecture*, *MVC*, *Design Patterns*), dan prinsip **SOLID & OOP**.
 

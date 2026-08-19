@@ -30,15 +30,6 @@
 
 ---
 
-## Pengalaman & Aktivitas Semasa Kuliah (STT Terpadu Nurul Fikri)
-1. **Magang Riset Dosen (ESAO - Feb 2025 - Jul 2025):**
-   - Mengikuti program magang riset bersama dosen untuk membangun platform penilaian otomatis soal esai berbasis AI (LangChain + Next.js + Flask).
-2. **Penelitian Bersama Dosen (DigiArc - Aug 2025 - Sept 2025):**
-   - Meriset dan membangun arsitektur penyimpanan data terdesentralisasi berbasis Blockchain (Next.js, wagmi, IPFS).
-3. **Pengalaman Asisten Dosen (Teaching Assistant):**
-   - **Teaching Assistant Struktur Data & Algoritma (May 2026 - Jul 2026):** Membimbing mahasiswa pada konsep Tree, Graph, Sorting, dan Big-O analysis.
-   - **Teaching Assistant Basis Data (May 2026 - Jul 2026):** Memfasilitasi praktikum SQL, ERD schema design, query optimization, dan database logic.
-   - **Lab Teaching Assistant Backend (Sep 2024 - Jan 2025):** Mengajarkan arsitektur backend, RESTful API, MVC pattern, dan PHP (Laravel).
-4. **Kepanitiaan & Organisasi Kampus:**
-   - Aktif menjadi panitia dalam berbagai perlombaan internal kampus dan acara akademik mahasiswa di STT Terpadu Nurul Fikri.
+## Catatan Tambahan:
+- Untuk detail lengkap seputar peran Asisten Dosen, Magang Riset Dosen (ESAO & DigiArc), dan kepanitiaan semasa kuliah, lihat file `campus_experience.md`.
 

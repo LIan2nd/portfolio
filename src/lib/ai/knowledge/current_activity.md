@@ -7,21 +7,13 @@
 
 ---
 
-## 🚀 Status Proyek-Proyek Portofolio (Semua Sudah Selesai)
-1. **ESAO (Essay Analytic Online):**
-   - **Status:** **SUDAH SELESAI** (Periode Riset: Feb 2025 - Jul 2025).
-   - Platform penilaian esai otomatis berbasis AI (LangChain + Next.js + Flask) yang berhasil dideploy di `https://esao.nurulfikri.ac.id`.
-2. **DigiArc (Web3 Decentralized Storage):**
-   - **Status:** **SUDAH SELESAI** (Periode Riset: Aug 2025 - Sept 2025).
-   - Platform decentralized cloud storage dengan Next.js, Wagmi, dan Smart Contract Solidity yang berhasil dideploy di `https://digiarc.vercel.app`.
-3. **Paper MIND Journal:**
-   - **Status:** **SUDAH SELESAI & TERPUBLIKASI** (Vol. 11, No. 1, 2026).
-   - Penelitian Machine Learning prediksi retensi mahasiswa (Random Forest + Algoritma Genetika + SMOTE).
-4. **Teaching Assistant (Asisten Dosen):**
-   - **Status:** **SUDAH SELESAI** (Struktur Data & Algoritma, Basis Data, dan Backend Laravel).
-5. **RoadSense (Smart Road Safety GIS):**
-   - **Status:** **IN DEVELOPMENT (Sedang Aktif Dikembangkan)**.
-   - Platform GIS navigasi keselamatan jalan raya dengan crowdsourcing laporan kerusakan jalan dan analisis spasial rute aman (T3 Stack: Next.js 15, tRPC, Leaflet, Flask + Shapely, PostgreSQL, OSRM).
+## 🚀 Status Lifecycle Proyek & Riset
+- **ESAO (AI Essay Grading):** **SUDAH SELESAI** (Feb 2025 – Jul 2025) — *Lihat detail di `esao_research.md`*.
+- **DigiArc (Web3 Cloud Storage):** **SUDAH SELESAI** (Aug 2025 – Sep 2025) — *Lihat detail di `digiarc.md`*.
+- **Paper MIND Journal (ML Retention):** **SUDAH TERPUBLIKASI** (Vol. 11, No. 1, 2026) — *Lihat detail di `thesis_and_education.md`*.
+- **Asisten Dosen (Teaching Assistant):** **SUDAH SELESAI** (Struktur Data & Algoritma, Basis Data, Backend Laravel) — *Lihat detail di `campus_experience.md`*.
+- **MSIB Batch 7 & Chicken Yasaka:** **SUDAH SELESAI** (Sep 2024 – Des 2024) — *Lihat detail di `campus_experience.md` & `chicken_yasaka.md`*.
+- **RoadSense (GIS Navigation):** **IN DEVELOPMENT (Sedang Aktif Dikembangkan)** — *Lihat detail di `roadsense.md`*.
 
 ---
 
