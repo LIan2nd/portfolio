@@ -20,18 +20,53 @@ const INITIAL_SUGGESTIONS = [
   "How can I contact or hire you? 📫",
 ];
 
+// Helper to parse multiple markdown links and text within any chunk
+function parseLinksAndText(text: string, keyPrefix: string): React.ReactNode[] {
+  const result: React.ReactNode[] = [];
+  const linkRegex = /\[(.*?)\]\((.*?)\)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = linkRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      result.push(text.slice(lastIndex, match.index));
+    }
+    const label = match[1];
+    const url = match[2];
+    result.push(
+      <a
+        key={`${keyPrefix}-link-${match.index}`}
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-accent underline font-medium hover:opacity-80 transition-opacity inline-flex items-center gap-0.5"
+      >
+        {label} ↗
+      </a>
+    );
+    lastIndex = linkRegex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    result.push(text.slice(lastIndex));
+  }
+
+  return result;
+}
+
 // Helper to format basic Markdown (bold, inline code, lists, and links)
 function formatMarkdown(text: string) {
   const parts = text.split("\n");
   return parts.map((line, lineIndex) => {
     const isList = line.startsWith("• ") || line.startsWith("- ") || line.startsWith("* ");
     const cleanLine = isList ? line.slice(2).trimStart() : line;
+    const isNotice = cleanLine.startsWith("*(") && cleanLine.endsWith(")*");
 
     const formattedChunks = cleanLine.split(/(\*\*.*?\*\*|`.*?`)/g).map((chunk, i) => {
       if (chunk.startsWith("**") && chunk.endsWith("**") && chunk.length >= 4) {
         return (
           <strong key={i} className="font-semibold text-[var(--color-text-primary)]">
-            {chunk.slice(2, -2)}
+            {parseLinksAndText(chunk.slice(2, -2), `bold-${lineIndex}-${i}`)}
           </strong>
         );
       }
@@ -44,27 +79,11 @@ function formatMarkdown(text: string) {
         );
       }
 
-      const linkMatch = chunk.match(/\[(.*?)\]\((.*?)\)/);
-      if (linkMatch) {
-        const [full, label, url] = linkMatch;
-        const [before, after] = chunk.split(full);
-        return (
-          <span key={i}>
-            {before}
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent underline font-medium hover:opacity-80 transition-opacity inline-flex items-center gap-0.5"
-            >
-              {label} ↗
-            </a>
-            {after}
-          </span>
-        );
-      }
-
-      return chunk;
+      return (
+        <span key={i}>
+          {parseLinksAndText(chunk, `chunk-${lineIndex}-${i}`)}
+        </span>
+      );
     });
 
     if (isList) {
@@ -80,7 +99,14 @@ function formatMarkdown(text: string) {
     }
 
     return (
-      <p key={lineIndex} className="my-1 leading-relaxed">
+      <p
+        key={lineIndex}
+        className={`my-1 leading-relaxed ${
+          isNotice
+            ? "italic text-[var(--color-text-secondary)] text-[11px] sm:text-xs opacity-90"
+            : ""
+        }`}
+      >
         {formattedChunks}
       </p>
     );

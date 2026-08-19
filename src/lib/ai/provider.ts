@@ -31,6 +31,46 @@ function createTextStream(chunks: string[], delayMs = 25): ReadableStream<Uint8A
 }
 
 /**
+ * Helper to detect whether a message or context is primarily English
+ */
+export function isEnglishText(msg: string): boolean {
+  const englishKeywords = [
+    "tell me", "how can", "how to", "what is", "what are", "hire", "contact",
+    "skills", "publication", "paper", "about", "who are", "why", "where",
+    "can you", "project", "projects", "work", "experience", "resume", "cv",
+    "salary", "grading", "navigation", "storage", "hello", "hi", "hey",
+    "english", "indonesian", "answer in", "speak", "everything", "all about",
+    "full story", "details"
+  ];
+  const indonesianKeywords = [
+    "kamu", "aku", "proyek", "cewek", "pacar", "kontak", "kesibukan",
+    "ngapain", "kuliah", "jalan", "bahasa", "hubungi", "sarkas", "siapa",
+    "kenapa", "dimana", "bisa", "halo", "hai", "ngoding", "lagi apa", "sekarang", "udah",
+    "keseluruhan", "tentang kamu", "semua", "kelewat", "jelasin", "ceritain", "lengkap"
+  ];
+
+  const lower = msg.toLowerCase().trim();
+  const hasIndo = indonesianKeywords.some((w) => lower.includes(w));
+  const hasEng = englishKeywords.some((w) => lower.includes(w));
+
+  if (hasEng && !hasIndo) return true;
+  if (!hasIndo && /[a-z]/i.test(lower) && (lower.includes("how") || lower.includes("what") || lower.includes("why") || lower.includes("tell") || lower.includes("hire") || lower.includes("contact") || lower.includes("everything") || lower.includes("all"))) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Witty fallback / cutoff notice when token limit is hit
+ */
+export function getCutoffNotice(isEn: boolean): string {
+  if (isEn) {
+    return "\n\n*(...oops, got cut off! This digital clone runs on token-saver mode so server costs stay friendly 😆 Want to explore all the details? Feel free to scroll through this portfolio or check out my [Resume / CV here](/file/resume.pdf)!)*\n[NAV:about:📍 View About & Skills]";
+  }
+  return "\n\n*(...waduh, kepotong nih! Maklum kloningan versi hemat token biar kuota & server nggak boncos 😆 Mau kepoin lebih lengkap? Yuk langsung scroll ke bawah buat eksplor portofolio ini atau cek [Resume / CV-ku di sini](/file/resume.pdf) ya!)*\n[NAV:about:📍 View About & Skills]";
+}
+
+/**
  * Google Gemini Provider implementation
  */
 export class GeminiProvider implements AiProvider {
@@ -79,10 +119,16 @@ export class GeminiProvider implements AiProvider {
     }
 
     const data = await response.json();
-    return (
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "Maaf, saya tidak dapat menghasilkan jawaban saat ini."
-    );
+    const candidate = data.candidates?.[0];
+    let text =
+      candidate?.content?.parts?.[0]?.text ||
+      "Maaf, saya tidak dapat menghasilkan jawaban saat ini.";
+
+    if (candidate?.finishReason === "MAX_TOKENS") {
+      text += getCutoffNotice(isEnglishText(lastUserQuery));
+    }
+
+    return text;
   }
 
   generateStream(messages: ChatMessage[]): ReadableStream<Uint8Array> {
@@ -137,10 +183,16 @@ export class GeminiProvider implements AiProvider {
                 if (jsonStr) {
                   try {
                     const parsed = JSON.parse(jsonStr);
+                    const candidate = parsed.candidates?.[0];
                     const text =
-                      parsed.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                      candidate?.content?.parts?.[0]?.text || "";
                     if (text) {
                       controller.enqueue(encoder.encode(text));
+                    }
+                    if (candidate?.finishReason === "MAX_TOKENS") {
+                      controller.enqueue(
+                        encoder.encode(getCutoffNotice(isEnglishText(lastUserQuery)))
+                      );
                     }
                   } catch (e) {
                     // Ignore SSE json parse errors on partial chunks
@@ -211,10 +263,16 @@ export class OpenAiProvider implements AiProvider {
     }
 
     const data = await response.json();
-    return (
-      data.choices?.[0]?.message?.content ||
-      "Maaf, tidak ada respon yang diterima."
-    );
+    const choice = data.choices?.[0];
+    let text =
+      choice?.message?.content ||
+      "Maaf, tidak ada respon yang diterima.";
+
+    if (choice?.finish_reason === "length") {
+      text += getCutoffNotice(isEnglishText(lastUserQuery));
+    }
+
+    return text;
   }
 
   generateStream(messages: ChatMessage[]): ReadableStream<Uint8Array> {
@@ -281,9 +339,15 @@ export class OpenAiProvider implements AiProvider {
                 if (data === "[DONE]") break;
                 try {
                   const parsed = JSON.parse(data);
-                  const content = parsed.choices?.[0]?.delta?.content || "";
+                  const choice = parsed.choices?.[0];
+                  const content = choice?.delta?.content || "";
                   if (content) {
                     controller.enqueue(encoder.encode(content));
+                  }
+                  if (choice?.finish_reason === "length") {
+                    controller.enqueue(
+                      encoder.encode(getCutoffNotice(isEnglishText(lastUserQuery)))
+                    );
                   }
                 } catch (e) {
                   // Ignore partial SSE chunk errors
@@ -310,32 +374,34 @@ export class MockFallbackProvider implements AiProvider {
   name = "Simulated Portfolio AI";
 
   private isEnglish(msg: string): boolean {
-    const englishKeywords = [
-      "tell me", "how can", "how to", "what is", "what are", "hire", "contact",
-      "skills", "publication", "paper", "about", "who are", "why", "where",
-      "can you", "project", "projects", "work", "experience", "resume", "cv",
-      "salary", "grading", "navigation", "storage", "hello", "hi", "hey",
-      "english", "indonesian", "answer in", "speak"
-    ];
-    const indonesianKeywords = [
-      "kamu", "aku", "proyek", "cewek", "pacar", "kontak", "kesibukan",
-      "ngapain", "kuliah", "jalan", "bahasa", "hubungi", "sarkas", "siapa",
-      "kenapa", "dimana", "bisa", "halo", "hai", "ngoding", "lagi apa", "sekarang", "udah"
-    ];
-
-    const hasIndo = indonesianKeywords.some((w) => msg.includes(w));
-    const hasEng = englishKeywords.some((w) => msg.includes(w));
-
-    if (hasEng && !hasIndo) return true;
-    if (!hasIndo && /[a-z]/i.test(msg) && (msg.includes("how") || msg.includes("what") || msg.includes("why") || msg.includes("tell") || msg.includes("hire") || msg.includes("contact"))) {
-      return true;
-    }
-    return false;
+    return isEnglishText(msg);
   }
 
   private getFullResponse(lastUserMessage: string): string {
     const msg = lastUserMessage.toLowerCase().trim();
     const isEn = this.isEnglish(msg);
+
+    // Comprehensive "tell me everything" question handler
+    if (
+      msg.includes("keseluruhan") ||
+      (msg.includes("semua") && (msg.includes("kamu") || msg.includes("tentang") || msg.includes("cerita") || msg.includes("jelasin") || msg.includes("profil") || msg.includes("diri") || msg.includes("hidup"))) ||
+      msg.includes("kelewat") ||
+      msg.includes("everything") ||
+      msg.includes("all about you") ||
+      msg.includes("tell me all") ||
+      msg.includes("full detail")
+    ) {
+      return isEn
+        ? "👋 I am **Alfian Nur Usyaid (LIand)**, a Computer Science graduate (**Cumlaude, GPA 3.94**) from STT Terpadu Nurul Fikri, currently specializing in **Fullstack Web Development, AI Integration, and QA/QC** at Pantona Bootcamp!\n\n" +
+          "- **Flagship Research:** Built **ESAO** (AI automated essay grading) and **DigiArc** (Web3 decentralized storage).\n" +
+          "- **Publications:** Author of a student retention prediction paper in *MIND Journal*.\n\n" +
+          "*(...eitss, berhubung kloningan ini mode hemat token biar ramah kuota & server nggak boncos 🚀)*, info selengkapnya gak mungkin ku-spill semua di satu chat ini! Yuk langsung **scroll portofolio ini** buat kepoin karya-karyaku, atau intip [Resume / CV-ku di sini](/file/resume.pdf) ya! 😉\n\n" +
+          "[NAV:about:📍 View About & Skills]"
+        : "👋 Aku **Alfian Nur Usyaid (LIand)**, Sarjana Komputer (**Cumlaude, IPK 3.94**) dari STT Terpadu Nurul Fikri yang fokus di **Fullstack Web Development, Integrasi AI, dan QA/QC** di Bootcamp Pantona!\n\n" +
+          "- **Proyek Unggulan:** Pengembang **ESAO** (Platform AI koreksi esai) & **DigiArc** (Penyimpanan Web3 terdesentralisasi).\n" +
+          "*(...eitss, berhubung kloningan AI ini hemat token biar ramah kuota & server nggak boncos 🚀)*, info super detailnya gak mungkin ku-spill semua di satu chat ini! Yuk langsung **scroll portofolio ini** buat kepoin proyek & pengalamanku, atau intip [Resume / CV-ku di sini](/file/resume.pdf) ya! 😉\n\n" +
+          "[NAV:about:📍 View About & Skills]";
+    }
 
     // Language explanation / inquiry
     if (
@@ -458,12 +524,12 @@ export class MockFallbackProvider implements AiProvider {
       return isEn
         ? "🍗 **MSIB Batch 7 — Software Engineering Participant:**\n\n" +
           "- **Role & Organization:** Software Engineering Participant at PT Global Investment Institusi (Learning X Academy), Sep – Dec 2024.\n" +
-          "- **Final Project:** Built **Chicken Yasaka**, a full-stack e-commerce platform using Python (Flask), jQuery (AJAX), and MongoDB.\n" +
+          "- **Learnings & Project:** Mastered full-stack fundamentals (Flask, jQuery AJAX, MongoDB) and developed **Chicken Yasaka** (poultry e-commerce).\n" +
           "- **Official Certificate:** [View MSIB Certificate](/file/work/msib.pdf) 📄\n\n" +
           "[NAV:experience:📍 View Experience]"
         : "🍗 **MSIB Batch 7 — Software Engineering Participant:**\n\n" +
-          "- **Program & Mitra:** Magang & Studi Independen Bersertifikat (MSIB) di PT Global Investment Institusi (Learning X Academy), Sep – Des 2024.\n" +
-          "- **Final Project:** Mengembangkan **Chicken Yasaka**, web e-commerce ayam potong menggunakan Python (Flask), jQuery (AJAX), dan MongoDB.\n" +
+          "- **Program & Mitra:** Magang & Studi Independen Bersertifikat (MSIB) Batch 7 di PT Global Investment Institusi (Learning X Academy), Sep – Des 2024.\n" +
+          "- **Materi & Final Project:** Belajar full-stack web dev (Flask, jQuery AJAX, MongoDB) dan menyelesaikan proyek web e-commerce **Chicken Yasaka**.\n" +
           "- **Bukti Sertifikat:** [Lihat Sertifikat MSIB](/file/work/msib.pdf) 📄\n\n" +
           "[NAV:experience:📍 View Experience]";
     }
@@ -538,24 +604,31 @@ export class MockFallbackProvider implements AiProvider {
 
     if (
       msg.includes("kuliah") ||
+      msg.includes("kampus") ||
       msg.includes("pendidikan") ||
       msg.includes("education") ||
       msg.includes("gpa") ||
+      msg.includes("ipk") ||
+      msg.includes("asdos") ||
+      msg.includes("asisten dosen") ||
+      msg.includes("kepanitiaan") ||
       msg.includes("skripsi") ||
       msg.includes("jurnal") ||
       msg.includes("publication") ||
       msg.includes("paper")
     ) {
       return isEn
-        ? "📄 **Education & Scientific Publications:**\n\n" +
+        ? "🎓 **Campus Life, Education & Academic Research:**\n\n" +
           "- **STT Terpadu Nurul Fikri (2022 - 2026):** Bachelor of Computer Science (S.Kom) in Informatics — **Cumlaude (GPA 3.94 / 4.00)**.\n" +
-          "- **Scientific Journal Publication:** Published paper in *MIND Journal (Itenas Bandung)* on *Student Retention Prediction using Random Forest & Genetic Algorithm (SMOTE)*.\n" +
-          "- **Teaching Assistant:** Data Structures & Algorithms, Databases, and Laravel Backend.\n\n" +
+          "- **Teaching Assistant:** Data Structures & Algorithms (Tree, Graph, Sorting, Big-O), Databases (MySQL, ERD, Query Optimization), and Backend Laravel.\n" +
+          "- **Faculty Research & Publications:** Built ESAO (AI grading) & DigiArc (Web3 storage); published machine learning paper in *MIND Journal (Itenas Bandung)*.\n" +
+          "- **Campus Activities:** Active in internal student event committees and academic competitions.\n\n" +
           "[NAV:experience:📍 View Experience]"
-        : "🎓 **Pendidikan & Publikasi Ilmiahku:**\n\n" +
-          "- **STT Terpadu Nurul Fikri (2022 - 2026)**: Sarjana Komputer (S.Kom) Teknik Informatika — **Cumlaude (IPK 3.94 / 4.00)**.\n" +
-          "- **Publikasi Jurnal Ilmiah:** Paper di *MIND Journal (Itenas Bandung)* mengenai *Prediksi Retensi Mahasiswa Menggunakan Random Forest & Algoritma Genetika (SMOTE)*.\n" +
-          "- **Teaching Assistant:** Asisten Dosen untuk Struktur Data & Algoritma, Basis Data, dan Backend Laravel.\n\n" +
+        : "🎓 **Pengalaman Kuliah, Pendidikan & Riset Kampus:**\n\n" +
+          "- **STT Terpadu Nurul Fikri (2022 - 2026):** Sarjana Komputer (S.Kom) Teknik Informatika — **Cumlaude (IPK 3.94 / 4.00)**.\n" +
+          "- **Asisten Dosen (Teaching Assistant):** Mengajar Struktur Data & Algoritma, Basis Data (MySQL/ERD), dan Lab Backend (Laravel).\n" +
+          "- **Riset Dosen & Publikasi:** Mengembangkan riset AI ESAO & Web3 DigiArc; menerbitkan paper machine learning di *MIND Journal (Itenas Bandung)*.\n" +
+          "- **Kepanitiaan:** Aktif sebagai panitia berbagai event lomba teknologi dan kegiatan akademik mahasiswa di kampus.\n\n" +
           "[NAV:experience:📍 View Experience]";
     }
 
