@@ -100,11 +100,12 @@ He holds a Bachelor's degree in Computer Science from STT Terpadu Nurul Fikri wi
   - Guided students in backend web development using PHP (Laravel), RESTful API design, database migrations, and authentication.
 
 ### 6. Software Engineering Participant — MSIB Batch 7
-- **Organization**: Magang & Studi Independen Bersertifikat (MSIB) — PT Global Investment Institusi
+- **Organization**: Magang & Studi Independen Bersertifikat (MSIB) — PT Global Investment Institusi (Learning X Academy)
 - **Period**: Sep 2024 – Dec 2024
 - **Key Responsibilities**:
   - Participated in an intensive technical upskilling framework, culminating in the development of "Chicken Yasaka", a full-stack e-commerce platform utilizing Python (Flask), jQuery (AJAX), and MongoDB.
-  - Developed robust business logic including secure user authentication, dynamic cart management, and an admin dashboard, culminating in multiple position offers from technical partners.
+  - Developed full-stack web features including product catalog browsing, dynamic cart management with jQuery AJAX, order data persistence in MongoDB, and an administrative order management dashboard.
+  - Completed program and earned verified MSIB certificate (PDF: /file/work/msib.pdf).
 
 ---
 
