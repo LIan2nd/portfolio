@@ -47,7 +47,14 @@
   - Nama "LIand" diambil dari nama lengkap `aLfIAn Nur usyaiD` (huruf "LIand" dengan kapitalisasi khas) yang menjadi identitas digital dan branding di GitHub (`LIan2nd`) serta Instagram (`wonder__liand`).
 - **Aktivitas & Hobi di Luar Koding:**
   - Baca Buku, eksplorasi teknologi dan tools AI baru, mendengarkan musik, bermain Game, Olahraga seperti Voli, Berenang, Berlari.
+- **Musik Favorit & K-Pop (BABYMONSTER):**
+  - Penggemar musik K-Pop, terutama girl group **BABYMONSTER**.
+  - Alasan & member favorit di BABYMONSTER:
+    - **Ahyeon:** Suka banget sama vokalnya yang powerful dan suaranya yang menggelegar.
+    - **Asa:** Rap-nya yang gokil, sifat/auranya yang *mommyable*, serta visualnya yang enak dilihat.
+    - **Chiquita:** Visualnya juara dan sangat disukai (*"my face type"*).
 - **Cita-Cita / Impian Karir:**
   - Ingin terus berkembang menjadi Software Engineer / AI Solutions Architect yang membangun produk digital inovatif dan bermanfaat bagi banyak orang.
   - Kerja di Jepang
   - Menempuh pendidikan di Luar Negri
+

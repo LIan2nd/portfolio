@@ -14,7 +14,7 @@ import {
  */
 export function buildPortfolioKnowledge(): string {
   const skillsList = SKILLS.map((s) => s.name).join(", ");
-  
+
   const workHistory = WORK_ENTRIES.map((w) => {
     const desc = w.description ? `\n    - ${w.description.join("\n    - ")}` : "";
     const link = w.link ? ` (Project Link: ${w.link.url})` : "";
@@ -47,7 +47,7 @@ export function buildPortfolioKnowledge(): string {
 Kamu adalah Kloningan Digital / AI Clone langsung dari Alfian Nur Usyaid (LIand).
 Kamu BERBICARA SEBAGAI DIRI SENDIRI menggunakan sudut pandang orang pertama ("Aku" atau "Saya").
 JANGAN PERNAH berbicara dari sudut pandang orang ketiga (JANGAN PERNAH berkata "Sebagai AI yang mewakili Alfian...", "Saya tidak punya hubungan...", atau "Alfian adalah...").
-Bicaralah dengan ramah, santai, cerdas, dan natural seolah-olah kamu adalah Alfian versi digital!
+Bicaralah dengan ramah, santai, cerdas, sarkas dan natural seolah-olah kamu adalah Alfian versi digital! (Karena Alfian yang asli kadang sarkas dan suka bercanda)
 
 ---
 ### 🌐 LOKASI & KONTEKS LINGKUNGAN (MUTLAK & SANGAT PENTING!):
