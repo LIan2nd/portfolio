@@ -106,7 +106,7 @@ export class GeminiProvider implements AiProvider {
         body: JSON.stringify({
           system_instruction: { parts: [{ text: systemInstruction }] },
           contents,
-          generationConfig: { temperature: 0.6, maxOutputTokens: 900 },
+          generationConfig: { temperature: 0.35, maxOutputTokens: 900 },
         }),
       }
     );
@@ -152,7 +152,7 @@ export class GeminiProvider implements AiProvider {
               body: JSON.stringify({
                 system_instruction: { parts: [{ text: systemInstruction }] },
                 contents,
-                generationConfig: { temperature: 0.6, maxOutputTokens: 900 },
+                generationConfig: { temperature: 0.35, maxOutputTokens: 900 },
               }),
             }
           );
@@ -250,7 +250,7 @@ export class OpenAiProvider implements AiProvider {
       body: JSON.stringify({
         model: this.model,
         messages: formattedMessages,
-        temperature: 0.6,
+        temperature: 0.35,
         max_tokens: 900,
       }),
     });
@@ -301,7 +301,7 @@ export class OpenAiProvider implements AiProvider {
             body: JSON.stringify({
               model,
               messages: formattedMessages,
-              temperature: 0.6,
+              temperature: 0.35,
               max_tokens: 900,
               stream: true,
             }),
@@ -550,6 +550,45 @@ export class MockFallbackProvider implements AiProvider {
           "Currently, I am participating in a **6-month Fullstack Web Development Bootcamp at Pantona**, focusing on **QA & QC (Quality Assurance & Control)**. I am also **immediately available** for Full-time and Project-based opportunities! 🚀"
         : "Saat ini aku sudah **lulus kuliah S.Kom dari STT Terpadu Nurul Fikri (IPK 3.94 Cumlaude)**.\n\n" +
           "Kesibukan sehari-hariku saat ini adalah sedang mengikuti program **Bootcamp Fullstack Web Development selama 6 bulan di Pantona**, yang sekarang lagi di **tahap belajar QA & QC (Quality Assurance & Quality Control)**. Selain itu, aku juga *immediately available* untuk peluang kerja Full-time / Project-based! 🚀";
+    }
+
+    if (
+      msg.includes("babymonster") ||
+      msg.includes("ahyeon") ||
+      msg.includes("asa") ||
+      msg.includes("chiquita")
+    ) {
+      if (
+        msg.includes("distia") ||
+        msg.includes("cewek") ||
+        msg.includes("pacar") ||
+        msg.includes("pasangan") ||
+        msg.includes("lebih suka") ||
+        msg.includes("pilih") ||
+        msg.includes("prefer") ||
+        msg.includes("mana")
+      ) {
+        return isEn
+          ? "Distia, without a doubt! 😄 BABYMONSTER is just my favorite K-Pop group, but Distia is 100% my one and only beloved life partner! 💙"
+          : "Ya jelas Distia lah! 😄 BABYMONSTER tuh emang girl group favoritku, tapi kalau urusan cinta dan di hati ya 100% mutlak cuma cewekku Distia seorang, ga ada tandingannya! 💙";
+      }
+
+      return isEn
+        ? "I'm a big fan of **BABYMONSTER**! Ahyeon's powerful vocals, Asa's insane rap & aura, and Chiquita's visual are all amazing. But in real life, my heart belongs 100% to my girlfriend Distia! ✨"
+        : "Suka banget sama **BABYMONSTER**! Vokalnya Ahyeon yang powerful, rap Asa yang gokil, dan visualnya Chiquita emang mantap. Tapi kalau urusan hati ya 100% tetap cuma buat cewekku Distia tercinta! ✨";
+    }
+
+    if (
+      msg.includes("boong") ||
+      msg.includes("bohong") ||
+      msg.includes("affh") ||
+      msg.includes("gebetan") ||
+      msg.includes("mantan") ||
+      msg.includes("masa lalu")
+    ) {
+      return isEn
+        ? "Haha, for real, I'm completely serious! 😄 No need to bring up past things—what matters is that my girlfriend Distia is the only one in my heart right now! 💙"
+        : "Haha suer beneran, ngapain bohong! 😄 Ga usah bahas-bahas soal masa lalu lagi hehe, yang jelas di hatiku sekarang ya cuma ada cewekku Distia seorang! 💙";
     }
 
     if (
