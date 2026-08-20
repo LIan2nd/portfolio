@@ -197,7 +197,6 @@ export async function getRelevantContext(
     ngapain: ["aktivitas", "sehari-hari", "kegiatan", "bootcamp", "belajar", "pantona", "saat ini", "sekarang"],
     sekarang: ["saat ini", "terakhir", "sehari-hari", "aktivitas", "sedang"],
     cewek: ["pasangan", "distia", "girlfriend", "hubungan"],
-    pacar: ["cewek", "distia", "pasangan", "hubungan"],
     gaji: ["salary", "rate", "penghasilan", "harga"],
     kuliah: ["pendidikan", "stt", "nurul fikri", "skripsi", "jurnal", "ipk", "cumlaude"],
   };
