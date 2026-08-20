@@ -5,8 +5,6 @@ import * as fc from "fast-check";
 import { ContactSection } from "@/components/ContactSection";
 
 describe("ContactSection", () => {
-  const dummyScriptUrl = "https://script.google.com/macros/s/test/exec";
-
   beforeEach(() => {
     cleanup();
     vi.restoreAllMocks();
@@ -19,7 +17,7 @@ describe("ContactSection", () => {
       json: async () => ({ status: "success" }),
     });
 
-    render(<ContactSection scriptUrl={dummyScriptUrl} />);
+    render(<ContactSection />);
 
     const nameInput = screen.getByPlaceholderText("Name");
     const emailInput = screen.getByPlaceholderText("Email address");
@@ -39,13 +37,31 @@ describe("ContactSection", () => {
     expect(nameInput).toHaveValue("");
     expect(emailInput).toHaveValue("");
     expect(msgInput).toHaveValue("");
+
+    // Verify it submitted to /api/contact with JSON body
+    expect(global.fetch).toHaveBeenCalledWith(
+      "/api/contact",
+      expect.objectContaining({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    // Verify the body contains required fields and anti-spam fields
+    const fetchCall = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+    const body = JSON.parse(fetchCall[1].body);
+    expect(body.name).toBe("John Doe");
+    expect(body.email).toBe("john@example.com");
+    expect(body.message).toBe("Hello there!");
+    expect(body._honeypot).toBe("");
+    expect(typeof body._timing).toBe("number");
   });
 
   it("shows error alert and preserves inputs on fetch failure", async () => {
     const user = userEvent.setup();
     global.fetch = vi.fn().mockRejectedValue(new Error("Network failure"));
 
-    render(<ContactSection scriptUrl={dummyScriptUrl} />);
+    render(<ContactSection />);
 
     const nameInput = screen.getByPlaceholderText("Name");
     const emailInput = screen.getByPlaceholderText("Email address");
@@ -67,6 +83,39 @@ describe("ContactSection", () => {
     expect(msgInput).toHaveValue("Preserved message!");
   });
 
+  it("shows server error message on non-ok response", async () => {
+    const user = userEvent.setup();
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({ status: "error", error: "Too many messages. Please try again later." }),
+    });
+
+    render(<ContactSection />);
+
+    await user.type(screen.getByPlaceholderText("Name"), "Test");
+    await user.type(screen.getByPlaceholderText("Email address"), "test@test.com");
+    await user.type(screen.getByPlaceholderText("Leave a message here"), "Hi");
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Too many messages/i)).toBeInTheDocument();
+    });
+  });
+
+  it("includes honeypot field that is visually hidden", () => {
+    render(<ContactSection />);
+
+    // The honeypot input should exist in the DOM but be hidden
+    const honeypotInput = document.getElementById("contact-website") as HTMLInputElement;
+    expect(honeypotInput).toBeTruthy();
+    expect(honeypotInput.value).toBe("");
+
+    // Its parent container should have accessibility hidden attributes
+    const container = honeypotInput.closest("[aria-hidden]");
+    expect(container).toBeTruthy();
+    expect(container?.getAttribute("aria-hidden")).toBe("true");
+  });
+
   // Feature: portfolio-nextjs-migration, Property 8: Form validation rejection
   it("Property 8: rejects submission and prevents fetch for invalid fields", () => {
     const fetchSpy = vi.fn();
@@ -82,7 +131,7 @@ describe("ContactSection", () => {
         (invalidInputs) => {
           cleanup();
           fetchSpy.mockClear();
-          render(<ContactSection scriptUrl={dummyScriptUrl} />);
+          render(<ContactSection />);
 
           const nameInput = screen.getByPlaceholderText("Name");
           const emailInput = screen.getByPlaceholderText("Email address");

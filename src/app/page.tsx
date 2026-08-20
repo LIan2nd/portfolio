@@ -16,7 +16,6 @@ import {
   EDUCATION_ENTRIES,
   PROJECTS,
   CERTIFICATIONS,
-  CONTACT_SCRIPT_URL,
 } from "@/lib/data";
 
 const jsonLd = {
@@ -224,7 +223,7 @@ export default function Home() {
         />
         <ProjectsSection projects={PROJECTS} />
         <CertificationsSection certifications={CERTIFICATIONS} />
-        <ContactSection scriptUrl={CONTACT_SCRIPT_URL} />
+        <ContactSection />
       </main>
       <Footer socials={SOCIALS} />
       <LazyAiAssistant />

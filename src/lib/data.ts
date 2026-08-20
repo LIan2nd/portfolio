@@ -295,6 +295,3 @@ export const CERTIFICATIONS: Certification[] = [
     skills: ["React", "JavaScript", "Deployment"],
   },
 ];
-
-export const CONTACT_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbzWscwvmfPHsrD0PFYmytr3Hr3UHTo46rhpMQ6vB_-aPoSeKnm37EYNEP2OAshRNfM-Dw/exec";

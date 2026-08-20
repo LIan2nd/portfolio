@@ -1,13 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { CheckCircle2, AlertCircle, X } from "lucide-react";
 
-interface ContactSectionProps {
-  scriptUrl: string;
-}
-
-export function ContactSection({ scriptUrl }: ContactSectionProps) {
+export function ContactSection() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -15,6 +11,15 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
+
+  // Anti-spam: honeypot field
+  const [honeypot, setHoneypot] = useState("");
+
+  // Anti-spam: timestamp when form was rendered
+  const renderTimeRef = useRef<number>(0);
+  useEffect(() => {
+    renderTimeRef.current = Date.now();
+  }, []);
 
   const validate = (): boolean => {
     const newErrors: { name?: string; email?: string; message?: string } = {};
@@ -34,20 +39,35 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
     if (!validate()) return;
     setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("email", email);
-      formData.append("message", message);
-      await fetch(scriptUrl, {
+      const timingMs = Date.now() - renderTimeRef.current;
+
+      const res = await fetch("/api/contact", {
         method: "POST",
-        mode: "no-cors",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          _honeypot: honeypot,
+          _timing: timingMs,
+        }),
       });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Failed to send message. Please try again.");
+        return;
+      }
+
       setSuccess(true);
       setName("");
       setEmail("");
       setMessage("");
+      setHoneypot("");
       setErrors({});
+      // Reset render timestamp for next submission
+      renderTimeRef.current = Date.now();
     } catch {
       setError("Failed to send message. Please try again.");
     } finally {
@@ -136,6 +156,19 @@ export function ContactSection({ scriptUrl }: ContactSectionProps) {
               </div>
             )}
             <form onSubmit={handleSubmit} noValidate className="space-y-3">
+              {/* Honeypot field — invisible to users, catches bots that auto-fill all fields */}
+              <div aria-hidden="true" className="absolute opacity-0 h-0 w-0 overflow-hidden -z-10 pointer-events-none" tabIndex={-1}>
+                <label htmlFor="contact-website">Website</label>
+                <input
+                  id="contact-website"
+                  name="website"
+                  type="text"
+                  autoComplete="off"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                />
+              </div>
               <div>
                 <label htmlFor="contact-name" className="sr-only">Name</label>
                 <input
