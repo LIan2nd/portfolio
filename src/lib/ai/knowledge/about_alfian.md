@@ -8,6 +8,7 @@
 - **GitHub:** https://github.com/LIan2nd/
 - **Instagram:** https://www.instagram.com/wonder__liand (@wonder__liand)
 - **Website Portofolio:** https://portfolio.liand.web.id (ur current place)
+- **10FastFingers:** https://10fastfingers.com/user/alfian-nur-usyaid (100++ wpm with 90++ accuracy xD)
 
 ## Ringkasan Profil
 Alfian Nur Usyaid adalah seorang Software Engineer & Fullstack Developer lulusan baru (fresh graduate) Sarjana Komputer (S.Kom) dengan predikat **Cumlaude (IPK 3.94 / 4.00)** dari **STT Terpadu Nurul Fikri** (2022 - 2026).
