@@ -111,12 +111,12 @@ export function Navbar({ links }: NavbarProps) {
       <div className="max-w-[800px] mx-auto relative z-10">
         <nav
           aria-label="Main navigation"
-          className={`flex items-center justify-between transition-all duration-500 ease-in-out ${
+          className={`grid grid-cols-[1fr_auto_1fr] items-center transition-all duration-500 ease-in-out ${
             isScrolled ? "py-2.5" : "py-5 max-md:py-3.5"
           }`}
         >
-          {/* Left Side: Desktop Nav Links (Desktop) / Mobile Hamburger Button (Mobile) */}
-          <div className="flex items-center">
+          {/* Left side: brand and mobile menu trigger */}
+          <div className="flex items-center gap-5">
             {/* Mobile Animated Hamburger to X (On Left for Mobile) */}
             <button
               className="md:hidden relative bg-transparent border-none cursor-pointer p-1.5 -ml-1 focus:outline-none flex items-center justify-center z-50"
@@ -143,31 +143,43 @@ export function Navbar({ links }: NavbarProps) {
               </div>
             </button>
 
-            {/* Desktop Navigation Links (Left aligned like Ted's) */}
-            <ul className="hidden md:flex items-center gap-6 list-none m-0 p-0">
-              {links.map((link) => {
-                const isActive = activeSection === link.href.replace("#", "");
-                return (
-                  <li key={link.href}>
-                    <a
-                      href={link.href}
-                      onClick={(e) => handleLinkClick(e, link.href)}
-                      className={`text-sm font-medium tracking-wide transition-colors duration-200 no-underline py-1 relative ${
-                        isActive
-                          ? "text-accent font-semibold after:w-full"
-                          : "text-[var(--color-text-primary)]/80 hover:text-accent after:w-0 hover:after:w-full"
-                      } after:content-[''] after:absolute after:bg-accent after:h-[2px] after:left-0 after:bottom-[-4px] after:rounded-full after:transition-all after:duration-200`}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
+            <a
+              href="#home"
+              onClick={(e) => handleLinkClick(e, "#home")}
+              className="text-lg font-bold tracking-tight text-accent no-underline transition-opacity duration-200 hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              aria-label="LIand home"
+            >
+              LIand
+            </a>
           </div>
 
+          {/* Center: desktop section navigation */}
+          <ul
+            aria-label="Portfolio sections"
+            className="hidden md:flex items-center justify-center gap-6 list-none m-0 p-0"
+          >
+            {links.map((link) => {
+              const isActive = activeSection === link.href.replace("#", "");
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => handleLinkClick(e, link.href)}
+                    className={`text-sm font-medium tracking-wide transition-colors duration-200 no-underline py-1 relative ${
+                      isActive
+                        ? "text-accent font-semibold after:w-full"
+                        : "text-[var(--color-text-primary)]/80 hover:text-accent after:w-0 hover:after:w-full"
+                    } after:content-[''] after:absolute after:bg-accent after:h-[2px] after:left-0 after:bottom-[-4px] after:rounded-full after:transition-all after:duration-200`}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+
           {/* Right side: AI Chat Toggle & Theme Toggle (Clean & Borderless) */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-self-end gap-2.5">
             {/* AI Assistant Visibility Toggle */}
             <button
               onClick={toggleAiVisibility}

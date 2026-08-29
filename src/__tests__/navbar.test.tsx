@@ -28,6 +28,18 @@ describe("Navbar & useActiveSection", () => {
       const links = screen.getAllByRole("link", { name: link.label });
       expect(links.length).toBeGreaterThanOrEqual(1);
     });
+
+    expect(screen.getByRole("link", { name: "LIand home" })).toHaveAttribute(
+      "href",
+      "#home"
+    );
+    expect(screen.getByRole("navigation", { name: "Main navigation" })).toHaveClass(
+      "grid",
+      "grid-cols-[1fr_auto_1fr]"
+    );
+    expect(screen.getByRole("list", { name: "Portfolio sections" })).toHaveClass(
+      "justify-center"
+    );
   });
 
   it("toggles mobile menu when hamburger button is clicked", async () => {
