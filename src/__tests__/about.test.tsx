@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import * as fc from "fast-check";
 import { AboutSection } from "@/components/AboutSection";
 import { SKILLS, PERSONAL_DETAILS, SOCIALS } from "@/lib/data";
+import { PROFILE_PHOTOS } from "@/lib/profilePhotos";
 import type { Skill } from "@/lib/types";
 
 describe("AboutSection & SkillBadge", () => {
@@ -10,7 +11,7 @@ describe("AboutSection & SkillBadge", () => {
     cleanup();
   });
 
-  it("renders profile image with proper alt text", () => {
+  it("renders every profile image with factual alt text and intrinsic dimensions", () => {
     render(
       <AboutSection
         skills={SKILLS}
@@ -19,8 +20,40 @@ describe("AboutSection & SkillBadge", () => {
       />
     );
 
-    const img = screen.getByAltText("Alfian Nur Usyaid - Fullstack Developer");
-    expect(img).toBeInTheDocument();
+    PROFILE_PHOTOS.forEach((photo) => {
+      const img = screen.getByAltText(photo.alt);
+
+      expect(img).toHaveAttribute("src", photo.src);
+      expect(img).toHaveAttribute("width", photo.width.toString());
+      expect(img).toHaveAttribute("height", photo.height.toString());
+      expect(img).toHaveAttribute("loading", "lazy");
+    });
+
+    expect(new Set(PROFILE_PHOTOS.map((photo) => photo.alt)).size).toBe(
+      PROFILE_PHOTOS.length,
+    );
+  });
+
+  it("uses a semantic section label and a real email link", () => {
+    const { container } = render(
+      <AboutSection
+        skills={SKILLS}
+        details={PERSONAL_DETAILS}
+        socials={SOCIALS}
+      />,
+    );
+
+    expect(container.querySelector("#about")).toHaveAttribute(
+      "aria-labelledby",
+      "about-alfian",
+    );
+
+    const email = PERSONAL_DETAILS.find((detail) => detail.isEmail);
+    expect(email).toBeDefined();
+    expect(screen.getByRole("link", { name: email!.value })).toHaveAttribute(
+      "href",
+      `mailto:${email!.value.replace("[at]", "@")}`,
+    );
   });
 
   it("renders all personal details accurately", () => {
