@@ -1,4 +1,13 @@
-import type { Skill, PersonalDetail, SocialLink, TimelineEntry, Project, Certification, NavLink } from "./types";
+import type {
+  Skill,
+  PersonalDetail,
+  SocialLink,
+  TimelineEntry,
+  Project,
+  Certification,
+  Publication,
+  NavLink,
+} from "./types";
 
 export const NAV_LINKS: NavLink[] = [
   { label: "About", href: "#about" },
@@ -157,6 +166,25 @@ export const EDUCATION_ENTRIES: TimelineEntry[] = [
     ],
   },
 ];
+
+export const PUBLICATION: Publication = {
+  title:
+    "Prediksi Retensi Mahasiswa Menggunakan Algoritma Random Forest dengan Optimasi Algoritma Genetika",
+  alternativeTitle:
+    "Student Retention Prediction with Genetic Algorithm-Optimized Random Forest and SMOTE",
+  authors: ["Pudy Prima", "Ahmad Rio Adriansyah", "Alfian Nur Usyaid"],
+  journal: "MIND (Multimedia Artificial Intelligent Networking Database) Journal",
+  year: "2026",
+  url: "https://ejurnal.itenas.ac.id/index.php/mindjournal/article/view/15673",
+  doi: "https://doi.org/10.26760/mindjournal.v11i1.115-126",
+  topics: [
+    "Random Forest",
+    "Genetic Algorithm",
+    "SMOTE",
+    "Student Retention",
+    "Machine Learning",
+  ],
+};
 
 export const PROJECTS: Project[] = [
   {

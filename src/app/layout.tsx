@@ -3,6 +3,8 @@ import { Inter, Gowun_Batang } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AiVisibilityProvider } from "@/components/AiVisibilityContext";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { HOME_DESCRIPTION, SITE_URL } from "@/lib/seo";
+import { PRIMARY_PROFILE_PHOTO } from "@/lib/profilePhotos";
 import "./globals.css";
 
 const inter = Inter({
@@ -20,13 +22,12 @@ const gowunBatang = Gowun_Batang({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://portfolio.liand.web.id"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
     template: "%s | Alfian Nur Usyaid",
   },
-  description:
-    "Portfolio of Alfian Nur Usyaid — Fullstack Web Developer & Software Engineer specializing in Next.js, React, Laravel, and Blockchain development. Cumlaude CS graduate (GPA 3.94).",
+  description: HOME_DESCRIPTION,
   keywords: [
     "Alfian Nur Usyaid",
     "Fullstack Developer",
@@ -57,27 +58,25 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
-    description:
-      "Portfolio of Alfian Nur Usyaid — Fullstack Web Developer & Software Engineer specializing in Next.js, React, Laravel, and Blockchain development. Cumlaude CS graduate (GPA 3.94).",
+    description: HOME_DESCRIPTION,
     url: "https://portfolio.liand.web.id",
     siteName: "LIand",
     type: "website",
     locale: "en_US",
     images: [
       {
-        url: "/img/profile/profile-1.png",
-        width: 800,
-        height: 800,
-        alt: "Alfian Nur Usyaid — Fullstack Web Developer",
+        url: PRIMARY_PROFILE_PHOTO.src,
+        width: PRIMARY_PROFILE_PHOTO.width,
+        height: PRIMARY_PROFILE_PHOTO.height,
+        alt: PRIMARY_PROFILE_PHOTO.alt,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
-    description:
-      "Portfolio of Alfian Nur Usyaid — Fullstack Web Developer & Software Engineer specializing in Next.js, React, Laravel, and Blockchain development. Cumlaude CS graduate (GPA 3.94).",
-    images: ["/img/profile/profile-1.png"],
+    description: HOME_DESCRIPTION,
+    images: [PRIMARY_PROFILE_PHOTO.src],
   },
   verification: {
     google: "5K0Z9r269vfnAcps_OeSx6pAZMDRD4D5iWAWTXV64HU",

@@ -43,6 +43,17 @@ export interface Certification {
   skills?: string[];
 }
 
+export interface Publication {
+  title: string;
+  alternativeTitle: string;
+  authors: string[];
+  journal: string;
+  year: string;
+  url: string;
+  doi: string;
+  topics: string[];
+}
+
 export interface NavLink {
   label: string;
   href: string;

@@ -65,9 +65,9 @@ export function isEnglishText(msg: string): boolean {
  */
 export function getCutoffNotice(isEn: boolean): string {
   if (isEn) {
-    return "\n\n*(...oops, got cut off! This digital clone runs on token-saver mode so server costs stay friendly 😆 Want to explore all the details? Feel free to scroll through this portfolio or check out my [Resume / CV here](/file/resume.pdf)!)*\n[NAV:about:📍 View About & Skills]";
+    return "\n\n*(...oops, got cut off! This digital clone runs on token-saver mode so server costs stay friendly 😆 Want to explore all the details? Feel free to scroll through this portfolio or check out my [Resume / CV here](/resume)!)*\n[NAV:about:📍 View About & Skills]";
   }
-  return "\n\n*(...waduh, kepotong nih! Maklum kloningan versi hemat token biar kuota & server nggak boncos 😆 Mau kepoin lebih lengkap? Yuk langsung scroll ke bawah buat eksplor portofolio ini atau cek [Resume / CV-ku di sini](/file/resume.pdf) ya!)*\n[NAV:about:📍 View About & Skills]";
+  return "\n\n*(...waduh, kepotong nih! Maklum kloningan versi hemat token biar kuota & server nggak boncos 😆 Mau kepoin lebih lengkap? Yuk langsung scroll ke bawah buat eksplor portofolio ini atau cek [Resume / CV-ku di sini](/resume) ya!)*\n[NAV:about:📍 View About & Skills]";
 }
 
 /**
@@ -395,11 +395,11 @@ export class MockFallbackProvider implements AiProvider {
         ? "👋 I am **Alfian Nur Usyaid (LIand)**, a Computer Science graduate (**Cumlaude, GPA 3.94**) from STT Terpadu Nurul Fikri, currently specializing in **Fullstack Web Development, AI Integration, and QA/QC** at Pantona Bootcamp!\n\n" +
           "- **Flagship Research:** Built **ESAO** (AI automated essay grading) and **DigiArc** (Web3 decentralized storage).\n" +
           "- **Publications:** Author of a student retention prediction paper in *MIND Journal*.\n\n" +
-          "*(...eitss, berhubung kloningan ini mode hemat token biar ramah kuota & server nggak boncos 🚀)*, info selengkapnya gak mungkin ku-spill semua di satu chat ini! Yuk langsung **scroll portofolio ini** buat kepoin karya-karyaku, atau intip [Resume / CV-ku di sini](/file/resume.pdf) ya! 😉\n\n" +
+          "*(...eitss, berhubung kloningan ini mode hemat token biar ramah kuota & server nggak boncos 🚀)*, info selengkapnya gak mungkin ku-spill semua di satu chat ini! Yuk langsung **scroll portofolio ini** buat kepoin karya-karyaku, atau intip [Resume / CV-ku di sini](/resume) ya! 😉\n\n" +
           "[NAV:about:📍 View About & Skills]"
         : "👋 Aku **Alfian Nur Usyaid (LIand)**, Sarjana Komputer (**Cumlaude, IPK 3.94**) dari STT Terpadu Nurul Fikri yang fokus di **Fullstack Web Development, Integrasi AI, dan QA/QC** di Bootcamp Pantona!\n\n" +
           "- **Proyek Unggulan:** Pengembang **ESAO** (Platform AI koreksi esai) & **DigiArc** (Penyimpanan Web3 terdesentralisasi).\n" +
-          "*(...eitss, berhubung kloningan AI ini hemat token biar ramah kuota & server nggak boncos 🚀)*, info super detailnya gak mungkin ku-spill semua di satu chat ini! Yuk langsung **scroll portofolio ini** buat kepoin proyek & pengalamanku, atau intip [Resume / CV-ku di sini](/file/resume.pdf) ya! 😉\n\n" +
+          "*(...eitss, berhubung kloningan AI ini hemat token biar ramah kuota & server nggak boncos 🚀)*, info super detailnya gak mungkin ku-spill semua di satu chat ini! Yuk langsung **scroll portofolio ini** buat kepoin proyek & pengalamanku, atau intip [Resume / CV-ku di sini](/resume) ya! 😉\n\n" +
           "[NAV:about:📍 View About & Skills]";
     }
 

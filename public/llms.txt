@@ -46,5 +46,5 @@
 - [Instagram](https://www.instagram.com/wonder__liand): Personal and tech updates.
 
 ## Optional Documents & Downloads
-- [Download Resume / CV (PDF)](https://portfolio.liand.web.id/file/myResume.pdf): Official resume of Alfian Nur Usyaid.
+- [Resume / CV](https://portfolio.liand.web.id/resume): Indexable professional resume of Alfian Nur Usyaid with a PDF download.
 - [Full LLM Context (Markdown)](https://portfolio.liand.web.id/llms-full.txt): Comprehensive plain-text knowledge document for AI agents and LLMs.
