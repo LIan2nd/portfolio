@@ -6,7 +6,7 @@ import { SOCIALS } from "@/lib/data";
 
 describe("HeroSection & Footer", () => {
   it("renders HeroSection with greeting, heading, tagline, and photo credit", () => {
-    render(<HeroSection />);
+    const { container } = render(<HeroSection />);
 
     expect(screen.getByText("Hi, there, I'm")).toBeInTheDocument();
     expect(screen.getByText("Alfian Nur Usyaid")).toBeInTheDocument();
@@ -15,6 +15,10 @@ describe("HeroSection & Footer", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Slava Auchynnikau")).toBeInTheDocument();
     expect(screen.getByText("Unsplash")).toBeInTheDocument();
+
+    const background = container.querySelector("#hero-background");
+    expect(background).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector("#home img")).toBeNull();
   });
 
   it("renders Footer with copyright notice including emoji and social links", () => {

@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export function HeroSection() {
   return (
     <section
@@ -7,27 +5,10 @@ export function HeroSection() {
       aria-label="Hero introduction"
       className="h-screen flex flex-col items-center justify-end px-6 pb-20 max-sm:justify-center max-sm:text-center relative overflow-hidden"
     >
-      {/* Dark Theme Background Image */}
-      <Image
-        src="/img/hero-bg.jpg"
-        alt=""
-        fill
-        priority
-        quality={75}
-        sizes="100vw"
-        className="object-cover object-bottom hero-bg-dark"
-        style={{ zIndex: -2 }}
-        aria-hidden="true"
-      />
-      {/* Light Theme Background Image */}
-      <Image
-        src="/img/hero-bg-light.jpg"
-        alt=""
-        fill
-        priority
-        quality={80}
-        sizes="100vw"
-        className="object-cover object-center hero-bg-light"
+      {/* Decorative CSS background keeps it out of search image candidates. */}
+      <div
+        id="hero-background"
+        className="absolute inset-0 pointer-events-none"
         style={{ zIndex: -2 }}
         aria-hidden="true"
       />

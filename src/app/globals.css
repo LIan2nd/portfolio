@@ -84,21 +84,18 @@ html {
   );
 }
 
-/* Theme-aware Hero Images */
-.hero-bg-dark {
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-}
-.hero-bg-light {
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+/* Decorative hero background intentionally uses CSS so search engines do not
+   treat it as a meaningful page image. */
+#hero-background {
+  background-image: url("/img/hero-bg.jpg");
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-[data-theme="light"] .hero-bg-dark {
-  opacity: 0;
-}
-[data-theme="light"] .hero-bg-light {
-  opacity: 1;
+[data-theme="light"] #hero-background {
+  background-image: url("/img/hero-bg-light.jpg");
+  background-position: center;
 }
 
 @keyframes tabSlideIn {
