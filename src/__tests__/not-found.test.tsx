@@ -4,13 +4,13 @@ import NotFound, { metadata } from "@/app/not-found";
 
 describe("NotFound page", () => {
   it("renders branded recovery actions", () => {
-    render(<NotFound />);
+    const { container } = render(<NotFound />);
 
     expect(
       screen.getByRole("heading", { level: 1, name: "Halaman ini nyasar." }),
     ).toBeInTheDocument();
     expect(screen.getByText("Error 404")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "LIand" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "LIand home" })).toHaveAttribute(
       "href",
       "/",
     );
@@ -21,6 +21,25 @@ describe("NotFound page", () => {
       "href",
       "/resume",
     );
+
+    expect(container.querySelector("main")).toHaveClass(
+      "h-screen",
+      "max-h-screen",
+      "overflow-hidden",
+    );
+    expect(
+      screen.getByRole("navigation", { name: "404 navigation" }),
+    ).toHaveClass(
+      "grid-cols-[auto_1fr_auto]",
+      "md:grid-cols-[1fr_auto_1fr]",
+      "py-5",
+      "max-md:py-3.5",
+    );
+    expect(container.querySelector("#not-found-background")).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+    expect(container.querySelector("main img")).toBeNull();
   });
 
   it("defines noindex metadata for missing URLs", () => {
