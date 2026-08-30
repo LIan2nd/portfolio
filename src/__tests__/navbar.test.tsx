@@ -29,13 +29,19 @@ describe("Navbar & useActiveSection", () => {
       expect(links.length).toBeGreaterThanOrEqual(1);
     });
 
-    expect(screen.getByRole("link", { name: "LIand home" })).toHaveAttribute(
-      "href",
-      "#home"
-    );
+    const brandLinks = screen.getAllByRole("link", { name: "LIand home" });
+    expect(brandLinks).toHaveLength(2);
+    brandLinks.forEach((brandLink) => {
+      expect(brandLink).toHaveAttribute("href", "#home");
+    });
     expect(screen.getByRole("navigation", { name: "Main navigation" })).toHaveClass(
       "grid",
-      "grid-cols-[1fr_auto_1fr]"
+      "grid-cols-[auto_1fr_auto]",
+      "md:grid-cols-[1fr_auto_1fr]"
+    );
+    expect(screen.getByRole("group", { name: "Navbar actions" })).toHaveClass(
+      "col-start-3",
+      "gap-2.5"
     );
     expect(screen.getByRole("list", { name: "Portfolio sections" })).toHaveClass(
       "justify-center"

@@ -6,6 +6,12 @@ import { useActiveSection } from "@/hooks/useActiveSection";
 import { useTheme } from "@/components/ThemeProvider";
 import { useAiVisibility } from "@/components/AiVisibilityContext";
 import { Bot, BotOff } from "lucide-react";
+import {
+  NAVBAR_BRAND_CLASS,
+  NAVBAR_CONTENT_CLASS,
+  NAVBAR_ROW_CLASS,
+  NAVBAR_TOP_SPACING_CLASS,
+} from "@/lib/navigationStyles";
 
 interface NavbarProps {
   links: NavLink[];
@@ -108,14 +114,14 @@ export function Navbar({ links }: NavbarProps) {
         }`}
       />
 
-      <div className="max-w-[800px] mx-auto relative z-10">
+      <div className={NAVBAR_CONTENT_CLASS}>
         <nav
           aria-label="Main navigation"
-          className={`grid grid-cols-[1fr_auto_1fr] items-center transition-all duration-500 ease-in-out ${
-            isScrolled ? "py-2.5" : "py-5 max-md:py-3.5"
+          className={`${NAVBAR_ROW_CLASS} transition-all duration-500 ease-in-out ${
+            isScrolled ? "py-2.5" : NAVBAR_TOP_SPACING_CLASS
           }`}
         >
-          {/* Left side: brand and mobile menu trigger */}
+          {/* Left side: mobile menu trigger and desktop brand */}
           <div className="flex items-center gap-5">
             {/* Mobile Animated Hamburger to X (On Left for Mobile) */}
             <button
@@ -146,7 +152,7 @@ export function Navbar({ links }: NavbarProps) {
             <a
               href="#home"
               onClick={(e) => handleLinkClick(e, "#home")}
-              className="text-lg font-bold tracking-tight text-accent no-underline transition-opacity duration-200 hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              className={`${NAVBAR_BRAND_CLASS} hidden md:inline`}
               aria-label="LIand home"
             >
               LIand
@@ -179,7 +185,20 @@ export function Navbar({ links }: NavbarProps) {
           </ul>
 
           {/* Right side: AI Chat Toggle & Theme Toggle (Clean & Borderless) */}
-          <div className="flex items-center justify-self-end gap-2.5">
+          <div
+            role="group"
+            aria-label="Navbar actions"
+            className="col-start-3 flex items-center justify-self-end gap-2.5"
+          >
+            <a
+              href="#home"
+              onClick={(e) => handleLinkClick(e, "#home")}
+              className={`${NAVBAR_BRAND_CLASS} md:hidden`}
+              aria-label="LIand home"
+            >
+              LIand
+            </a>
+
             {/* AI Assistant Visibility Toggle */}
             <button
               onClick={toggleAiVisibility}
