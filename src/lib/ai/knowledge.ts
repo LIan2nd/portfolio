@@ -8,11 +8,56 @@ import {
   SOCIALS,
 } from "@/lib/data";
 
+const INTRODUCTION_INTENT_PATTERNS = [
+  /\b(perkenalan|perkenalkan diri(?:mu)?|kenalin diri|kenalkan dirimu|siapa kamu)\b/,
+  /\b(ceritakan|ceritain|jelaskan|jelasin).*\b(tentang dirimu|tentang diri kamu|tentang kamu)\b/,
+  /\b(introduce yourself|tell me about yourself|who are you)\b/,
+];
+
+const SOCIAL_IDENTITY_INTENT_PATTERNS = [
+  /\b(di ?mana|dimana).*\b(cari|mencari|nyari|menemukan|nemuin|hubungi)\b.*\b(kamu|mu|lu|elo)\b/,
+  /\bwhere can i (find|reach|contact) you\b/,
+  /\b(info|informasi|detail|daftar|semua).*\b(kontak|sosmed|social media|akun sosial)\b/,
+  /\b(kontakmu|sosmedmu|socials|social media|akun sosialmu)\b/,
+  /\b(gimana|bagaimana|cara).*\b(kontak|hubungi|mencari|nyari)\b/,
+  /\b(how can i|how do i).*\b(contact|reach|hire) you\b/,
+];
+
+const TYPING_FUN_FACT_QUERY_PATTERNS = [
+  /\b(10fastfingers|typing speed|wpm|fun fact|funfact)\b/,
+  /\bkecepatan.*\b(ngetik|mengetik)\b/,
+];
+
+function matchesIntent(query: string, patterns: RegExp[]): boolean {
+  const normalizedQuery = query.toLowerCase().replace(/\s+/g, " ").trim();
+  return patterns.some((pattern) => pattern.test(normalizedQuery));
+}
+
+export function isIntroductionQuery(query: string): boolean {
+  return matchesIntent(query, INTRODUCTION_INTENT_PATTERNS);
+}
+
+export function isSocialIdentityQuery(query: string): boolean {
+  return matchesIntent(query, SOCIAL_IDENTITY_INTENT_PATTERNS);
+}
+
+export function isTypingFunFactQuery(query: string): boolean {
+  return matchesIntent(query, TYPING_FUN_FACT_QUERY_PATTERNS);
+}
+
+export function shouldIncludeTypingFunFact(query: string): boolean {
+  return (
+    isIntroductionQuery(query) ||
+    isSocialIdentityQuery(query) ||
+    isTypingFunFactQuery(query)
+  );
+}
+
 /**
  * Generates structured context about Alfian Nur Usyaid from data.ts
  * Keeps a single source of truth for the AI assistant.
  */
-export function buildPortfolioKnowledge(): string {
+export function buildPortfolioKnowledge(userQuery = ""): string {
   const skillsList = SKILLS.map((s) => s.name).join(", ");
 
   const workHistory = WORK_ENTRIES.map((w) => {
@@ -42,6 +87,16 @@ export function buildPortfolioKnowledge(): string {
   const socialsList = SOCIALS.map((s) => `• ${s.label}: ${s.url}`).join("\n");
 
   const detailsList = PERSONAL_DETAILS.map((d) => `• ${d.label}: ${d.value}`).join("\n");
+
+  const typingFunFactContext = shouldIncludeTypingFunFact(userQuery)
+    ? `
+### FUN FACT YANG DIIZINKAN UNTUK PERTANYAAN INI:
+- Jika user menanyakan 10FastFingers, typing speed, WPM, atau fun fact secara langsung, jawab fakta tersebut secara langsung.
+- Selain itu, setelah menjawab perkenalan atau memberikan daftar identitas/kontak utama (Email, Instagram, LinkedIn, GitHub, dan sejenisnya), tambahkan satu kalimat bonus: aku aktif di **10FastFingers** dengan kecepatan mengetik **100++ WPM** dan akurasi **90%++**.
+- Sertakan tautan ini jika relevan: https://10fastfingers.com/user/alfian-nur-usyaid
+- Sampaikan sebagai bonus singkat di bagian akhir, bukan sebagai inti jawaban.
+`
+    : "";
 
   return `
 Kamu adalah Kloningan Digital / AI Clone langsung dari Alfian Nur Usyaid (LIand).
@@ -100,9 +155,11 @@ ${certsList}
 ${socialsList}
 Email: alfiannurusyaid19@gmail.com
 
-### 🎮 FUN FACT:
-- Aku juga aktif di **10FastFingers** (typing test) — kecepatan ngetikku **100++ WPM** dengan akurasi **90%++**! Kalau penasaran: https://10fastfingers.com/user/alfian-nur-usyaid
-- **ATURAN**: Jika user bertanya seputar "di mana bisa nyari kamu?", "link sosmedmu?", "where can I find you?", atau sejenisnya, **SISIPKAN juga 10FastFingers ini sebagai fun fact tambahan** dengan nada santai/fun (misal: *"Oh iya, fun fact: aku juga ada di 10FastFingers loh, typing speed-ku 100++ WPM 🔥"*). Jangan jadikan ini poin utama, cukup sebagai bonus ringan yang bikin obrolan makin seru!
+### ATURAN FUN FACT KONDISIONAL:
+- Jangan menambahkan fun fact pada setiap jawaban.
+- Fun fact hanya boleh disebut jika bagian **FUN FACT YANG DIIZINKAN UNTUK PERTANYAAN INI** tersedia di prompt.
+- Untuk pertanyaan tentang proyek, skill, pendidikan, pengalaman, aktivitas, pasangan, gaji, website, sapaan biasa, atau topik lain di luar intent perkenalan/identitas sosial, jawab hanya konteks yang ditanyakan tanpa fun fact tambahan.
+${typingFunFactContext}
 
 ---
 ### ⚡ ATURAN UTAMA GAYA BICARA, KEPADATAN & KEAMANAN (WAJIB DITAATI!):

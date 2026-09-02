@@ -1,4 +1,10 @@
-import { buildPortfolioKnowledge } from "./knowledge";
+import {
+  buildPortfolioKnowledge,
+  isIntroductionQuery,
+  isSocialIdentityQuery,
+  isTypingFunFactQuery,
+  shouldIncludeTypingFunFact,
+} from "./knowledge";
 import { getRelevantContext } from "./rag";
 
 export interface ChatMessage {
@@ -28,6 +34,20 @@ function createTextStream(chunks: string[], delayMs = 25): ReadableStream<Uint8A
       controller.close();
     },
   });
+}
+
+function appendTypingFunFact(response: string, isEnglish: boolean): string {
+  const funFact = isEnglish
+    ? "Fun fact: I also have a 100++ WPM typing speed with 90%++ accuracy on [10FastFingers](https://10fastfingers.com/user/alfian-nur-usyaid) 🔥"
+    : "Oh iya, fun fact: kecepatan ngetikku di [10FastFingers](https://10fastfingers.com/user/alfian-nur-usyaid) mencapai 100++ WPM dengan akurasi 90%++ 🔥";
+  const navigationMarker = response.match(/\n\n(\[NAV:[^\n]+\])$/);
+
+  if (!navigationMarker) {
+    return `${response}\n\n${funFact}`;
+  }
+
+  const responseBody = response.slice(0, -navigationMarker[0].length);
+  return `${responseBody}\n\n${funFact}\n\n${navigationMarker[1]}`;
 }
 
 /**
@@ -95,7 +115,7 @@ export class GeminiProvider implements AiProvider {
   async generateResponse(messages: ChatMessage[]): Promise<string> {
     const lastUserQuery = messages.filter((m) => m.role === "user").pop()?.content || "";
     const ragContext = await getRelevantContext(lastUserQuery);
-    const systemInstruction = `${buildPortfolioKnowledge()}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`;
+    const systemInstruction = `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`;
     const contents = this.formatContents(messages);
 
     const response = await fetch(
@@ -142,7 +162,7 @@ export class GeminiProvider implements AiProvider {
       async start(controller) {
         try {
           const ragContext = await getRelevantContext(lastUserQuery);
-          const systemInstruction = `${buildPortfolioKnowledge()}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`;
+          const systemInstruction = `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`;
 
           const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}&alt=sse`,
@@ -237,7 +257,7 @@ export class OpenAiProvider implements AiProvider {
     const ragContext = await getRelevantContext(lastUserQuery);
     const systemPrompt: ChatMessage = {
       role: "system",
-      content: `${buildPortfolioKnowledge()}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`,
+      content: `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`,
     };
     const formattedMessages = [systemPrompt, ...messages];
 
@@ -288,7 +308,7 @@ export class OpenAiProvider implements AiProvider {
           const ragContext = await getRelevantContext(lastUserQuery);
           const systemPrompt: ChatMessage = {
             role: "system",
-            content: `${buildPortfolioKnowledge()}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`,
+            content: `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`,
           };
           const formattedMessages = [systemPrompt, ...messages];
 
@@ -377,7 +397,7 @@ export class MockFallbackProvider implements AiProvider {
     return isEnglishText(msg);
   }
 
-  private getFullResponse(lastUserMessage: string): string {
+  private getBaseResponse(lastUserMessage: string): string {
     const msg = lastUserMessage.toLowerCase().trim();
     const isEn = this.isEnglish(msg);
 
@@ -401,6 +421,12 @@ export class MockFallbackProvider implements AiProvider {
           "- **Proyek Unggulan:** Pengembang **ESAO** (Platform AI koreksi esai) & **DigiArc** (Penyimpanan Web3 terdesentralisasi).\n" +
           "*(...eitss, berhubung kloningan AI ini hemat token biar ramah kuota & server nggak boncos 🚀)*, info super detailnya gak mungkin ku-spill semua di satu chat ini! Yuk langsung **scroll portofolio ini** buat kepoin proyek & pengalamanku, atau intip [Resume / CV-ku di sini](/resume) ya! 😉\n\n" +
           "[NAV:about:📍 View About & Skills]";
+    }
+
+    if (isIntroductionQuery(msg)) {
+      return isEn
+        ? "I'm **Alfian Nur Usyaid (LIand)**, a Computer Science graduate with honors (GPA 3.94) focused on Fullstack Development, AI Integration, and Web3. You can find me on [LinkedIn](https://linkedin.com/in/alfian-nur-usyaid/), [GitHub](https://github.com/LIan2nd/), [Instagram](https://www.instagram.com/wonder__liand), or email me at [alfiannurusyaid19@gmail.com](mailto:alfiannurusyaid19@gmail.com).\n\n[NAV:about:📍 View About & Skills]"
+        : "Aku **Alfian Nur Usyaid (LIand)**, lulusan S.Kom Cumlaude (IPK 3.94) yang fokus di Fullstack Development, Integrasi AI, dan Web3. Kamu bisa nemuin aku lewat [LinkedIn](https://linkedin.com/in/alfian-nur-usyaid/), [GitHub](https://github.com/LIan2nd/), [Instagram](https://www.instagram.com/wonder__liand), atau email ke [alfiannurusyaid19@gmail.com](mailto:alfiannurusyaid19@gmail.com).\n\n[NAV:about:📍 View About & Skills]";
     }
 
     // Language explanation / inquiry
@@ -676,7 +702,8 @@ export class MockFallbackProvider implements AiProvider {
       msg.includes("email") ||
       msg.includes("hubungi") ||
       msg.includes("contact") ||
-      msg.includes("hire")
+      msg.includes("hire") ||
+      isSocialIdentityQuery(msg)
     ) {
       return isEn
         ? "📫 **Contact & Hiring Information:**\n\n" +
@@ -745,6 +772,22 @@ export class MockFallbackProvider implements AiProvider {
     return isEn
       ? "Hey! I'm only trained to answer questions about Alfian's portfolio, projects, and skills (like ESAO, RoadSense, or DigiArc) 🗿\n\nFeel free to ask anything about my tech stack and experience!"
       : "Dih, si tau tuh aku... Tanya yang berbobot seputar proyek atau portofolioku kek, misal ESAO, RoadSense, atau DigiArc 🗿\n\nAtau mau tanya seputar tech stack dan pengalamanku? Tanyain aja ya!";
+  }
+
+  private getFullResponse(lastUserMessage: string): string {
+    if (isTypingFunFactQuery(lastUserMessage)) {
+      return this.isEnglish(lastUserMessage)
+        ? "My typing speed on [10FastFingers](https://10fastfingers.com/user/alfian-nur-usyaid) is **100++ WPM** with **90%++ accuracy** 🔥"
+        : "Kecepatan ngetikku di [10FastFingers](https://10fastfingers.com/user/alfian-nur-usyaid) mencapai **100++ WPM** dengan **akurasi 90%++** 🔥";
+    }
+
+    const response = this.getBaseResponse(lastUserMessage);
+
+    if (!shouldIncludeTypingFunFact(lastUserMessage)) {
+      return response;
+    }
+
+    return appendTypingFunFact(response, this.isEnglish(lastUserMessage));
   }
 
   async generateResponse(messages: ChatMessage[]): Promise<string> {

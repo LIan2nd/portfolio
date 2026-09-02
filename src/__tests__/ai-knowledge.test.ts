@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildPortfolioKnowledge } from "@/lib/ai/knowledge";
+import {
+  buildPortfolioKnowledge,
+  shouldIncludeTypingFunFact,
+} from "@/lib/ai/knowledge";
 import { MockFallbackProvider } from "@/lib/ai/provider";
 import { loadAllKnowledgeChunks } from "@/lib/ai/rag";
 
@@ -58,5 +61,44 @@ describe("AI Knowledge & Anti-Hallucination Guardrails", () => {
       (c) => c.content.includes("Distia") && c.content.includes("Kesetiaan")
     );
     expect(partnerChunk).toBeDefined();
+  });
+
+  it("only enables the typing fact for introductions, broad social identity, or direct questions", () => {
+    expect(shouldIncludeTypingFunFact("Tolong perkenalkan diri kamu")).toBe(true);
+    expect(shouldIncludeTypingFunFact("Di mana aku bisa mencari kamu?")).toBe(true);
+    expect(shouldIncludeTypingFunFact("Where can I find you?")).toBe(true);
+    expect(shouldIncludeTypingFunFact("Berapa typing speed kamu?")).toBe(true);
+    expect(shouldIncludeTypingFunFact("Apa proyek unggulanmu?")).toBe(false);
+    expect(shouldIncludeTypingFunFact("Apa email kamu?")).toBe(false);
+    expect(shouldIncludeTypingFunFact("Kamu lagi sibuk apa?")).toBe(false);
+    expect(shouldIncludeTypingFunFact("Portofoliomu keren")).toBe(false);
+  });
+
+  it("only exposes 10FastFingers data to the live model for an allowed query", () => {
+    const unrelatedKnowledge = buildPortfolioKnowledge("Ceritakan proyek ESAO");
+    const introductionKnowledge = buildPortfolioKnowledge("Perkenalkan dirimu");
+
+    expect(unrelatedKnowledge).not.toContain("100++ WPM");
+    expect(unrelatedKnowledge).not.toContain("10fastfingers.com");
+    expect(introductionKnowledge).toContain("100++ WPM");
+    expect(introductionKnowledge).toContain("10fastfingers.com");
+  });
+
+  it("keeps the fallback typing fun fact out of unrelated and single-detail answers", async () => {
+    const mock = new MockFallbackProvider();
+    const projectResponse = await mock.generateResponse([
+      { role: "user", content: "Apa itu ESAO?" },
+    ]);
+    const emailResponse = await mock.generateResponse([
+      { role: "user", content: "Apa email kamu?" },
+    ]);
+    const introductionResponse = await mock.generateResponse([
+      { role: "user", content: "Tolong perkenalkan diri kamu" },
+    ]);
+
+    expect(projectResponse).not.toContain("100++ WPM");
+    expect(emailResponse).not.toContain("100++ WPM");
+    expect(introductionResponse).toContain("100++ WPM");
+    expect(introductionResponse).toMatch(/100\+\+ WPM[\s\S]*\[NAV:/);
   });
 });
