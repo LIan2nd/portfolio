@@ -43,6 +43,8 @@ export interface Certification {
   skills?: string[];
 }
 
+export type Certificate = Certification;
+
 export interface Publication {
   title: string;
   alternativeTitle: string;

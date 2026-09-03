@@ -13,7 +13,7 @@ export const NAV_LINKS: NavLink[] = [
   { label: "About", href: "#about" },
   { label: "Experience", href: "#experience" },
   { label: "Project", href: "#project" },
-  { label: "Certifications", href: "#certifications" },
+  { label: "Certificates", href: "#certificates" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -260,7 +260,7 @@ export const CERTIFICATIONS: Certification[] = [
     date: "Jun 2026",
     credentialId: "UC-8d1a2b88-45c5-49a4-9404-7b8b8e988a9d",
     credentialUrl:
-      "/file/certifications/The Complete Full-Stack Web Development Bootcamp - Alfian Nur Usyaid.pdf",
+      "/file/certificates/The Complete Full-Stack Web Development Bootcamp - Alfian Nur Usyaid.pdf",
     skills: ["Fullstack Web Development", "Node.js", "React", "PostgreSQL", "Motoko"],
   },
   {
@@ -269,7 +269,7 @@ export const CERTIFICATIONS: Certification[] = [
     date: "Jul 2026",
     credentialId: "UC-c25d74f6-2110-43c6-8898-d2e070ba5b42",
     credentialUrl:
-      "/file/certifications/Complete Web Development Course - Alfian Nur Usyaid.pdf",
+      "/file/certificates/Complete Web Development Course - Alfian Nur Usyaid.pdf",
     skills: ["Fullstack Web Development", "JavaScript", "ExpressJs", "NextJs", "MongoDB", "Docker"],
   },
   {
@@ -277,7 +277,7 @@ export const CERTIFICATIONS: Certification[] = [
     issuer: "Dunia Coding",
     date: "Sep 2025",
     credentialUrl:
-      "/file/certifications/Dunia Coding_Sertifikat Mini Class - Alfian Nur Usyaid.pdf",
+      "/file/certificates/Dunia Coding_Sertifikat Mini Class - Alfian Nur Usyaid.pdf",
     skills: ["Next.js", "TypeScript", "TailwindCSS"],
   },
   {
@@ -285,7 +285,7 @@ export const CERTIFICATIONS: Certification[] = [
     issuer: "IBM SkillsBuild & Hacktiv8",
     date: "Jul 2025",
     credentialUrl:
-      "/file/certifications/Sertifikat IBM Wave 5 - Alfian Nur Usyaid.pdf",
+      "/file/certificates/Sertifikat IBM Wave 5 - Alfian Nur Usyaid.pdf",
     skills: ["Code Generation", "Code Optimization", "AI"],
   },
   {
@@ -294,7 +294,7 @@ export const CERTIFICATIONS: Certification[] = [
     date: "Jul 2025",
     credentialId: "CCSE070725-01-1-00131",
     credentialUrl:
-      "/file/certifications/SECC_alfiannurusyaid19@gmail.com_CCSE070725-01-1-00131.pdf",
+      "/file/certificates/SECC_alfiannurusyaid19@gmail.com_CCSE070725-01-1-00131.pdf",
     skills: ["Software Engineering", "Web Development"],
   },
   {
@@ -302,7 +302,7 @@ export const CERTIFICATIONS: Certification[] = [
     issuer: "LearningX",
     date: "Dec 2024",
     credentialUrl:
-      "/file/certifications/Xpresso 4 - UIUX Design And Development.pdf",
+      "/file/certificates/Xpresso 4 - UIUX Design And Development.pdf",
     skills: ["UI/UX Design", "Web Development", "Figma"],
   },
   {
@@ -310,8 +310,17 @@ export const CERTIFICATIONS: Certification[] = [
     issuer: "LearningX",
     date: "Nov 2024",
     credentialUrl:
-      "/file/certifications/MBKM Course Batch 7 Full Stack Web Development.pdf",
+      "/file/certificates/MBKM Course Batch 7 Full Stack Web Development.pdf",
     skills: ["Full Stack", "JQuery", "Flask (Python)"],
+  },
+  {
+    title: "Cloud Practitioner Essentials (Belajar Dasar AWS Cloud)",
+    issuer: "Dicoding Indonesia",
+    date: "Jun 2024",
+    credentialId: "GRX5OWMWYP0M",
+    credentialUrl:
+      "/file/certificates/Sertifikat Dicoding - Cloud Practitioner Essentials.pdf",
+    skills: ["AWS", "Cloud Computing", "Infrastructure"],
   },
   {
     title: "Belajar React JS dari Dasar hingga Siap Deployment",
@@ -319,7 +328,10 @@ export const CERTIFICATIONS: Certification[] = [
     date: "2024",
     credentialId: "C-C24-0013",
     credentialUrl:
-      "/file/certifications/Dunia Coding_Sertifikat React - Alfian Nur Usyaid.pdf",
+      "/file/certificates/Dunia Coding_Sertifikat React - Alfian Nur Usyaid.pdf",
     skills: ["React", "JavaScript", "Deployment"],
   },
 ];
+
+export const CERTIFICATES = CERTIFICATIONS;
+
