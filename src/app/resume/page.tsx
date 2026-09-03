@@ -103,11 +103,10 @@ export default function ResumePage() {
             </a>
             <a
               href="/resume.pdf"
-              download
               className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-accent px-3.5 text-sm font-semibold text-white no-underline transition-colors duration-200 hover:bg-accent-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <Download aria-hidden="true" size={16} />
-              <span>Download PDF</span>
+              <span>View PDF</span>
             </a>
           </div>
         </nav>
