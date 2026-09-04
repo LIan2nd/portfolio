@@ -188,6 +188,14 @@ export const PUBLICATION: Publication = {
 
 export const PROJECTS: Project[] = [
   {
+    icon: "notebook",
+    title: "Leath Notes (AI Note-Taking App)",
+    description:
+      "A calm, skeuomorphic online notepad with folders, autosave, drag-and-drop organization, guest mode, authentication, and optional multi-provider AI assistance. Built with Next.js 15, tRPC, Prisma, and PostgreSQL.",
+    url: "https://leath-note.my.id",
+    image: "/img/projects/leath-notes.webp",
+  },
+  {
     icon: "map",
     title: "RoadSense (Smart GIS Navigation)",
     description:

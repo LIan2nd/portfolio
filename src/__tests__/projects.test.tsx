@@ -19,6 +19,18 @@ describe("ProjectsSection & ProjectCard", () => {
     });
   });
 
+  it("links Leath Notes to its production domain", () => {
+    render(<ProjectsSection projects={PROJECTS} />);
+
+    const projectLink = screen.getByRole("link", {
+      name: /Leath Notes \(AI Note-Taking App\)/i,
+    });
+
+    expect(projectLink).toHaveAttribute("href", "https://leath-note.my.id");
+    expect(projectLink).toHaveAttribute("target", "_blank");
+    expect(screen.getByAltText("Leath Notes (AI Note-Taking App)")).toBeInTheDocument();
+  });
+
   // Feature: portfolio-nextjs-migration, Property 6: Project card completeness
   it("Property 6: renders all project elements with valid URL as external link", () => {
     fc.assert(

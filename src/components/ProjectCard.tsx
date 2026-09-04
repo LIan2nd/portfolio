@@ -13,6 +13,7 @@ import {
   Database,
   Film,
   Clapperboard,
+  NotebookPen,
 } from "lucide-react";
 import type { Project } from "@/lib/types";
 
@@ -46,6 +47,9 @@ function ProjectIcon({ icon }: { icon: string }) {
       return <Film {...iconProps} />;
     case "clapperboard":
       return <Clapperboard {...iconProps} />;
+    case "notebook":
+    case "note":
+      return <NotebookPen {...iconProps} />;
     case "shop":
     case "store":
     case "shopping-cart":

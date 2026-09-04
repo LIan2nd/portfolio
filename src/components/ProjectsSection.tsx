@@ -14,9 +14,9 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
           Featured Projects
         </h2>
         <p className="font-serif leading-7 text-sm opacity-90 mb-8 max-w-[620px] mx-auto">
-          A curated selection of web development and software engineering projects spanning fullstack applications,
-          AI-powered platforms, geographic information systems, and Web3 decentralized solutions — built with
-          modern technologies including Next.js, React, TypeScript, Laravel, Flask, and Solidity.
+          A curated selection of productivity tools, fullstack applications, AI-powered platforms, geographic
+          information systems, and Web3 decentralized solutions — built with modern technologies including Next.js,
+          React, TypeScript, Laravel, Flask, and Solidity.
         </p>
         <div className="grid grid-cols-2 max-md:grid-cols-1 gap-4">
           {projects.map((project, i) => (

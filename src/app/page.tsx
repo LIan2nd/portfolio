@@ -78,6 +78,17 @@ const jsonLd = {
     },
     {
       "@type": "SoftwareApplication",
+      "@id": `${SITE_URL}/#project-leath-notes`,
+      name: "Leath Notes",
+      description:
+        "Skeuomorphic online notepad with folders, autosave, guest mode, authentication, and optional multi-provider AI assistance.",
+      applicationCategory: "ProductivityApplication",
+      operatingSystem: "Any",
+      author: { "@id": PERSON_ID },
+      url: "https://leath-note.my.id",
+    },
+    {
+      "@type": "SoftwareApplication",
       "@id": `${SITE_URL}/#project-roadsense`,
       name: "RoadSense",
       description:

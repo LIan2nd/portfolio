@@ -111,32 +111,37 @@ He holds a Bachelor's degree in Computer Science from STT Terpadu Nurul Fikri wi
 
 ## 5. Featured Projects
 
-### 1. RoadSense (Smart GIS Navigation & Road Damage Mapping)
+### 1. Leath Notes (Calm Online Notepad & AI Note-Taking App)
+- **Tech Stack**: Next.js 15, React 19, TypeScript, Tailwind CSS 4, tRPC, TanStack Query, Prisma, PostgreSQL, NextAuth.js
+- **Live App**: https://leath-note.my.id
+- **Description**: A skeuomorphic, paper-first online notepad with guest mode, personal notes, folders, drag-and-drop organization, debounced autosave, authentication, keyboard shortcuts, and optional AI assistance through multiple providers.
+
+### 2. RoadSense (Smart GIS Navigation & Road Damage Mapping)
 - **Tech Stack**: Next.js 15, tRPC (T3 Stack), Leaflet, Flask (Python), Shapely, OSRM Routing
 - **Repository**: https://github.com/LIan2nd/RoadSense
 - **Description**: A crowdsourced Geographic Information System (GIS) platform enabling citizens to report and visualize road damage in real time, featuring intelligent alternative route calculation to avoid severely damaged roads.
 
-### 2. DigiArc (Web3 Decentralized Cloud Storage)
+### 3. DigiArc (Web3 Decentralized Cloud Storage)
 - **Tech Stack**: Next.js, Wagmi, Solidity Smart Contracts, IPFS
 - **Live Demo**: https://digiarc.vercel.app
 - **Description**: A decentralized alternative to Google Drive. Enables users to store, manage, and verify document authenticity on the blockchain via IPFS content addressing.
 
-### 3. ESAO (AI-Powered Automated Essay Grading System)
+### 4. ESAO (AI-Powered Automated Essay Grading System)
 - **Tech Stack**: Next.js, Flask (Python), LangChain, AI LLM APIs
 - **Live System**: https://esao.nurulfikri.ac.id
 - **Description**: Automated exam assessment platform for educators that evaluates descriptive student answers against custom grading rubrics, providing instant scoring and personalized constructive feedback.
 
-### 4. Event Management & Registration System
+### 5. Event Management & Registration System
 - **Tech Stack**: Laravel (PHP), MySQL, Bootstrap, Blade MVC
 - **Repository**: https://github.com/LIan2nd/sistem-pendaftaran-event
 - **Description**: Multi-role event registration and participant ticketing platform with secure user authentication, CRUD operations, and event analytics.
 
-### 5. Chicken Yasaka (E-Commerce Web)
+### 6. Chicken Yasaka (E-Commerce Web)
 - **Tech Stack**: Python (Flask), jQuery (AJAX), Bootstrap 5, Jinja2, MongoDB/MySQL
 - **Repository**: https://github.com/MuhamadMudrikaRidho/web_chicken_yaska
 - **Description**: Full-stack e-commerce web platform for poultry sales developed as the final project for MSIB Kampus Merdeka with LearningX. Features product catalogs, dynamic cart management, user authentication, and an admin dashboard.
 
-### 6. HRD RESTful API
+### 7. HRD RESTful API
 - **Tech Stack**: Express.js, Node.js, MySQL
 - **Repository**: https://github.com/LIan2nd/uas-pemrograman-backend
 - **Description**: Enterprise-grade human resources backend service utilizing clean MVC and OOP architectures, class-based controllers, DAO models, and parameterized SQL queries.

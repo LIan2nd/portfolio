@@ -30,6 +30,7 @@
 - [AI Portfolio Assistant](https://portfolio.liand.web.id/): Embedded RAG AI chatbot trained on Alfian's background and projects.
 
 ## Featured Projects
+- [Leath Notes](https://leath-note.my.id): Skeuomorphic online notepad with folders, autosave, drag-and-drop organization, guest mode, authentication, and optional multi-provider AI assistance, built with Next.js 15, tRPC, Prisma, and PostgreSQL.
 - [RoadSense](https://github.com/LIan2nd/RoadSense): Smart GIS road damage mapping & navigation using Next.js 15, Leaflet, Flask (Shapely), and OSRM routing.
 - [DigiArc](https://digiarc.vercel.app): Decentralized Web3 file storage on IPFS with Solidity smart contracts and Next.js / Wagmi.
 - [ESAO](https://esao.nurulfikri.ac.id): Automated AI essay grading platform for university lecturers using Next.js, Flask, and LangChain.
