@@ -178,9 +178,8 @@ export function ContactSection() {
                     autoComplete="name"
                     value={name}
                     onChange={(e) => handleNameChange(e.target.value)}
-                    placeholder="Name"
                     maxLength={100}
-                    className={`peer w-full h-[58px] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-transparent focus:placeholder:text-[var(--color-text-secondary)]/40 rounded-md px-4 pt-5 pb-2 text-sm font-sans outline-none transition-all duration-200 ease-out ${
+                    className={`peer w-full h-[58px] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] rounded-md px-4 pt-5 pb-2 text-sm font-sans outline-none transition-all duration-200 ease-out ${
                       errors.name
                         ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
                         : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
@@ -191,7 +190,7 @@ export function ContactSection() {
                     className={`absolute left-4 top-[18px] text-sm origin-top-left transition-all duration-200 pointer-events-none select-none ${
                       name
                         ? "-translate-y-2.5 scale-85"
-                        : "peer-focus:-translate-y-2.5 peer-focus:scale-85 peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:scale-85"
+                        : "peer-focus:-translate-y-2.5 peer-focus:scale-85 peer-autofill:-translate-y-2.5 peer-autofill:scale-85"
                     } ${
                       errors.name
                         ? "text-red-400 peer-focus:text-red-400"
@@ -212,9 +211,8 @@ export function ContactSection() {
                     autoComplete="email"
                     value={email}
                     onChange={(e) => handleEmailChange(e.target.value)}
-                    placeholder="Email address"
                     maxLength={254}
-                    className={`peer w-full h-[58px] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-transparent focus:placeholder:text-[var(--color-text-secondary)]/40 rounded-md px-4 pt-5 pb-2 text-sm font-sans outline-none transition-all duration-200 ease-out ${
+                    className={`peer w-full h-[58px] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] rounded-md px-4 pt-5 pb-2 text-sm font-sans outline-none transition-all duration-200 ease-out ${
                       errors.email
                         ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
                         : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
@@ -225,7 +223,7 @@ export function ContactSection() {
                     className={`absolute left-4 top-[18px] text-sm origin-top-left transition-all duration-200 pointer-events-none select-none ${
                       email
                         ? "-translate-y-2.5 scale-85"
-                        : "peer-focus:-translate-y-2.5 peer-focus:scale-85 peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:scale-85"
+                        : "peer-focus:-translate-y-2.5 peer-focus:scale-85 peer-autofill:-translate-y-2.5 peer-autofill:scale-85"
                     } ${
                       errors.email
                         ? "text-red-400 peer-focus:text-red-400"
@@ -244,10 +242,9 @@ export function ContactSection() {
                     name="message"
                     value={message}
                     onChange={(e) => handleMessageChange(e.target.value)}
-                    placeholder="Leave a message here"
                     maxLength={1000}
                     rows={5}
-                    className={`peer w-full min-h-[140px] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-transparent focus:placeholder:text-[var(--color-text-secondary)]/40 rounded-md px-4 pt-6 pb-3 text-sm font-sans outline-none transition-all duration-200 ease-out resize-none ${
+                    className={`peer w-full min-h-[140px] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] rounded-md px-4 pt-6 pb-3 text-sm font-sans outline-none transition-all duration-200 ease-out resize-none ${
                       errors.message
                         ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
                         : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
@@ -258,7 +255,7 @@ export function ContactSection() {
                     className={`absolute left-4 top-[18px] text-sm origin-top-left transition-all duration-200 pointer-events-none select-none ${
                       message
                         ? "-translate-y-2.5 scale-85"
-                        : "peer-focus:-translate-y-2.5 peer-focus:scale-85 peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:scale-85"
+                        : "peer-focus:-translate-y-2.5 peer-focus:scale-85 peer-autofill:-translate-y-2.5 peer-autofill:scale-85"
                     } ${
                       errors.message
                         ? "text-red-400 peer-focus:text-red-400"

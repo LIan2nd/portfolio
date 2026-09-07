@@ -19,9 +19,9 @@ describe("ContactSection", () => {
 
     render(<ContactSection />);
 
-    const nameInput = screen.getByPlaceholderText("Name");
-    const emailInput = screen.getByPlaceholderText("Email address");
-    const msgInput = screen.getByPlaceholderText("Leave a message here");
+    const nameInput = screen.getByLabelText("Name");
+    const emailInput = screen.getByLabelText("Email address");
+    const msgInput = screen.getByLabelText("Message");
     const submitBtn = screen.getByRole("button", { name: /send message/i });
 
     await user.type(nameInput, "John Doe");
@@ -63,9 +63,9 @@ describe("ContactSection", () => {
 
     render(<ContactSection />);
 
-    const nameInput = screen.getByPlaceholderText("Name");
-    const emailInput = screen.getByPlaceholderText("Email address");
-    const msgInput = screen.getByPlaceholderText("Leave a message here");
+    const nameInput = screen.getByLabelText("Name");
+    const emailInput = screen.getByLabelText("Email address");
+    const msgInput = screen.getByLabelText("Message");
     const submitBtn = screen.getByRole("button", { name: /send message/i });
 
     await user.type(nameInput, "John Doe");
@@ -92,9 +92,9 @@ describe("ContactSection", () => {
 
     render(<ContactSection />);
 
-    await user.type(screen.getByPlaceholderText("Name"), "Test");
-    await user.type(screen.getByPlaceholderText("Email address"), "test@test.com");
-    await user.type(screen.getByPlaceholderText("Leave a message here"), "Hi");
+    await user.type(screen.getByLabelText("Name"), "Test");
+    await user.type(screen.getByLabelText("Email address"), "test@test.com");
+    await user.type(screen.getByLabelText("Message"), "Hi");
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     await waitFor(() => {
@@ -133,9 +133,9 @@ describe("ContactSection", () => {
           fetchSpy.mockClear();
           render(<ContactSection />);
 
-          const nameInput = screen.getByPlaceholderText("Name");
-          const emailInput = screen.getByPlaceholderText("Email address");
-          const msgInput = screen.getByPlaceholderText("Leave a message here");
+          const nameInput = screen.getByLabelText("Name");
+          const emailInput = screen.getByLabelText("Email address");
+          const msgInput = screen.getByLabelText("Message");
           const submitBtn = screen.getByRole("button", { name: /send message/i });
 
           fireEvent.change(nameInput, { target: { value: invalidInputs.name } });
