@@ -76,6 +76,12 @@ const selectedProjects = PROJECTS.slice(0, 4);
 export default function ResumePage() {
   return (
     <>
+      <a
+        href="#resume-main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white text-sm font-semibold transition-all duration-200"
+      >
+        Skip to main content
+      </a>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(resumeJsonLd) }}
@@ -112,7 +118,7 @@ export default function ResumePage() {
         </nav>
       </header>
 
-      <main className="px-6 py-12 md:py-16">
+      <main id="resume-main" className="px-6 py-12 md:py-16">
         <article className="mx-auto max-w-[800px]">
           <header className="border-b border-[var(--color-bg-tertiary)]/60 pb-10">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">

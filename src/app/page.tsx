@@ -76,46 +76,28 @@ const jsonLd = {
       sameAs: PUBLICATION.doi,
       about: PUBLICATION.topics,
     },
-    {
+    ...PROJECTS.map((project) => ({
       "@type": "SoftwareApplication",
-      "@id": `${SITE_URL}/#project-leath-notes`,
-      name: "Leath Notes",
-      description:
-        "Skeuomorphic online notepad with folders, autosave, guest mode, authentication, and optional multi-provider AI assistance.",
-      applicationCategory: "ProductivityApplication",
-      operatingSystem: "Any",
-      author: { "@id": PERSON_ID },
-      url: "https://leath-note.my.id",
-    },
-    {
-      "@type": "SoftwareApplication",
-      "@id": `${SITE_URL}/#project-roadsense`,
-      name: "RoadSense",
-      description:
-        "Smart GIS road damage mapping and navigation with crowdsourced reporting and intelligent alternative routing.",
+      "@id": `${SITE_URL}/#project-${project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      name: project.title,
+      description: project.description,
       applicationCategory: "WebApplication",
       author: { "@id": PERSON_ID },
-      url: "https://github.com/LIan2nd/RoadSense",
-    },
+      ...(project.url ? { url: project.url } : {}),
+      ...(project.image ? { image: `${SITE_URL}${project.image}` } : {}),
+    })),
     {
-      "@type": "SoftwareApplication",
-      "@id": `${SITE_URL}/#project-digiarc`,
-      name: "DigiArc",
-      description:
-        "Decentralized Web3 file storage platform on IPFS with Solidity smart contracts.",
-      applicationCategory: "WebApplication",
-      author: { "@id": PERSON_ID },
-      url: "https://digiarc.vercel.app",
-    },
-    {
-      "@type": "SoftwareApplication",
-      "@id": `${SITE_URL}/#project-esao`,
-      name: "ESAO",
-      description:
-        "AI-powered automated essay grading system for university lecturers using LangChain and rubric-based semantic evaluation.",
-      applicationCategory: "WebApplication",
-      author: { "@id": PERSON_ID },
-      url: "https://esao.nurulfikri.ac.id",
+      "@type": "ItemList",
+      "@id": `${SITE_URL}/#featured-projects`,
+      name: "Featured Projects by Alfian Nur Usyaid",
+      numberOfItems: PROJECTS.length,
+      itemListElement: PROJECTS.map((project, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: project.title,
+        description: project.description,
+        ...(project.url ? { url: project.url } : {}),
+      })),
     },
   ],
 };
@@ -123,12 +105,18 @@ const jsonLd = {
 export default function Home() {
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white text-sm font-semibold transition-all duration-200"
+      >
+        Skip to main content
+      </a>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Navbar links={NAV_LINKS} />
-      <main>
+      <main id="main-content">
         <HeroSection />
         <AboutSection
           skills={SKILLS}

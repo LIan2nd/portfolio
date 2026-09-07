@@ -23,16 +23,17 @@ export function ExperienceSection({
   };
 
   return (
-    <section id="experience" aria-label="Work and education experience" className="py-10 md:py-14 px-6 text-center">
+    <section id="experience" aria-labelledby="experience-heading" className="py-10 md:py-14 px-6 text-center">
       <div className="max-w-[800px] mx-auto">
         <span className="text-accent text-xs font-semibold uppercase tracking-widest">Follow my</span>
-        <h2 className="text-3xl max-sm:text-2xl font-bold mt-1 mb-6">
+        <h2 id="experience-heading" className="text-3xl max-sm:text-2xl font-bold mt-1 mb-6">
           Experience
         </h2>
         <div className="text-left w-full max-w-[680px] mx-auto">
           <div
             className="bg-[var(--color-bg-tertiary)] relative flex p-1 rounded-lg mb-4"
             role="tablist"
+            aria-label="Experience and education"
             onKeyDown={handleKeyDown}
           >
             {/* Sliding active indicator */}
@@ -42,7 +43,9 @@ export function ExperienceSection({
               }`}
             />
             <button
+              id="tab-work"
               role="tab"
+              aria-controls="panel-work"
               aria-selected={activeTab === "work"}
               tabIndex={activeTab === "work" ? 0 : -1}
               onClick={() => setActiveTab("work")}
@@ -61,7 +64,9 @@ export function ExperienceSection({
               Work
             </button>
             <button
+              id="tab-education"
               role="tab"
+              aria-controls="panel-education"
               aria-selected={activeTab === "education"}
               tabIndex={activeTab === "education" ? 0 : -1}
               onClick={() => setActiveTab("education")}
@@ -82,8 +87,11 @@ export function ExperienceSection({
           </div>
 
           <div
-            className="border border-[var(--color-bg-tertiary)]/60 bg-[var(--color-bg-secondary)]/30 rounded-xl p-6 max-md:p-4 shadow-xs"
+            id={activeTab === "work" ? "panel-work" : "panel-education"}
             role="tabpanel"
+            aria-labelledby={activeTab === "work" ? "tab-work" : "tab-education"}
+            tabIndex={0}
+            className="border border-[var(--color-bg-tertiary)]/60 bg-[var(--color-bg-secondary)]/30 rounded-xl p-6 max-md:p-4 shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <ul key={activeTab} className="list-none p-0 m-0 animate-tab-slide">
               {activeTab === "work"

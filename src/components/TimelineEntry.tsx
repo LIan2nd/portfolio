@@ -106,9 +106,10 @@ export function TimelineEntry({ entry }: TimelineEntryProps) {
                 href={entry.link.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`${entry.link.label} (opens in new tab)`}
                 className="group inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-[var(--color-bg-secondary)] hover:bg-accent text-[var(--color-text-primary)] hover:text-white border border-[var(--color-bg-tertiary)] hover:border-accent transition-all duration-200 active:scale-95 shadow-xs no-underline"
               >
-                <ExternalLink size={12} className="shrink-0 text-accent group-hover:text-white transition-colors duration-200" />
+                <ExternalLink aria-hidden="true" size={12} className="shrink-0 text-accent group-hover:text-white transition-colors duration-200" />
                 <span>{entry.link.label}</span>
               </a>
             )}
@@ -117,9 +118,10 @@ export function TimelineEntry({ entry }: TimelineEntryProps) {
                 href={entry.certificate.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`${entry.certificate.label || "Certificate"} (opens in new tab)`}
                 className="group inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-[var(--color-bg-secondary)] hover:bg-accent text-[var(--color-text-primary)] hover:text-white border border-[var(--color-bg-tertiary)] hover:border-accent transition-all duration-200 active:scale-95 shadow-xs no-underline"
               >
-                <FileText size={12} className="shrink-0 text-accent group-hover:text-white transition-colors duration-200" />
+                <FileText aria-hidden="true" size={12} className="shrink-0 text-accent group-hover:text-white transition-colors duration-200" />
                 <span>{entry.certificate.label || "Certificate"}</span>
               </a>
             )}

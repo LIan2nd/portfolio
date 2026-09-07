@@ -1,4 +1,4 @@
-import { SOCIALS } from "@/lib/data";
+import { SOCIALS, CERTIFICATIONS } from "@/lib/data";
 import { PRIMARY_PROFILE_PHOTO } from "@/lib/profilePhotos";
 
 export const SITE_URL = "https://portfolio.liand.web.id";
@@ -71,5 +71,22 @@ export const personJsonLd = {
         name: "STT Terpadu Nurul Fikri",
       },
     },
+    ...CERTIFICATIONS.map((cert) => ({
+      "@type": "EducationalOccupationalCredential",
+      name: cert.title,
+      credentialCategory: "certificate",
+      recognizedBy: {
+        "@type": "Organization",
+        name: cert.issuer,
+      },
+      ...(cert.credentialId ? { identifier: cert.credentialId } : {}),
+      ...(cert.credentialUrl
+        ? {
+            url: cert.credentialUrl.startsWith("http")
+              ? cert.credentialUrl
+              : `${SITE_URL}${cert.credentialUrl}`,
+          }
+        : {}),
+    })),
   ],
 };

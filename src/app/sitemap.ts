@@ -6,12 +6,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: `${SITE_URL}/`,
-      lastModified: new Date("2026-08-29T00:00:00+07:00"),
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 1.0,
       images: PROFILE_PHOTOS.map((photo) => `${SITE_URL}${photo.src}`),
     },
     {
       url: `${SITE_URL}/resume`,
-      lastModified: new Date("2026-08-29T00:00:00+07:00"),
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
   ];
 }

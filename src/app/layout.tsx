@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     "Portfolio",
     "Software Engineer",
   ],
-  authors: [{ name: "Alfian Nur Usyaid", url: "https://portfolio.liand.web.id" }],
+  authors: [{ name: "Alfian Nur Usyaid", url: SITE_URL }],
   creator: "Alfian Nur Usyaid",
   publisher: "Alfian Nur Usyaid",
   robots: {
@@ -54,12 +54,12 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://portfolio.liand.web.id",
+    canonical: SITE_URL,
   },
   openGraph: {
     title: "Alfian Nur Usyaid — Fullstack Web Developer Portfolio",
     description: HOME_DESCRIPTION,
-    url: "https://portfolio.liand.web.id",
+    url: SITE_URL,
     siteName: "LIand",
     type: "website",
     locale: "en_US",
