@@ -1,5 +1,5 @@
 export const NAVBAR_CONTENT_CLASS =
-  "mx-auto max-w-[800px] relative z-10";
+  "mx-auto max-w-[800px] relative z-50";
 
 export const NAVBAR_ROW_CLASS =
   "grid grid-cols-[auto_1fr_auto] items-center md:grid-cols-[1fr_auto_1fr]";

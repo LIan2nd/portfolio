@@ -68,6 +68,31 @@ describe("Navbar & useActiveSection", () => {
     expect(toggleBtn).toHaveAttribute("aria-expanded", "false");
   });
 
+  it("closes mobile menu when a drawer navigation link is clicked", async () => {
+    const user = userEvent.setup();
+    const scrollMock = vi.fn();
+    window.HTMLElement.prototype.scrollIntoView = scrollMock;
+
+    render(
+      <ThemeProvider>
+        <AiVisibilityProvider>
+          <Navbar links={NAV_LINKS} />
+        </AiVisibilityProvider>
+      </ThemeProvider>
+    );
+
+    const toggleBtn = screen.getByLabelText("Toggle navigation");
+    await user.click(toggleBtn);
+    expect(toggleBtn).toHaveAttribute("aria-expanded", "true");
+
+    const drawer = screen.getByRole("dialog", { name: "Mobile navigation" });
+    const aboutLink = drawer.querySelector('a[href="#about"]');
+    expect(aboutLink).not.toBeNull();
+
+    await user.click(aboutLink!);
+    expect(toggleBtn).toHaveAttribute("aria-expanded", "false");
+  });
+
   it("renders theme toggle button and switches icon", async () => {
     const user = userEvent.setup();
     localStorage.setItem("theme", "dark");

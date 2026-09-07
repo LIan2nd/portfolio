@@ -50,4 +50,10 @@ describe("ProfilePhotoStack", () => {
       PROFILE_PHOTOS[3].alt,
     );
   });
+
+  it("isolates its stacking context to prevent z-index collision with global overlays", () => {
+    const { container } = render(<ProfilePhotoStack photos={PROFILE_PHOTOS} />);
+    const photoContainer = container.querySelector(".group.relative");
+    expect(photoContainer).toHaveClass("isolate");
+  });
 });

@@ -18,7 +18,7 @@ export function ProfilePhotoStack({ photos }: ProfilePhotoStackProps) {
 
   return (
     <div className="flex shrink-0 select-none flex-col items-center max-md:w-full">
-      <div className="group relative h-[360px] w-[280px] max-w-full max-md:w-full max-md:max-w-[320px]">
+      <div className="group relative isolate h-[360px] w-[280px] max-w-full max-md:w-full max-md:max-w-[320px]">
         {photos.map((photo, index) => {
           const position = (index - topIndex + total) % total;
 

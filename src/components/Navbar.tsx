@@ -129,6 +129,7 @@ export function Navbar({ links }: NavbarProps) {
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle navigation"
               aria-expanded={menuOpen}
+              aria-controls="mobile-navigation-drawer"
             >
               <div className="w-5 h-[16px] flex flex-col justify-between pointer-events-none">
                 <span
@@ -229,15 +230,20 @@ export function Navbar({ links }: NavbarProps) {
       {/* Mobile Drawer Backdrop Overlay */}
       <div
         onClick={() => setMenuOpen(false)}
-        className={`md:hidden fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300 ${
+        className={`md:hidden fixed inset-0 z-30 bg-black/60 backdrop-blur-xs transition-opacity duration-300 ${
           menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       />
 
       {/* Mobile Slide-from-Left Drawer */}
       <div
+        id="mobile-navigation-drawer"
+        role="dialog"
+        aria-label="Mobile navigation"
+        aria-modal="true"
+        aria-hidden={!menuOpen}
         className={`md:hidden fixed top-0 bottom-0 left-0 w-64 max-w-[80vw] bg-[var(--color-bg-primary)]/95 backdrop-blur-2xl border-r border-[var(--color-bg-tertiary)]/70 shadow-2xl p-6 pt-20 flex flex-col justify-between transition-transform duration-300 ease-out z-40 ${
-          menuOpen ? "translate-x-0" : "-translate-x-full"
+          menuOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"
         }`}
       >
         <ul className="flex flex-col gap-1.5 list-none m-0 p-0">
