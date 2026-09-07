@@ -91,10 +91,10 @@ export function ContactSection() {
   };
 
   return (
-    <section id="contact" aria-label="Contact form" className="py-10 md:py-14 px-6">
+    <section id="contact" aria-labelledby="contact-heading" className="py-10 md:py-14 px-6">
       <div className="max-w-[800px] mx-auto">
         <span className="text-accent text-xs font-semibold uppercase tracking-widest">Get in touch</span>
-        <h2 className="text-3xl max-sm:text-2xl font-bold mt-1 mb-8">
+        <h2 id="contact-heading" className="text-3xl max-sm:text-2xl font-bold mt-1 mb-8">
           Contact
         </h2>
         <div className="flex gap-12 max-md:flex-col max-md:gap-8">
@@ -170,59 +170,104 @@ export function ContactSection() {
                 />
               </div>
               <div>
-                <label htmlFor="contact-name" className="sr-only">Name</label>
-                <input
-                  id="contact-name"
-                  name="name"
-                  type="text"
-                  autoComplete="name"
-                  value={name}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                  placeholder="Name"
-                  maxLength={100}
-                  className={`w-full bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] rounded-md px-4 py-3 text-sm font-sans outline-none transition-all duration-200 ease-out ${
-                    errors.name
-                      ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
-                      : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
-                  }`}
-                />
+                <div className="relative">
+                  <input
+                    id="contact-name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    value={name}
+                    onChange={(e) => handleNameChange(e.target.value)}
+                    placeholder="Name"
+                    maxLength={100}
+                    className={`peer w-full h-[58px] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-transparent focus:placeholder:text-[var(--color-text-secondary)]/40 rounded-md px-4 pt-5 pb-2 text-sm font-sans outline-none transition-all duration-200 ease-out ${
+                      errors.name
+                        ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
+                        : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
+                    }`}
+                  />
+                  <label
+                    htmlFor="contact-name"
+                    className={`absolute left-4 top-[18px] text-sm origin-top-left transition-all duration-200 pointer-events-none select-none ${
+                      name
+                        ? "-translate-y-2.5 scale-85"
+                        : "peer-focus:-translate-y-2.5 peer-focus:scale-85 peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:scale-85"
+                    } ${
+                      errors.name
+                        ? "text-red-400 peer-focus:text-red-400"
+                        : "text-[var(--color-text-secondary)] peer-focus:text-accent"
+                    }`}
+                  >
+                    Name
+                  </label>
+                </div>
                 {errors.name && <p className="text-red-400 text-xs mt-1.5 animate-tab-slide">{errors.name}</p>}
               </div>
               <div>
-                <label htmlFor="contact-email" className="sr-only">Email address</label>
-                <input
-                  id="contact-email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => handleEmailChange(e.target.value)}
-                  placeholder="Email address"
-                  maxLength={254}
-                  className={`w-full bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] rounded-md px-4 py-3 text-sm font-sans outline-none transition-all duration-200 ease-out ${
-                    errors.email
-                      ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
-                      : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
-                  }`}
-                />
+                <div className="relative">
+                  <input
+                    id="contact-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => handleEmailChange(e.target.value)}
+                    placeholder="Email address"
+                    maxLength={254}
+                    className={`peer w-full h-[58px] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-transparent focus:placeholder:text-[var(--color-text-secondary)]/40 rounded-md px-4 pt-5 pb-2 text-sm font-sans outline-none transition-all duration-200 ease-out ${
+                      errors.email
+                        ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
+                        : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
+                    }`}
+                  />
+                  <label
+                    htmlFor="contact-email"
+                    className={`absolute left-4 top-[18px] text-sm origin-top-left transition-all duration-200 pointer-events-none select-none ${
+                      email
+                        ? "-translate-y-2.5 scale-85"
+                        : "peer-focus:-translate-y-2.5 peer-focus:scale-85 peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:scale-85"
+                    } ${
+                      errors.email
+                        ? "text-red-400 peer-focus:text-red-400"
+                        : "text-[var(--color-text-secondary)] peer-focus:text-accent"
+                    }`}
+                  >
+                    Email address
+                  </label>
+                </div>
                 {errors.email && <p className="text-red-400 text-xs mt-1.5 animate-tab-slide">{errors.email}</p>}
               </div>
               <div>
-                <label htmlFor="contact-message" className="sr-only">Message</label>
-                <textarea
-                  id="contact-message"
-                  name="message"
-                  value={message}
-                  onChange={(e) => handleMessageChange(e.target.value)}
-                  placeholder="Leave a message here"
-                  maxLength={1000}
-                  rows={6}
-                  className={`w-full bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] rounded-md px-4 py-3 text-sm font-sans outline-none transition-all duration-200 ease-out resize-none ${
-                    errors.message
-                      ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
-                      : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
-                  }`}
-                />
+                <div className="relative">
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    value={message}
+                    onChange={(e) => handleMessageChange(e.target.value)}
+                    placeholder="Leave a message here"
+                    maxLength={1000}
+                    rows={5}
+                    className={`peer w-full min-h-[140px] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] placeholder:text-transparent focus:placeholder:text-[var(--color-text-secondary)]/40 rounded-md px-4 pt-6 pb-3 text-sm font-sans outline-none transition-all duration-200 ease-out resize-none ${
+                      errors.message
+                        ? "border border-red-500 ring-1 ring-red-500/40 focus:border-red-500 focus:ring-2 focus:ring-red-500/50"
+                        : "border border-transparent focus:border-accent focus:ring-2 focus:ring-accent/50 hover:border-accent/30"
+                    }`}
+                  />
+                  <label
+                    htmlFor="contact-message"
+                    className={`absolute left-4 top-[18px] text-sm origin-top-left transition-all duration-200 pointer-events-none select-none ${
+                      message
+                        ? "-translate-y-2.5 scale-85"
+                        : "peer-focus:-translate-y-2.5 peer-focus:scale-85 peer-[:not(:placeholder-shown)]:-translate-y-2.5 peer-[:not(:placeholder-shown)]:scale-85"
+                    } ${
+                      errors.message
+                        ? "text-red-400 peer-focus:text-red-400"
+                        : "text-[var(--color-text-secondary)] peer-focus:text-accent"
+                    }`}
+                  >
+                    Message
+                  </label>
+                </div>
                 {errors.message && <p className="text-red-400 text-xs mt-1.5 animate-tab-slide">{errors.message}</p>}
               </div>
               <button
