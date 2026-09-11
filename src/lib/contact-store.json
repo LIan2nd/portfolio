@@ -1,0 +1,20 @@
+{
+  "messages": [
+    {
+      "id": "msg-1789137287383-5x85f",
+      "name": "LIand",
+      "email": "lian.2d22@gmail.com",
+      "message": "hello from liand!",
+      "createdAt": "2026-09-11T14:34:47.383Z",
+      "read": false
+    },
+    {
+      "id": "msg-1789135639310-lg7kn",
+      "name": "Alfian",
+      "email": "alfiannurusyaid19@gmail.com",
+      "message": "hello from me at sept, 11",
+      "createdAt": "2026-09-11T14:07:19.310Z",
+      "read": false
+    }
+  ]
+}

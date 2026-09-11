@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { saveContactMessage, emitContactEvent } from "@/features/contact";
+import { emitSyncEvent } from "@/features/sync/infrastructure/sync-event-emitter";
 
 // ---------------------------------------------------------------------------
 // Rate limiter – in-memory, per-IP (sufficient for a portfolio-scale site)
@@ -107,26 +109,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ---- Forward to Google Apps Script ----
-    const scriptUrl = process.env.CONTACT_SCRIPT_URL;
-
-    if (!scriptUrl) {
-      console.error("[Contact API] CONTACT_SCRIPT_URL env var is not set.");
-      return NextResponse.json(
-        { status: "error", error: "Server configuration error." },
-        { status: 500 },
-      );
+    // ---- Save message to portfolio database & emit realtime sync ----
+    try {
+      const saved = saveContactMessage({
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+      });
+      emitSyncEvent({ type: "content_update", resource: "contact" });
+      emitContactEvent({ type: "new_message", message: saved });
+    } catch (saveErr) {
+      console.error("[Contact API] Failed to save message to local store:", saveErr);
     }
 
-    const formData = new FormData();
-    formData.append("name", name.trim());
-    formData.append("email", email.trim());
-    formData.append("message", message.trim());
+    // ---- Forward to Google Apps Script (if configured) ----
+    const scriptUrl = process.env.CONTACT_SCRIPT_URL;
 
-    await fetch(scriptUrl, {
-      method: "POST",
-      body: formData,
-    });
+    if (scriptUrl) {
+      try {
+        const formData = new FormData();
+        formData.append("name", name.trim());
+        formData.append("email", email.trim());
+        formData.append("message", message.trim());
+
+        await fetch(scriptUrl, {
+          method: "POST",
+          body: formData,
+        });
+      } catch (scriptErr) {
+        console.error("[Contact API] Failed to forward to Google Apps Script:", scriptErr);
+      }
+    } else {
+      console.warn("[Contact API] CONTACT_SCRIPT_URL not set; message saved locally to dashboard store.");
+    }
 
     return NextResponse.json({ status: "success" });
   } catch (err) {
