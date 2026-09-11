@@ -86,7 +86,9 @@ describe("ProjectsSection & ProjectCard", () => {
           expect(descEl?.textContent).toBe(project.description);
 
           const card = container.firstChild as HTMLElement;
-          expect(card.className).toContain("cursor-not-allowed");
+          expect(card.className).not.toContain("cursor-not-allowed");
+          expect(card.className).not.toContain("opacity-50");
+          expect(container.querySelector("svg.lucide-arrow-right")).toBeNull();
 
           cleanup();
         }

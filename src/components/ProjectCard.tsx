@@ -132,7 +132,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   }
 
   return (
-    <article className="rounded-xl overflow-hidden bg-[var(--color-bg-secondary)] flex flex-col cursor-not-allowed opacity-50 border border-transparent">
+    <article className="rounded-xl overflow-hidden bg-[var(--color-bg-secondary)] flex flex-col border border-transparent">
       {cardContent}
     </article>
   );

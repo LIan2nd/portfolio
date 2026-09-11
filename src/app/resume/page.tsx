@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { ArrowLeft, Download, ExternalLink } from "lucide-react";
 import {
-  EDUCATION_ENTRIES,
-  PROJECTS,
   PUBLICATION,
   SKILLS,
   SOCIALS,
-  WORK_ENTRIES,
 } from "@/lib/data";
+import { loadTimelineEntries } from "@/features/experience/infrastructure/data-repository";
+import { loadPortfolioProjects } from "@/features/project/infrastructure/data-repository";
 import {
   PERSON_ID,
   PROFILE_IMAGE_ID,
@@ -19,6 +18,9 @@ import {
   profileImageJsonLd,
 } from "@/lib/seo";
 import { PRIMARY_PROFILE_PHOTO } from "@/lib/profilePhotos";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: {
@@ -70,10 +72,11 @@ const resumeJsonLd = {
     personJsonLd,
   ],
 };
-
-const selectedProjects = PROJECTS.slice(0, 4);
-
 export default function ResumePage() {
+  const { work: workEntries, education: educationEntries } =
+    loadTimelineEntries();
+  const selectedProjects = loadPortfolioProjects().slice(0, 4);
+
   return (
     <>
       <a
@@ -165,7 +168,7 @@ export default function ResumePage() {
                   Experience
                 </h2>
                 <div className="mt-5 space-y-6">
-                  {WORK_ENTRIES.map((entry) => (
+                  {workEntries.map((entry) => (
                     <article
                       key={`${entry.title}-${entry.dateRange}`}
                       className="border-l-2 border-accent/40 pl-4"
@@ -295,7 +298,7 @@ export default function ResumePage() {
                   Education
                 </h2>
                 <div className="mt-4 space-y-5">
-                  {EDUCATION_ENTRIES.map((entry) => (
+                  {educationEntries.map((entry) => (
                     <article key={`${entry.title}-${entry.dateRange}`}>
                       <h3 className="text-sm font-bold leading-snug">
                         {entry.title}

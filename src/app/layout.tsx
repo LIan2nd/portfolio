@@ -3,6 +3,7 @@ import { Inter, Gowun_Batang } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AiVisibilityProvider } from "@/components/AiVisibilityContext";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { LiveContentSync } from "@/components/LiveContentSync";
 import { HOME_DESCRIPTION, SITE_URL } from "@/lib/seo";
 import { PRIMARY_PROFILE_PHOTO } from "@/lib/profilePhotos";
 import "./globals.css";
@@ -108,6 +109,7 @@ export default function RootLayout({
           <AiVisibilityProvider>{children}</AiVisibilityProvider>
         </ThemeProvider>
         <GoogleAnalytics />
+        <LiveContentSync />
       </body>
     </html>
   );
