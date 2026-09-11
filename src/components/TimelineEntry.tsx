@@ -8,6 +8,7 @@ import {
   Database,
   Binary,
   BookOpen,
+  Briefcase,
   ExternalLink,
   FileText,
 } from "lucide-react";
@@ -37,6 +38,8 @@ function TimelineIcon({ icon }: { icon?: string }) {
       return <Binary {...iconProps} />;
     case "book-open":
       return <BookOpen {...iconProps} />;
+    case "briefcase":
+      return <Briefcase {...iconProps} />;
     default:
       return <Code {...iconProps} />;
   }
