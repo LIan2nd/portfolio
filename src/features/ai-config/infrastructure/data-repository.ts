@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { getMongoDb } from "@/lib/mongodb";
 import type { AiModelConfig } from "../domain/types";
 
 const STORE_PATH = path.join(process.cwd(), "src/lib/ai-config-store.json");
@@ -28,23 +29,32 @@ function getDefaultConfig(): AiModelConfig {
   };
 }
 
+let cachedConfig: AiModelConfig | null = null;
+
 export function loadAiConfig(): AiModelConfig {
+  if (cachedConfig) {
+    return cachedConfig;
+  }
+
   const defaults = getDefaultConfig();
   try {
     if (fs.existsSync(STORE_PATH)) {
       const raw = fs.readFileSync(STORE_PATH, "utf-8");
       const parsed = JSON.parse(raw);
-      return {
+      cachedConfig = {
         activeProvider:
           parsed?.activeProvider === "sumopod" ? "sumopod" : "nara",
         naraModel: parsed?.naraModel || defaults.naraModel,
         sumopodModel: parsed?.sumopodModel || defaults.sumopodModel,
         updatedAt: parsed?.updatedAt,
       };
+      return cachedConfig;
     }
   } catch (error) {
     console.error("Failed to read AI config store:", error);
   }
+
+  cachedConfig = defaults;
   return defaults;
 }
 
@@ -64,16 +74,34 @@ export function saveAiConfig(
     updatedAt: new Date().toISOString(),
   };
 
+  cachedConfig = updated;
+
+  // Persist to MongoDB asynchronously for serverless runtime
+  try {
+    void (async () => {
+      const db = await getMongoDb();
+      if (db) {
+        await db.collection("portfolio_settings").updateOne(
+          { id: "ai_config" },
+          { $set: { ...updated, id: "ai_config" } },
+          { upsert: true },
+        );
+      }
+    })();
+  } catch (err) {
+    console.error("[MongoDB AI Config Save Error]:", err);
+  }
+
   try {
     const dir = path.dirname(STORE_PATH);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
     fs.writeFileSync(STORE_PATH, JSON.stringify(updated, null, 2), "utf-8");
-  } catch (error) {
-    console.error("Failed to write AI config store:", error);
-    throw new Error("Failed to persist AI config.");
+  } catch {
+    // Gracefully fallback on read-only file system
   }
 
   return updated;
 }
+

@@ -54,6 +54,7 @@ export async function getEmbedding(text: string): Promise<number[]> {
           model: embeddingModel,
           input: text.slice(0, 2048),
         }),
+        signal: AbortSignal.timeout(2500),
       });
 
       if (response.ok) {
@@ -63,7 +64,7 @@ export async function getEmbedding(text: string): Promise<number[]> {
           return vector;
         }
       }
-    } catch (err) {
+    } catch {
       // Fallback if network or model error
     }
   }
@@ -83,6 +84,7 @@ export async function getEmbedding(text: string): Promise<number[]> {
               parts: [{ text: text.slice(0, 2048) }],
             },
           }),
+          signal: AbortSignal.timeout(2500),
         }
       );
 
@@ -90,7 +92,7 @@ export async function getEmbedding(text: string): Promise<number[]> {
         const data = await response.json();
         return data.embedding?.values || [];
       }
-    } catch (e) {
+    } catch {
       // Fallback
     }
   }
@@ -162,6 +164,11 @@ export function loadAllKnowledgeChunks(): KnowledgeChunk[] {
   return chunks;
 }
 
+function isIntroductionQuery(text: string): boolean {
+  const introPatterns = /^(halo|hi|hai|pagi|siang|sore|malam|assalamu'alaikum|assalam|p)\b/i;
+  return introPatterns.test(text);
+}
+
 /**
  * Retrieves the Top-K most relevant knowledge chunks for a user query
  */
@@ -169,30 +176,39 @@ export async function getRelevantContext(
   query: string,
   topK = 5
 ): Promise<string> {
-  const chunks = loadAllKnowledgeChunks();
-
-  // Try Vector Embedding Search first
-  const queryEmbedding = await getEmbedding(query);
-
-  if (queryEmbedding.length > 0) {
-    // Score each chunk
-    const scored = await Promise.all(
-      chunks.map(async (chunk) => {
-        if (!chunk.embedding || chunk.embedding.length === 0) {
-          chunk.embedding = await getEmbedding(chunk.content);
-        }
-        const score = cosineSimilarity(queryEmbedding, chunk.embedding);
-        return { chunk, score };
-      })
-    );
-
-    scored.sort((a, b) => b.score - a.score);
-    const topChunks = scored.slice(0, topK).map((s) => s.chunk.content);
-    return topChunks.join("\n\n---\n\n");
+  const trimmed = query.trim();
+  if (isIntroductionQuery(trimmed) || trimmed.length <= 3) {
+    return "";
   }
 
-  // Fast Keyword & Semantic Fallback if embedding is unavailable
-  const normalizedQuery = query.toLowerCase();
+  const chunks = loadAllKnowledgeChunks();
+  if (chunks.length === 0) return "";
+
+  // If any chunks have precomputed embeddings, try vector search
+  const hasPrecomputed = chunks.some((c) => Array.isArray(c.embedding) && c.embedding.length > 0);
+  if (hasPrecomputed) {
+    try {
+      const queryEmbedding = await getEmbedding(trimmed);
+      if (queryEmbedding.length > 0) {
+        const scored = chunks
+          .filter((c) => Array.isArray(c.embedding) && c.embedding.length > 0)
+          .map((chunk) => ({
+            chunk,
+            score: cosineSimilarity(queryEmbedding, chunk.embedding!),
+          }));
+        scored.sort((a, b) => b.score - a.score);
+        const topChunks = scored.slice(0, topK).map((s) => s.chunk.content);
+        if (topChunks.length > 0) {
+          return topChunks.join("\n\n---\n\n");
+        }
+      }
+    } catch {
+      // Fallback to fast keyword scoring
+    }
+  }
+
+  // Fast Keyword & Semantic Scoring with synonym expansion
+  const normalizedQuery = trimmed.toLowerCase();
   const queryWords = normalizedQuery.split(/\s+/).filter((w) => w.length >= 2);
 
   // Common synonym expansion for Indonesian conversational queries

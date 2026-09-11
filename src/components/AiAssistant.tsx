@@ -112,6 +112,11 @@ function formatMarkdown(text: string) {
     );
   });
 }
+// Helper to detect if user query is likely in English
+function isEnglishText(text: string): boolean {
+  const englishWords = /\b(what|who|where|how|tell|project|skills|resume|experience|hello|hi|hey|please|can|you)\b/i;
+  return englishWords.test(text);
+}
 
 // Helper: extract [NAV:sectionId:label] action marker from AI response content
 const NAV_ACTION_REGEX = /\[NAV:(\w+):(.+?)\]/;
@@ -345,19 +350,31 @@ export function AiAssistant() {
       );
     } catch (error) {
       setAiStatus("error");
-      const errorText =
-        error instanceof Error
+      const isEnglish = isEnglishText(query);
+      const isNetworkError =
+        error instanceof Error &&
+        (error.message === "Failed to fetch" ||
+          error.name === "TypeError" ||
+          error.message.includes("fetch"));
+
+      const errorText = isNetworkError
+        ? isEnglish
+          ? "⚠️ Connection interrupted while AI was warming up. Please try sending your message again!"
+          : "⚠️ Koneksi terputus atau AI sedang warm-up dari cold start. Silakan coba kirim lagi pesanmu ya!"
+        : error instanceof Error
           ? error.message
-          : "⚠️ Maaf, koneksi ke server AI terputus. Silakan coba kembali sesaat lagi.";
+          : isEnglish
+            ? "⚠️ Sorry, connection to AI was lost. Please try again."
+            : "⚠️ Maaf, koneksi ke server AI terputus. Silakan coba kembali sesaat lagi.";
 
       setMessages((prev) =>
         prev.map((msg) =>
           msg.id === aiMessageId
             ? {
-              ...msg,
-              content: errorText,
-              isStreaming: false,
-            }
+                ...msg,
+                content: errorText,
+                isStreaming: false,
+              }
             : msg
         )
       );

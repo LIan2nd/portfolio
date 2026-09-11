@@ -5,6 +5,7 @@ import { logUserQuestion, logBotResponse } from "@/lib/ai/logger";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 // In-memory rate limiting map with short-term (1 min) and hourly limits
 interface RateLimitRecord {
