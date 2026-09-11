@@ -1,12 +1,11 @@
 import {
   PERSONAL_DETAILS,
   SKILLS,
-  WORK_ENTRIES,
-  EDUCATION_ENTRIES,
   PROJECTS,
   CERTIFICATIONS,
   SOCIALS,
 } from "@/lib/data";
+import { loadExperienceEntries } from "@/features/experience/infrastructure/data-repository";
 
 const INTRODUCTION_INTENT_PATTERNS = [
   /\b(perkenalan|perkenalkan diri(?:mu)?|kenalin diri|kenalkan dirimu|siapa kamu)\b/,
@@ -60,19 +59,29 @@ export function shouldIncludeTypingFunFact(query: string): boolean {
 export function buildPortfolioKnowledge(userQuery = ""): string {
   const skillsList = SKILLS.map((s) => s.name).join(", ");
 
-  const workHistory = WORK_ENTRIES.map((w) => {
-    const desc = w.description ? `\n    - ${w.description.join("\n    - ")}` : "";
-    const link = w.link ? ` (Project Link: ${w.link.url})` : "";
-    const cert = w.certificate ? ` (Certificate File: ${w.certificate.url})` : "";
-    return `• ${w.title} at ${w.subtitle} (${w.dateRange})${link}${cert}${desc}`;
-  }).join("\n\n");
+  const experiences = loadExperienceEntries();
 
-  const educationHistory = EDUCATION_ENTRIES.map((e) => {
-    const desc = e.description ? `\n    - ${e.description.join("\n    - ")}` : "";
-    const link = e.link ? ` (Paper/Link: ${e.link.url})` : "";
-    const cert = e.certificate ? ` (Certificate File: ${e.certificate.url})` : "";
-    return `• ${e.title} - ${e.subtitle} (${e.dateRange})${link}${cert}${desc}`;
-  }).join("\n\n");
+  const workHistory = experiences
+    .filter((e) => e.kind === "work")
+    .map((w) => {
+      const desc =
+        w.highlights && w.highlights.length > 0
+          ? `\n    - ${w.highlights.join("\n    - ")}`
+          : `\n    - ${w.description}`;
+      return `• ${w.title} at ${w.organization} (${w.dateRange})${desc}`;
+    })
+    .join("\n\n");
+
+  const educationHistory = experiences
+    .filter((e) => e.kind === "education")
+    .map((e) => {
+      const desc =
+        e.highlights && e.highlights.length > 0
+          ? `\n    - ${e.highlights.join("\n    - ")}`
+          : `\n    - ${e.description}`;
+      return `• ${e.title} - ${e.organization} (${e.dateRange})${desc}`;
+    })
+    .join("\n\n");
 
   const projectsList = PROJECTS.map((p) => {
     return `• ${p.title}: ${p.description} (URL: ${p.url})`;

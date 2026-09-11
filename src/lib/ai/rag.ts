@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { buildPortfolioKnowledge } from "./knowledge";
+import { loadKnowledgeDocuments } from "@/features/knowledge/infrastructure/markdown-repository";
 
 export interface KnowledgeChunk {
   id: string;
@@ -32,21 +33,22 @@ export function cosineSimilarity(vecA: number[], vecB: number[]): number {
 }
 
 /**
- * Generates text embedding via SumoPod / OpenAI-compatible / Gemini API
+ * Generates text embedding via Nara / SumoPod / OpenAI-compatible / Gemini API,
+ * with graceful fallback to keyword & semantic scoring.
  */
 export async function getEmbedding(text: string): Promise<number[]> {
-  const sumopodKey = process.env.SUMOPOD_API_KEY || process.env.OPENAI_API_KEY;
+  const embeddingKey = process.env.SUMOPOD_API_KEY || process.env.OPENAI_API_KEY;
   const baseUrl = process.env.SUMOPOD_BASE_URL || process.env.OPENAI_BASE_URL || "https://ai.sumopod.com/v1";
   const embeddingModel = process.env.SUMOPOD_EMBEDDING_MODEL || "gemini/gemini-embedding-001";
 
-  // 1. SumoPod / OpenAI Compatible /embeddings endpoint
-  if (sumopodKey) {
+  // 1. External OpenAI-compatible /embeddings endpoint (e.g. SumoPod, OpenAI)
+  if (embeddingKey) {
     try {
       const response = await fetch(`${baseUrl.replace(/\/$/, "")}/embeddings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sumopodKey}`,
+          Authorization: `Bearer ${embeddingKey}`,
         },
         body: JSON.stringify({
           model: embeddingModel,
@@ -101,6 +103,10 @@ export async function getEmbedding(text: string): Promise<number[]> {
  * plus core data from data.ts dynamically
  */
 export function loadAllKnowledgeChunks(): KnowledgeChunk[] {
+  if (cachedChunks) {
+    return cachedChunks;
+  }
+
   const chunks: KnowledgeChunk[] = [];
 
   // 1. Add core knowledge base from data.ts
@@ -116,39 +122,35 @@ export function loadAllKnowledgeChunks(): KnowledgeChunk[] {
     }
   });
 
-  // 2. Read all Markdown files from src/lib/ai/knowledge/
+  // 2. Read all Markdown files from cached knowledge repository
   try {
-    const knowledgeDir = path.join(process.cwd(), "src/lib/ai/knowledge");
-    if (fs.existsSync(knowledgeDir)) {
-      const files = fs.readdirSync(knowledgeDir);
-      for (const file of files) {
-        if (file.endsWith(".md")) {
-          const filePath = path.join(knowledgeDir, file);
-          const rawText = fs.readFileSync(filePath, "utf-8").trim();
+    const documents = loadKnowledgeDocuments();
+    for (const doc of documents) {
+      if (doc.id === "ai-system-prompt") continue;
+      const file = `${doc.id}.md`;
+      const rawText = doc.content.trim();
 
-          if (rawText.length > 0) {
-            // Add entire file chunk for holistic context
-            chunks.push({
-              id: `${file}-full`,
-              source: file,
-              content: rawText,
-            });
+      if (rawText.length > 0) {
+        // Add entire file chunk for holistic context
+        chunks.push({
+          id: `${file}-full`,
+          source: file,
+          content: rawText,
+        });
 
-            // Also chunk by markdown sections (## Header) if multiple sections exist
-            const sections = rawText.split(/(?=\n##\s)/g);
-            if (sections.length > 1) {
-              sections.forEach((sec, sIdx) => {
-                const trimmed = sec.trim();
-                if (trimmed.length > 10) {
-                  chunks.push({
-                    id: `${file}-${sIdx}`,
-                    source: file,
-                    content: trimmed,
-                  });
-                }
+        // Also chunk by markdown sections (## Header) if multiple sections exist
+        const sections = rawText.split(/(?=\n##\s)/g);
+        if (sections.length > 1) {
+          sections.forEach((sec, sIdx) => {
+            const trimmed = sec.trim();
+            if (trimmed.length > 10) {
+              chunks.push({
+                id: `${file}-${sIdx}`,
+                source: file,
+                content: trimmed,
               });
             }
-          }
+          });
         }
       }
     }
@@ -156,6 +158,7 @@ export function loadAllKnowledgeChunks(): KnowledgeChunk[] {
     // Fallback gracefully
   }
 
+  cachedChunks = chunks;
   return chunks;
 }
 
