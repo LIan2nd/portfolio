@@ -1,6 +1,8 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { InvalidHistoryQuery } from "../application/query";
 import type { ChatHistoryService } from "../application/service";
+import { chatEventEmitter } from "../infrastructure/chat-event-emitter";
+import { contactEventEmitter } from "@/features/contact/infrastructure/contact-event-emitter";
 
 function json(body: unknown, status = 200) {
   return Response.json(body, {
@@ -85,6 +87,66 @@ export function createHistoryHandlers(
               { error: { code: "NOT_FOUND", message: "Exchange not found." } },
               404,
             );
+      }),
+    stream: (request: Request) =>
+      handle(request, async () => {
+        const encoder = new TextEncoder();
+        let heartbeat: ReturnType<typeof setInterval> | undefined;
+
+        const stream = new ReadableStream({
+          start(controller) {
+            controller.enqueue(encoder.encode("event: connected\ndata: {}\n\n"));
+
+            const onChatEvent = (event: unknown) => {
+              try {
+                controller.enqueue(
+                  encoder.encode(`event: chat_event\ndata: ${JSON.stringify(event)}\n\n`),
+                );
+              } catch {
+                // Stream might be closed
+              }
+            };
+
+            const onContactEvent = (event: unknown) => {
+              try {
+                controller.enqueue(
+                  encoder.encode(`event: contact_event\ndata: ${JSON.stringify(event)}\n\n`),
+                );
+              } catch {
+                // Stream might be closed
+              }
+            };
+
+            chatEventEmitter.on("chat_event", onChatEvent);
+            contactEventEmitter.on("contact_event", onContactEvent);
+
+            heartbeat = setInterval(() => {
+              try {
+                controller.enqueue(encoder.encode(": keepalive\n\n"));
+              } catch {
+                if (heartbeat) clearInterval(heartbeat);
+              }
+            }, 15000);
+
+            request.signal.addEventListener("abort", () => {
+              chatEventEmitter.off("chat_event", onChatEvent);
+              contactEventEmitter.off("contact_event", onContactEvent);
+              if (heartbeat) clearInterval(heartbeat);
+              try {
+                controller.close();
+              } catch {}
+            });
+          },
+        });
+
+        return new Response(stream, {
+          headers: {
+            "Content-Type": "text/event-stream; charset=utf-8",
+            "Cache-Control": "no-cache, no-transform",
+            "Connection": "keep-alive",
+            "X-Content-Type-Options": "nosniff",
+          },
+        });
       }),
   };
 }

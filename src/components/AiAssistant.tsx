@@ -143,6 +143,7 @@ export function AiAssistant() {
   const [providerMode, setProviderMode] = useState<"live" | "simulated">(
     "simulated"
   );
+  const [providerName, setProviderName] = useState<string>("Nara AI");
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -164,8 +165,18 @@ export function AiAssistant() {
     hasProbed.current = true;
     fetch("/api/chat")
       .then((res) => {
-        if (!res.ok) setAiStatus("error");
-        else setAiStatus("active");
+        if (!res.ok) {
+          setAiStatus("error");
+          return null;
+        }
+        setAiStatus("active");
+        return res.json();
+      })
+      .then((data) => {
+        if (data) {
+          if (data.mode) setProviderMode(data.mode);
+          if (data.provider) setProviderName(data.provider);
+        }
       })
       .catch(() => setAiStatus("offline"));
   }, [isOpen]);
@@ -289,6 +300,10 @@ export function AiAssistant() {
       const modeHeader = response.headers.get("X-AI-Mode");
       if (modeHeader === "live" || modeHeader === "simulated") {
         setProviderMode(modeHeader);
+      }
+      const providerHeader = response.headers.get("X-AI-Provider");
+      if (providerHeader) {
+        setProviderName(decodeURIComponent(providerHeader));
       }
 
       if (!response.ok || !response.body) {
@@ -457,7 +472,9 @@ export function AiAssistant() {
                 <span className="text-[9px] sm:text-[10px] text-[var(--color-text-secondary)]/60">
                   Powered by{" "}
                   <span className="text-accent font-medium">
-                    {providerMode === "live" ? "SumoPod & RAG AI" : "LLM & RAG Engine"}
+                    {providerMode === "live"
+                      ? `${providerName || "Nara AI"} & RAG Engine`
+                      : "LLM & RAG Engine"}
                   </span>
                 </span>
               </div>
