@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
 
     // ---- Save message to portfolio database & emit realtime sync ----
     try {
-      const saved = saveContactMessage({
+      const saved = await saveContactMessage({
         name: name.trim(),
         email: email.trim(),
         message: message.trim(),

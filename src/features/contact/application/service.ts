@@ -1,9 +1,12 @@
 import type { ContactMessage } from "../domain/types";
 
 export interface ContactRepository {
-  loadContactMessages(): ContactMessage[];
-  markContactMessageRead?(id: string, read: boolean): ContactMessage | null;
-  deleteContactMessage?(id: string): boolean;
+  loadContactMessages(): Promise<ContactMessage[]> | ContactMessage[];
+  markContactMessageRead?(
+    id: string,
+    read: boolean,
+  ): Promise<ContactMessage | null> | ContactMessage | null;
+  deleteContactMessage?(id: string): Promise<boolean> | boolean;
 }
 
 export interface ContactService {
@@ -18,7 +21,7 @@ export function createContactService(
 ): ContactService {
   return {
     async list(searchParams) {
-      const messages = repository.loadContactMessages();
+      const messages = await repository.loadContactMessages();
       if (!searchParams) {
         return { items: messages };
       }
@@ -46,7 +49,7 @@ export function createContactService(
     },
 
     async find(id) {
-      const messages = repository.loadContactMessages();
+      const messages = await repository.loadContactMessages();
       return messages.find((msg) => msg.id === id) ?? null;
     },
 
@@ -54,14 +57,14 @@ export function createContactService(
       if (!repository.markContactMessageRead) {
         throw new Error("Repository does not support updating contact messages.");
       }
-      return repository.markContactMessageRead(id, read);
+      return await repository.markContactMessageRead(id, read);
     },
 
     async delete(id) {
       if (!repository.deleteContactMessage) {
         throw new Error("Repository does not support deleting contact messages.");
       }
-      return repository.deleteContactMessage(id);
+      return await repository.deleteContactMessage(id);
     },
   };
 }
