@@ -1,0 +1,72 @@
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 70% 20%, rgb(46 242 122 / 22%), transparent 60%),
+    radial-gradient(ellipse at 30% 35%, rgb(20 199 166 / 18%), transparent 65%),
+    #021526;
+}
+
+.background::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 23px 31px, rgb(255 255 255 / 70%) 50%, transparent),
+    radial-gradient(1px 1px at 71px 83px, rgb(255 255 255 / 40%) 50%, transparent),
+    radial-gradient(1.5px 1.5px at 139px 47px, rgb(255 255 255 / 60%) 50%, transparent);
+  background-size: 197px 173px, 239px 229px, 317px 293px;
+}
+
+.canvas,
+.scrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.canvas {
+  display: block;
+  opacity: 0;
+}
+
+.canvas[data-ready="true"] {
+  opacity: 1;
+}
+
+.scrim {
+  background: linear-gradient(
+    to top,
+    #021526 0%,
+    rgb(2 21 38 / 82%) 22%,
+    rgb(2 21 38 / 35%) 55%,
+    rgb(2 21 38 / 15%) 100%
+  );
+}
+
+:global([data-theme="light"]) .background {
+  background:
+    radial-gradient(circle at 80% 22%, #fff1b8 0, #ffda70 4.8vh, rgb(255 213 102 / 30%) 5.4vh, transparent 15vh),
+    radial-gradient(ellipse 28% 12% at 24% 30%, #fff 15%, rgb(255 255 255 / 85%) 38%, transparent 74%),
+    radial-gradient(ellipse 32% 14% at 68% 48%, #fff 15%, rgb(255 255 255 / 85%) 38%, transparent 74%),
+    linear-gradient(to bottom, #429fec, #bfe6fc);
+}
+
+:global([data-theme="light"]) .background::before {
+  opacity: 0;
+}
+
+:global([data-theme="light"]) .scrim {
+  background: linear-gradient(
+    to top,
+    #fff 0%,
+    rgb(240 248 255 / 65%) 18%,
+    rgb(230 243 255 / 18%) 45%,
+    rgb(225 238 252 / 3%) 75%,
+    rgb(225 238 252 / 0%) 100%
+  );
+}

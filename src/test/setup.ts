@@ -52,11 +52,25 @@ class MockIntersectionObserver {
 }
 
 Object.defineProperty(window, "IntersectionObserver", {
+  configurable: true,
   writable: true,
   value: MockIntersectionObserver,
 });
 
 Object.defineProperty(globalThis, "IntersectionObserver", {
+  configurable: true,
   writable: true,
   value: MockIntersectionObserver,
+});
+
+class MockResizeObserver {
+  observe = () => {};
+  unobserve = () => {};
+  disconnect = () => {};
+}
+
+Object.defineProperty(globalThis, "ResizeObserver", {
+  configurable: true,
+  writable: true,
+  value: MockResizeObserver,
 });

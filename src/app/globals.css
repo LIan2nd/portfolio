@@ -62,43 +62,6 @@ html {
   max-width: 960px;
 }
 
-/* Hero Section Gradient Overlay (theme-aware ultra-smooth blend) */
-#hero-overlay {
-  background: linear-gradient(
-    to top,
-    rgba(2, 21, 38, 1) 0%,
-    rgba(2, 21, 38, 0.92) 10%,
-    rgba(2, 21, 38, 0.5) 28%,
-    rgba(2, 21, 38, 0.15) 50%,
-    rgba(2, 21, 38, 0) 100%
-  );
-}
-
-[data-theme="light"] #hero-overlay {
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 1) 10%,
-    rgba(255, 255, 255, 0.92) 20%,
-    rgba(255, 255, 255, 0.5) 38%,
-    rgba(255, 255, 255, 0.015) 50%,
-    rgba(255, 255, 255, 0.0) 100%
-  );
-}
-
-/* Decorative hero background intentionally uses CSS so search engines do not
-   treat it as a meaningful page image. */
-#hero-background {
-  background-image: url("/img/hero-bg.jpg");
-  background-position: center bottom;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-[data-theme="light"] #hero-background {
-  background-image: url("/img/hero-bg-light.jpg");
-  background-position: center;
-}
-
 /* The 404 background is decorative and uses stronger theme-aware overlays so
    recovery text remains readable over both photographs. */
 #not-found-background {

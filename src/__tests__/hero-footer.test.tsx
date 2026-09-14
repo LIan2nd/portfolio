@@ -1,24 +1,35 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { HeroSection } from "@/components/HeroSection";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { Footer } from "@/components/Footer";
 import { SOCIALS } from "@/lib/data";
 
 describe("HeroSection & Footer", () => {
-  it("renders HeroSection with greeting, heading, tagline, and photo credit", () => {
-    const { container } = render(<HeroSection />);
+  it("preserves hero content with a decorative sky when WebGL is unavailable", () => {
+    const getContext = vi
+      .spyOn(HTMLCanvasElement.prototype, "getContext")
+      .mockReturnValue(null);
+    const { container, unmount } = render(
+      <ThemeProvider>
+        <HeroSection />
+      </ThemeProvider>,
+    );
 
     expect(screen.getByText("Hi, there, I'm")).toBeInTheDocument();
     expect(screen.getByText("Alfian Nur Usyaid")).toBeInTheDocument();
     expect(
       screen.getByText("Fullstack Web Developer — Next.js, Laravel & Blockchain")
     ).toBeInTheDocument();
-    expect(screen.getByText("Slava Auchynnikau")).toBeInTheDocument();
-    expect(screen.getByText("Unsplash")).toBeInTheDocument();
+    expect(screen.queryByText("Slava Auchynnikau")).not.toBeInTheDocument();
+    expect(screen.queryByText("Unsplash")).not.toBeInTheDocument();
 
     const background = container.querySelector("#hero-background");
     expect(background).toHaveAttribute("aria-hidden", "true");
+    expect(background?.querySelector("canvas")).not.toHaveAttribute("data-ready");
     expect(container.querySelector("#home img")).toBeNull();
+    unmount();
+    getContext.mockRestore();
   });
 
   it("renders Footer with copyright notice including emoji and social links", () => {
