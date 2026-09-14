@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { MessageSquareCode, ChevronUp, Send, Trash2, ShieldCheck, MapPin } from "lucide-react";
 import { PrivacyPolicyModal } from "./PrivacyPolicyModal";
 import { useAiVisibility } from "./AiVisibilityContext";
+import { useFloatingViewport } from "@/hooks/useFloatingViewport";
+import styles from "./AiAssistant.module.css";
 
 interface Message {
   id: string;
@@ -139,6 +141,7 @@ import { LOADING_PHRASES, getRandomLoadingIndex } from "@/lib/loadingPhrases";
 
 export function AiAssistant() {
   const { isAiVisible } = useAiVisibility();
+  const viewportStyle = useFloatingViewport(isAiVisible);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -406,15 +409,16 @@ export function AiAssistant() {
     <aside
       ref={containerRef}
       aria-label="AI Assistant"
-      className={`fixed z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-md border border-black/[0.08] dark:border-white/[0.08] rounded-2xl shadow-lg shadow-black/8 dark:shadow-2xl dark:shadow-black/60 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isOpen
-        ? "bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:bottom-5 sm:w-[360px] h-[520px] max-h-[85vh]"
-        : "bottom-4 right-4 sm:right-5 sm:bottom-5 w-[210px] sm:w-[220px] h-[56px]"
+      style={viewportStyle}
+      className={`${styles.viewport} fixed z-[60] bg-[var(--color-bg-primary)]/95 backdrop-blur-md border border-black/[0.08] dark:border-white/[0.08] rounded-2xl shadow-lg shadow-black/8 dark:shadow-2xl dark:shadow-black/60 flex flex-col overflow-hidden transition-[width,height,background-color,border-color,box-shadow] duration-300 ease-in-out ${isOpen
+        ? "left-4 right-4 sm:left-auto sm:right-5 sm:w-[360px] h-[520px]"
+        : "right-4 sm:right-5 w-[210px] sm:w-[220px] h-[56px]"
         }`}
     >
       {/* Header Bar (Always visible & Clickable to toggle) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-3.5 py-2 flex items-center justify-between bg-[var(--color-bg-secondary)]/50 hover:bg-[var(--color-bg-secondary)]/80 transition-colors cursor-pointer text-left focus:outline-none ${isOpen ? "border-b border-[var(--color-bg-tertiary)]/70" : "border-none"
+        className={`w-full shrink-0 px-3.5 py-2 flex items-center justify-between bg-[var(--color-bg-secondary)]/50 hover:bg-[var(--color-bg-secondary)]/80 transition-colors cursor-pointer text-left focus:outline-none ${isOpen ? "border-b border-[var(--color-bg-tertiary)]/70" : "border-none"
           }`}
         aria-label={isOpen ? "Close AI Clone" : "Open AI Clone"}
       >

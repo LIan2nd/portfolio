@@ -1,0 +1,20 @@
+.viewport {
+  --panel-gap: 1rem;
+
+  bottom: calc(
+    var(--floating-bottom-offset, 0px) + var(--panel-gap) + env(safe-area-inset-bottom, 0px)
+  );
+  max-height: min(
+    85dvh,
+    calc(
+      var(--floating-viewport-height, 100dvh) - 2 * var(--panel-gap) -
+        env(safe-area-inset-bottom, 0px) - env(safe-area-inset-top, 0px)
+    )
+  );
+}
+
+@media (min-width: 640px) {
+  .viewport {
+    --panel-gap: 1.25rem;
+  }
+}
