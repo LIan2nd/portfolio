@@ -9,6 +9,7 @@ const ATMOSPHERE_SCALE = 0.5;
 export interface SkyFrame {
   time: number;
   daylight: number;
+  motionEnabled: boolean;
   pointer: { x: number; y: number };
 }
 
@@ -59,18 +60,20 @@ function createPass(gl: WebGL2RenderingContext, fragmentSource: string) {
     time: gl.getUniformLocation(program, "t"),
     pointer: gl.getUniformLocation(program, "mouse"),
     daylight: gl.getUniformLocation(program, "dayMix"),
+    motionEnabled: gl.getUniformLocation(program, "motionEnabled"),
   };
 }
 
 function drawPass(
   gl: WebGL2RenderingContext,
   pass: ReturnType<typeof createPass>,
-  { time, daylight, pointer }: SkyFrame,
+  { time, daylight, pointer, motionEnabled }: SkyFrame,
 ) {
   gl.useProgram(pass.program);
   gl.uniform1f(pass.time, time);
   gl.uniform2f(pass.pointer, pointer.x, pointer.y);
   gl.uniform1f(pass.daylight, daylight);
+  gl.uniform1i(pass.motionEnabled, motionEnabled ? 1 : 0);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
 

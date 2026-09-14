@@ -49,6 +49,7 @@ export function HeroBackground() {
       renderer.draw({
         time: isStill ? STILL_TIME : elapsed,
         daylight,
+        motionEnabled: !isStill,
         pointer: isStill ? { x: 0.5, y: 0.5 } : pointer,
       });
       if (canvas!.dataset.ready !== "true") canvas!.dataset.ready = "true";

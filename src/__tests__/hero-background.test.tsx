@@ -91,7 +91,7 @@ describe("HeroBackground rendering lifecycle", () => {
     advanceFrame(16);
     expect(mocks.draw).toHaveBeenCalledTimes(1);
     advanceFrame(34);
-    expect(mocks.draw).toHaveBeenLastCalledWith(expect.objectContaining({ time: 0.05 }));
+    expect(mocks.draw).toHaveBeenLastCalledWith(expect.objectContaining({ time: 0.05, motionEnabled: true }));
     advanceFrame(20);
     expect(mocks.draw).toHaveBeenLastCalledWith(expect.objectContaining({ time: 0.07 }));
 
@@ -117,7 +117,7 @@ describe("HeroBackground rendering lifecycle", () => {
     const view = render(<HeroBackground />);
     setVisible(true);
     expect(mocks.draw).toHaveBeenLastCalledWith({
-      time: 8, daylight: 0, pointer: { x: 0.5, y: 0.5 },
+      time: 8, daylight: 0, motionEnabled: false, pointer: { x: 0.5, y: 0.5 },
     });
     expect(frames.size).toBe(0);
     notifyResize();
@@ -129,7 +129,7 @@ describe("HeroBackground rendering lifecycle", () => {
     mocks.theme = "light";
     view.rerender(<HeroBackground />);
     expect(mocks.draw).toHaveBeenLastCalledWith({
-      time: 8, daylight: 1, pointer: { x: 0.5, y: 0.5 },
+      time: 8, daylight: 1, motionEnabled: false, pointer: { x: 0.5, y: 0.5 },
     });
     expect(frames.size).toBe(0);
     motion.matches = false;
@@ -156,7 +156,7 @@ describe("HeroBackground rendering lifecycle", () => {
     motion.matches = true;
     advanceFrame(34);
     expect(mocks.draw).toHaveBeenLastCalledWith({
-      time: 8, daylight: 0, pointer: { x: 0.5, y: 0.5 },
+      time: 8, daylight: 0, motionEnabled: false, pointer: { x: 0.5, y: 0.5 },
     });
     expect(frames.size).toBe(0);
   });
