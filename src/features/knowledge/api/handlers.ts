@@ -1,6 +1,5 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { revalidatePath } from "next/cache";
-import { emitSyncEvent } from "@/features/sync/infrastructure/sync-event-emitter";
 import type { KnowledgeService } from "../application/service";
 
 function triggerRevalidation() {
@@ -9,7 +8,6 @@ function triggerRevalidation() {
   } catch {
     // Graceful fallback in non-Next runtime or test environment
   }
-  emitSyncEvent({ type: "content_update", resource: "knowledge" });
 }
 
 function json(body: unknown, status = 200) {

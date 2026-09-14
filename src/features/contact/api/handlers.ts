@@ -1,11 +1,5 @@
 import { createHash, timingSafeEqual } from "node:crypto";
-import { emitSyncEvent } from "@/features/sync/infrastructure/sync-event-emitter";
-import {
-  contactEventEmitter,
-  emitContactEvent,
-} from "../infrastructure/contact-event-emitter";
 import type { ContactService } from "../application/service";
-import { getMongoDb } from "@/lib/mongodb";
 
 function json(body: unknown, status = 200) {
   return Response.json(body, {
@@ -122,8 +116,6 @@ export function createContactHandlers(
             404,
           );
         }
-        emitSyncEvent({ type: "content_update", resource: "contact" });
-        emitContactEvent({ type: "message_read", id, read: body.read });
         return json(updated, 200);
       }),
     delete: (request: Request, id: string) =>
@@ -135,111 +127,18 @@ export function createContactHandlers(
             404,
           );
         }
-        emitSyncEvent({ type: "content_update", resource: "contact" });
-        emitContactEvent({ type: "message_deleted", id });
         return json({ success: true }, 200);
       }),
     stream: (request: Request) =>
-      handle(request, async () => {
-        const encoder = new TextEncoder();
-        let heartbeat: ReturnType<typeof setInterval> | undefined;
-        let pollInterval: ReturnType<typeof setInterval> | undefined;
-
-        const stream = new ReadableStream({
-          start(controller) {
-            controller.enqueue(encoder.encode("event: connected\ndata: {}\n\n"));
-
-            const emittedContactIds = new Set<string>();
-            let lastCheckedTime = new Date(Date.now() - 5000);
-
-            const onContactEvent = (event: unknown) => {
-              try {
-                controller.enqueue(
-                  encoder.encode(`event: contact_event\ndata: ${JSON.stringify(event)}\n\n`),
-                );
-              } catch {
-                // Stream might be closed
-              }
-            };
-
-            contactEventEmitter.on("contact_event", onContactEvent);
-
-            let isPolling = false;
-            const pollContacts = async () => {
-              if (isPolling) return;
-              isPolling = true;
-              try {
-                const db = await getMongoDb();
-                if (!db) return;
-
-                const newContacts = await db
-                  .collection("contact_messages")
-                  .find({ createdAt: { $gte: lastCheckedTime.toISOString() } })
-                  .sort({ createdAt: 1 })
-                  .limit(10)
-                  .toArray();
-
-                for (const c of newContacts) {
-                  const cId = c.id || c._id.toString();
-                  if (!emittedContactIds.has(cId)) {
-                    emittedContactIds.add(cId);
-                    controller.enqueue(
-                      encoder.encode(
-                        `event: contact_event\ndata: ${JSON.stringify({
-                          type: "new_message",
-                          message: {
-                            id: c.id,
-                            name: c.name,
-                            email: c.email,
-                            message: c.message,
-                            createdAt: c.createdAt,
-                            read: Boolean(c.read),
-                          },
-                        })}\n\n`,
-                      ),
-                    );
-                  }
-                }
-
-                lastCheckedTime = new Date(Date.now() - 3000);
-              } catch {
-                // Ignore background polling errors
-              } finally {
-                isPolling = false;
-              }
-            };
-
-            pollContacts();
-            pollInterval = setInterval(pollContacts, 2000);
-
-            heartbeat = setInterval(() => {
-              try {
-                controller.enqueue(encoder.encode(": keepalive\n\n"));
-              } catch {
-                if (heartbeat) clearInterval(heartbeat);
-                if (pollInterval) clearInterval(pollInterval);
-              }
-            }, 15000);
-
-            request.signal.addEventListener("abort", () => {
-              contactEventEmitter.off("contact_event", onContactEvent);
-              if (heartbeat) clearInterval(heartbeat);
-              if (pollInterval) clearInterval(pollInterval);
-              try {
-                controller.close();
-              } catch {}
-            });
-          },
-        });
-
-        return new Response(stream, {
+      handle(request, async () =>
+        // HTTP 204 tells legacy EventSource clients to stop reconnecting.
+        new Response(null, {
+          status: 204,
           headers: {
-            "Content-Type": "text/event-stream; charset=utf-8",
-            "Cache-Control": "no-cache, no-transform",
-            Connection: "keep-alive",
+            "Cache-Control": "private, no-store",
             "X-Content-Type-Options": "nosniff",
           },
-        });
-      }),
+        }),
+      ),
   };
 }

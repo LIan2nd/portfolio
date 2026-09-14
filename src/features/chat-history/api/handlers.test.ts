@@ -2,6 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import { createHistoryHandlers } from "./handlers";
 import { createChatHistoryService } from "../application/service";
 import type { ChatHistoryRepository } from "../domain/types";
+import { getMongoDb } from "@/lib/mongodb";
+
+vi.mock("@/lib/mongodb", () => ({ getMongoDb: vi.fn() }));
 
 const token = "synthetic-token-for-tests-only-0000000000000";
 function request(query = "", authorization = `Bearer ${token}`) {
@@ -43,6 +46,9 @@ describe("read-only history API boundary", () => {
           )
         ).status,
       ).toBe(401);
+      expect((await handlers.stream(request("", authorization))).status).toBe(
+        401,
+      );
       expect(repository.list).not.toHaveBeenCalled();
       expect(repository.summarize).not.toHaveBeenCalled();
       expect(repository.find).not.toHaveBeenCalled();
@@ -52,7 +58,27 @@ describe("read-only history API boundary", () => {
     for (const configured of ["", "short"]) {
       const { handlers, repository } = setup(configured);
       expect((await handlers.list(request())).status).toBe(503);
+      expect((await handlers.stream(request())).status).toBe(503);
       expect(repository.list).not.toHaveBeenCalled();
+    }
+  });
+  it("retires the stream without reading storage or starting background work", async () => {
+    vi.useFakeTimers();
+    try {
+      const { handlers, repository } = setup();
+      const response = await handlers.stream(request());
+
+      expect(response.status).toBe(204);
+      expect(response.body).toBeNull();
+      expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+      await vi.advanceTimersByTimeAsync(60_000);
+      expect(vi.getTimerCount()).toBe(0);
+      expect(getMongoDb).not.toHaveBeenCalled();
+      expect(repository.list).not.toHaveBeenCalled();
+      expect(repository.summarize).not.toHaveBeenCalled();
+      expect(repository.find).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
     }
   });
   it.each([

@@ -25,10 +25,4 @@ export {
   markContactMessageRead,
   deleteContactMessage,
 };
-export {
-  contactEventEmitter,
-  emitContactEvent,
-  type ContactEvent,
-} from "./infrastructure/contact-event-emitter";
 export type { ContactMessage } from "./domain/types";
-

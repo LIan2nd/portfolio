@@ -27,8 +27,7 @@ import {
   profileImageJsonLd,
 } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 3600;
 
 function buildJsonLd(projects: ReturnType<typeof loadPortfolioProjects>) {
   return {

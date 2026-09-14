@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { saveContactMessage, emitContactEvent } from "@/features/contact";
-import { emitSyncEvent } from "@/features/sync/infrastructure/sync-event-emitter";
+import { saveContactMessage } from "@/features/contact";
 
 // ---------------------------------------------------------------------------
 // Rate limiter – in-memory, per-IP (sufficient for a portfolio-scale site)
@@ -15,9 +14,7 @@ interface RateLimitEntry {
 
 const rateLimitMap = new Map<string, RateLimitEntry>();
 
-/** Evict expired entries periodically so the Map doesn't grow unbounded. */
-function evictExpired() {
-  const now = Date.now();
+function evictExpired(now: number) {
   for (const [key, entry] of rateLimitMap) {
     if (now >= entry.resetAt) {
       rateLimitMap.delete(key);
@@ -25,18 +22,9 @@ function evictExpired() {
   }
 }
 
-// Run eviction every 5 minutes
-if (typeof globalThis !== "undefined") {
-  // Guard against multiple intervals in dev hot-reload
-  const EVICT_KEY = Symbol.for("contact-rate-limit-evict");
-  const g = globalThis as unknown as Record<symbol, ReturnType<typeof setInterval> | undefined>;
-  if (!g[EVICT_KEY]) {
-    g[EVICT_KEY] = setInterval(evictExpired, 5 * 60 * 1000);
-  }
-}
-
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
+  evictExpired(now);
   const entry = rateLimitMap.get(ip);
 
   if (!entry || now >= entry.resetAt) {
@@ -109,15 +97,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ---- Save message to portfolio database & emit realtime sync ----
+    // ---- Save message to portfolio database ----
     try {
-      const saved = await saveContactMessage({
+      await saveContactMessage({
         name: name.trim(),
         email: email.trim(),
         message: message.trim(),
       });
-      emitSyncEvent({ type: "content_update", resource: "contact" });
-      emitContactEvent({ type: "new_message", message: saved });
     } catch (saveErr) {
       console.error("[Contact API] Failed to save message to local store:", saveErr);
     }

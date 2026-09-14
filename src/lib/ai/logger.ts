@@ -1,7 +1,6 @@
 import crypto from "crypto";
 import { ObjectId } from "mongodb";
 import { getMongoDb } from "@/lib/mongodb";
-import { emitChatEvent } from "@/features/chat-history/infrastructure/chat-event-emitter";
 
 export interface LogQuestionParams {
   queryId?: ObjectId;
@@ -62,21 +61,6 @@ export async function logUserQuestion({
       createdAtIso: now.toISOString(),
     });
 
-    try {
-      emitChatEvent({
-        type: "user_question",
-        exchange: {
-          queryId: queryId.toString(),
-          question: trimmed,
-          anonymousId,
-          createdAt: now.toISOString(),
-          response: null,
-        },
-      });
-    } catch (eventErr) {
-      console.error("[Realtime Chat Event Error]:", eventErr);
-    }
-
     return queryId;
   } catch (err) {
     console.error("[MongoDB User Query Logger Error - Silently Handled]:", err);
@@ -114,23 +98,6 @@ export async function logBotResponse({
       createdAt: now,
       createdAtIso: now.toISOString(),
     });
-
-    if (queryId) {
-      try {
-        emitChatEvent({
-          type: "bot_response",
-          queryId: queryId.toString(),
-          response: {
-            queryId: queryId.toString(),
-            content: trimmed,
-            durationMs,
-            createdAt: now.toISOString(),
-          },
-        });
-      } catch (eventErr) {
-        console.error("[Realtime Chat Event Error]:", eventErr);
-      }
-    }
   } catch (err) {
     console.error("[MongoDB Bot Response Logger Error - Silently Handled]:", err);
   }

@@ -19,8 +19,7 @@ import {
 } from "@/lib/seo";
 import { PRIMARY_PROFILE_PHOTO } from "@/lib/profilePhotos";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: {
