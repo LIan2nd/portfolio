@@ -1,34 +1,25 @@
 import type { KnowledgeDocument } from "../domain/types";
 
 export interface KnowledgeRepository {
-  loadKnowledgeDocuments(): KnowledgeDocument[];
-  saveKnowledgeDocument?(input: {
-    id?: string;
-    title: string;
-    category: string;
-    description?: string;
-    content: string;
-  }): KnowledgeDocument;
+  loadKnowledgeDocuments(): Promise<KnowledgeDocument[]>;
+  saveKnowledgeDocument(input: SaveKnowledgeInput): Promise<KnowledgeDocument>;
+}
+
+export interface SaveKnowledgeInput {
+  id?: string;
+  title: string;
+  category: string;
+  description?: string;
+  content: string;
 }
 
 export interface KnowledgeService {
   list(searchParams?: URLSearchParams): Promise<{ items: KnowledgeDocument[] }>;
   find(id: string): Promise<KnowledgeDocument | null>;
-  create(input: {
-    id?: string;
-    title: string;
-    category: string;
-    description?: string;
-    content: string;
-  }): Promise<KnowledgeDocument>;
+  create(input: SaveKnowledgeInput): Promise<KnowledgeDocument>;
   update(
     id: string,
-    input: {
-      title: string;
-      category: string;
-      description?: string;
-      content: string;
-    },
+    input: Omit<SaveKnowledgeInput, "id">,
   ): Promise<KnowledgeDocument>;
 }
 
@@ -37,7 +28,7 @@ export function createKnowledgeService(
 ): KnowledgeService {
   return {
     async list(searchParams) {
-      const documents = repository.loadKnowledgeDocuments();
+      const documents = await repository.loadKnowledgeDocuments();
       if (!searchParams) {
         return { items: documents };
       }
@@ -62,16 +53,17 @@ export function createKnowledgeService(
     },
 
     async find(id) {
-      const documents = repository.loadKnowledgeDocuments();
+      const documents = await repository.loadKnowledgeDocuments();
       return documents.find((doc) => doc.id === id) ?? null;
     },
 
     async create(input) {
-      if (!input.title?.trim() || !input.category?.trim() || !input.content?.trim()) {
+      if (
+        !input.title?.trim() ||
+        !input.category?.trim() ||
+        !input.content?.trim()
+      ) {
         throw new Error("Title, category, and content are required.");
-      }
-      if (!repository.saveKnowledgeDocument) {
-        throw new Error("Repository does not support saving documents.");
       }
       return repository.saveKnowledgeDocument({
         id: input.id?.trim() || undefined,
@@ -86,15 +78,18 @@ export function createKnowledgeService(
       if (!id?.trim()) {
         throw new Error("Document ID is required.");
       }
-      if (!input.title?.trim() || !input.category?.trim() || !input.content?.trim()) {
+      if (
+        !input.title?.trim() ||
+        !input.category?.trim() ||
+        !input.content?.trim()
+      ) {
         throw new Error("Title, category, and content are required.");
       }
-      const existing = repository.loadKnowledgeDocuments().find((d) => d.id === id);
+      const existing = (await repository.loadKnowledgeDocuments()).find(
+        (document) => document.id === id,
+      );
       if (!existing) {
         throw new Error("DOCUMENT_NOT_FOUND");
-      }
-      if (!repository.saveKnowledgeDocument) {
-        throw new Error("Repository does not support saving documents.");
       }
       return repository.saveKnowledgeDocument({
         id: id.trim(),

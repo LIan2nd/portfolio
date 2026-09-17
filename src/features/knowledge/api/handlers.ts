@@ -62,7 +62,8 @@ export function createKnowledgeHandlers(
     if (denied) return denied;
     try {
       return await action();
-    } catch {
+    } catch (error) {
+      console.error("Knowledge request failed:", error);
       return json(
         {
           error: {

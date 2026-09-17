@@ -4,7 +4,8 @@ import {
   shouldIncludeTypingFunFact,
 } from "@/lib/ai/knowledge";
 import { MockFallbackProvider } from "@/lib/ai/provider";
-import { loadAllKnowledgeChunks } from "@/lib/ai/rag";
+import { buildKnowledgeChunks } from "@/lib/ai/knowledge-chunks";
+import { loadSeedKnowledgeDocuments } from "@/features/knowledge/infrastructure/markdown-repository";
 
 describe("AI Knowledge & Anti-Hallucination Guardrails", () => {
   it("buildPortfolioKnowledge contains explicit loyalty and anti-hallucination rules", () => {
@@ -54,7 +55,7 @@ describe("AI Knowledge & Anti-Hallucination Guardrails", () => {
   });
 
   it("loads all knowledge chunks including another-about-me without errors", () => {
-    const chunks = loadAllKnowledgeChunks();
+    const chunks = buildKnowledgeChunks(loadSeedKnowledgeDocuments());
     expect(chunks.length).toBeGreaterThan(0);
 
     const partnerChunk = chunks.find(

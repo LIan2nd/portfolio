@@ -39,7 +39,7 @@ function parseCategory(content: string, docId: string): string {
   return "General";
 }
 
-function parseDescription(content: string): string {
+export function parseKnowledgeDescription(content: string): string {
   // Try to find summary after ## Ringkasan or Overview
   const summaryMatch = content.match(
     /##\s+[^\n]*(?:Ringkasan|Overview)[^\n]*\n+([\s\S]*?)(?=\n\n|\n##|\n---|$)/i,
@@ -65,7 +65,7 @@ function parseDescription(content: string): string {
   return "Context documentation for portfolio AI assistant.";
 }
 
-export function loadKnowledgeDocuments(): KnowledgeDocument[] {
+export function loadSeedKnowledgeDocuments(): KnowledgeDocument[] {
   if (cachedDocuments) {
     return cachedDocuments;
   }
@@ -87,7 +87,7 @@ export function loadKnowledgeDocuments(): KnowledgeDocument[] {
           documents.push({
             id: docId,
             title: parseTitle(rawText, docId),
-            description: parseDescription(rawText),
+            description: parseKnowledgeDescription(rawText),
             category: parseCategory(rawText, docId),
             content: rawText,
             updatedAt: stats.mtime.toISOString(),
@@ -113,61 +113,4 @@ export function loadKnowledgeDocuments(): KnowledgeDocument[] {
 
   cachedDocuments = documents;
   return documents;
-}
-
-export function clearKnowledgeCache(): void {
-  cachedDocuments = null;
-}
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-export interface SaveKnowledgeInput {
-  id?: string;
-  title: string;
-  category: string;
-  description?: string;
-  content: string;
-}
-
-export function saveKnowledgeDocument(
-  input: SaveKnowledgeInput,
-): KnowledgeDocument {
-  const knowledgeDir = path.join(process.cwd(), "src/lib/ai/knowledge");
-  if (!fs.existsSync(knowledgeDir)) {
-    fs.mkdirSync(knowledgeDir, { recursive: true });
-  }
-
-  const rawId = input.id ? slugify(input.id) : slugify(input.title);
-  const docId = rawId || `doc-${Date.now()}`;
-  const filePath = path.join(knowledgeDir, `${docId}.md`);
-
-  let content = input.content.trim();
-  if (!content.startsWith("#")) {
-    content = `# ${input.title}\n\n${content}`;
-  }
-  if (!content.includes("- **Kategori:**")) {
-    const firstNewline = content.indexOf("\n");
-    if (firstNewline !== -1) {
-      content = `${content.slice(0, firstNewline)}\n\n- **Kategori:** ${input.category}${content.slice(firstNewline)}`;
-    } else {
-      content = `${content}\n\n- **Kategori:** ${input.category}`;
-    }
-  }
-
-  fs.writeFileSync(filePath, content, "utf-8");
-  clearKnowledgeCache();
-
-  return {
-    id: docId,
-    title: input.title,
-    category: input.category,
-    description: input.description || parseDescription(content),
-    content,
-    updatedAt: new Date().toISOString(),
-  };
 }

@@ -32,9 +32,9 @@ function request(query = "", authorization = `Bearer ${token}`) {
 
 function setup(configured: string | undefined = token) {
   const repository = {
-    loadKnowledgeDocuments: vi.fn(() => [...mockDocuments]),
+    loadKnowledgeDocuments: vi.fn(async () => [...mockDocuments]),
     saveKnowledgeDocument: vi.fn(
-      (input: {
+      async (input: {
         id?: string;
         title: string;
         category: string;
@@ -198,4 +198,3 @@ describe("knowledge API boundary", () => {
     expect(res.status).toBe(404);
   });
 });
-
