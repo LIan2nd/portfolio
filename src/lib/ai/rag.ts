@@ -1,4 +1,5 @@
 import { knowledgeRepository } from "@/features/knowledge/composition";
+import { isCurrentActivityQuery } from "./current-activity";
 import {
   buildKnowledgeChunks,
   type KnowledgeChunk,
@@ -115,7 +116,7 @@ export async function loadAllKnowledgeChunks(): Promise<KnowledgeChunk[]> {
 
 function isIntroductionQuery(text: string): boolean {
   const introPatterns =
-    /^(halo|hi|hai|pagi|siang|sore|malam|assalamu'alaikum|assalam|p)\b/i;
+    /^(halo|hi|hai|pagi|siang|sore|malam|assalamu'alaikum|assalam|p)[\s!.]*$/i;
   return introPatterns.test(text);
 }
 
@@ -133,6 +134,11 @@ export async function getRelevantContext(
 
   const chunks = await loadAllKnowledgeChunks();
   if (chunks.length === 0) return "";
+
+  if (isCurrentActivityQuery(trimmed)) {
+    const activity = chunks.find(({ id }) => id === "current_activity.md-full");
+    if (activity) return `Source: current_activity (current knowledge)\n${activity.content}`;
+  }
 
   // If any chunks have precomputed embeddings, try vector search
   const hasPrecomputed = chunks.some(

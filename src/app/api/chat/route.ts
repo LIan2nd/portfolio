@@ -164,6 +164,7 @@ export async function POST(req: NextRequest) {
 
     try {
       const { provider, mode } = getAiProvider();
+      const rawStream = await provider.generateStream(sanitizedMessages);
 
       if (latestUserQuery) {
         void logUserQuestion({
@@ -175,7 +176,6 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      const rawStream = provider.generateStream(sanitizedMessages);
       const loggedStream = createLoggingStream(rawStream, (fullResponse) => {
         void logBotResponse({
           queryId,
@@ -208,7 +208,7 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      const rawStream = fallback.generateStream(sanitizedMessages);
+      const rawStream = await fallback.generateStream(sanitizedMessages);
       const loggedStream = createLoggingStream(rawStream, (fullResponse) => {
         void logBotResponse({
           queryId,

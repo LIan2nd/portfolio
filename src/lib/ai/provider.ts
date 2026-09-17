@@ -6,6 +6,7 @@ import {
   shouldIncludeTypingFunFact,
 } from "./knowledge";
 import { getRelevantContext } from "./rag";
+import { isCurrentActivityQuery, readCurrentActivity } from "./current-activity";
 
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -15,7 +16,7 @@ export interface ChatMessage {
 export interface AiProvider {
   name: string;
   generateResponse(messages: ChatMessage[]): Promise<string>;
-  generateStream(messages: ChatMessage[]): ReadableStream<Uint8Array>;
+  generateStream(messages: ChatMessage[]): Promise<ReadableStream<Uint8Array>>;
 }
 
 /**
@@ -151,41 +152,38 @@ export class GeminiProvider implements AiProvider {
     return text;
   }
 
-  generateStream(messages: ChatMessage[]): ReadableStream<Uint8Array> {
+  async generateStream(messages: ChatMessage[]): Promise<ReadableStream<Uint8Array>> {
     const lastUserQuery = messages.filter((m) => m.role === "user").pop()?.content || "";
     const encoder = new TextEncoder();
     const contents = this.formatContents(messages);
     const apiKey = this.apiKey;
     const model = this.model;
 
-    return new ReadableStream({
+    const ragContext = await getRelevantContext(lastUserQuery);
+    const systemInstruction = `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`;
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}&alt=sse`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: systemInstruction }] },
+          contents,
+          generationConfig: { temperature: 0.35, maxOutputTokens: 900 },
+        }),
+      }
+    );
+
+    if (!response.ok || !response.body) {
+      throw new Error("Gemini streaming request failed (HTTP " + response.status + ").");
+    }
+    const responseBody = response.body;
+
+    return new ReadableStream<Uint8Array>({
       async start(controller) {
         try {
-          const ragContext = await getRelevantContext(lastUserQuery);
-          const systemInstruction = `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`;
-
-          const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}&alt=sse`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                system_instruction: { parts: [{ text: systemInstruction }] },
-                contents,
-                generationConfig: { temperature: 0.35, maxOutputTokens: 900 },
-              }),
-            }
-          );
-
-          if (!response.ok || !response.body) {
-            controller.enqueue(
-              encoder.encode("Terjadi kendala saat menghubungkan ke Gemini stream.")
-            );
-            controller.close();
-            return;
-          }
-
-          const reader = response.body.getReader();
+          const reader = responseBody.getReader();
           const decoder = new TextDecoder();
           let buffer = "";
 
@@ -222,12 +220,10 @@ export class GeminiProvider implements AiProvider {
             }
           }
         } catch (error) {
-          controller.enqueue(
-            encoder.encode("Terjadi kesalahan streaming dari Gemini.")
-          );
-        } finally {
-          controller.close();
+          controller.error(error);
+          return;
         }
+        controller.close();
       },
     });
   }
@@ -300,7 +296,7 @@ export class OpenAiProvider implements AiProvider {
     return text;
   }
 
-  generateStream(messages: ChatMessage[]): ReadableStream<Uint8Array> {
+  async generateStream(messages: ChatMessage[]): Promise<ReadableStream<Uint8Array>> {
     const lastUserQuery = messages.filter((m) => m.role === "user").pop()?.content || "";
     const encoder = new TextEncoder();
     const apiKey = this.apiKey;
@@ -308,46 +304,37 @@ export class OpenAiProvider implements AiProvider {
     const model = this.model;
     const maxTokens = this.maxTokens;
 
-    return new ReadableStream({
+    const ragContext = await getRelevantContext(lastUserQuery);
+    const systemPrompt: ChatMessage = {
+      role: "system",
+      content: `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`,
+    };
+    const formattedMessages = [systemPrompt, ...messages];
+
+    const response = await fetch(`${baseUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages: formattedMessages,
+        temperature: 0.35,
+        max_tokens: maxTokens,
+        stream: true,
+      }),
+    });
+
+    if (!response.ok || !response.body) {
+      throw new Error("OpenAi streaming request failed (HTTP " + response.status + ").");
+    }
+    const responseBody = response.body;
+
+    return new ReadableStream<Uint8Array>({
       async start(controller) {
         try {
-          const ragContext = await getRelevantContext(lastUserQuery);
-          const systemPrompt: ChatMessage = {
-            role: "system",
-            content: `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`,
-          };
-          const formattedMessages = [systemPrompt, ...messages];
-
-          const response = await fetch(`${baseUrl}/chat/completions`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-              model,
-              messages: formattedMessages,
-              temperature: 0.35,
-              max_tokens: maxTokens,
-              stream: true,
-            }),
-          });
-
-          if (!response.ok || !response.body) {
-            // Intelligent fallback: if external API quota runs out, stream from local knowledge engine
-            const fallback = new MockFallbackProvider();
-            const fallbackStream = fallback.generateStream(messages);
-            const fallbackReader = fallbackStream.getReader();
-            while (true) {
-              const { done, value } = await fallbackReader.read();
-              if (done) break;
-              controller.enqueue(value);
-            }
-            controller.close();
-            return;
-          }
-
-          const reader = response.body.getReader();
+          const reader = responseBody.getReader();
           const decoder = new TextDecoder();
           let buffer = "";
 
@@ -382,23 +369,10 @@ export class OpenAiProvider implements AiProvider {
             }
           }
         } catch (err) {
-          try {
-            const fallback = new MockFallbackProvider();
-            const fallbackStream = fallback.generateStream(messages);
-            const fallbackReader = fallbackStream.getReader();
-            while (true) {
-              const { done, value } = await fallbackReader.read();
-              if (done) break;
-              controller.enqueue(value);
-            }
-          } catch {
-            controller.enqueue(
-              encoder.encode("Terjadi kesalahan streaming dari server AI.")
-            );
-          }
-        } finally {
-          controller.close();
+          controller.error(err);
+          return;
         }
+        controller.close();
       },
     });
   }
@@ -414,7 +388,7 @@ export class MockFallbackProvider implements AiProvider {
     return isEnglishText(msg);
   }
 
-  private getBaseResponse(lastUserMessage: string): string {
+  private async getBaseResponse(lastUserMessage: string): Promise<string> {
     const msg = lastUserMessage.toLowerCase().trim();
     const isEn = this.isEnglish(msg);
 
@@ -577,22 +551,17 @@ export class MockFallbackProvider implements AiProvider {
           "[NAV:experience:📍 View Experience]";
     }
 
-    if (
-      msg.includes("sekarang") ||
-      msg.includes("lagi apa") ||
-      msg.includes("ngapain") ||
-      msg.includes("pantona") ||
-      msg.includes("bootcamp") ||
-      msg.includes("kesibukan") ||
-      msg.includes("currently") ||
-      msg.includes("doing now") ||
-      msg.includes("status")
-    ) {
-      return isEn
-        ? "I have graduated with a **Bachelor of Computer Science (Cumlaude, GPA 3.94)** from STT Terpadu Nurul Fikri.\n\n" +
-          "Currently, I am participating in a **6-month Fullstack Web Development Bootcamp at Pantona**, focusing on **QA & QC (Quality Assurance & Control)**. I am also **immediately available** for Full-time and Project-based opportunities! 🚀"
-        : "Saat ini aku sudah **lulus kuliah S.Kom dari STT Terpadu Nurul Fikri (IPK 3.94 Cumlaude)**.\n\n" +
-          "Kesibukan sehari-hariku saat ini adalah sedang mengikuti program **Bootcamp Fullstack Web Development selama 6 bulan di Pantona**, yang sekarang lagi di **tahap belajar QA & QC (Quality Assurance & Quality Control)**. Selain itu, aku juga *immediately available* untuk peluang kerja Full-time / Project-based! 🚀";
+    if (isCurrentActivityQuery(msg)) {
+      const activity = await readCurrentActivity();
+      if (!activity) {
+        return isEn
+          ? "The AI service is unavailable, and I cannot confirm my current activities. Please try again later."
+          : "Layanan AI sedang tidak tersedia, dan aku belum bisa memastikan aktivitas terkiniku. Coba lagi nanti, ya.";
+      }
+      const notice = isEn
+        ? "The AI service is unavailable. Here is an excerpt from my current knowledge (in its original language):"
+        : "Layanan AI sedang tidak tersedia. Ini kutipan dari knowledge terkiniku:";
+      return `${notice}\n\n${activity}`;
     }
 
     if (
@@ -791,14 +760,14 @@ export class MockFallbackProvider implements AiProvider {
       : "Dih, si tau tuh aku... Tanya yang berbobot seputar proyek atau portofolioku kek, misal ESAO, RoadSense, atau DigiArc 🗿\n\nAtau mau tanya seputar tech stack dan pengalamanku? Tanyain aja ya!";
   }
 
-  private getFullResponse(lastUserMessage: string): string {
+  private async getFullResponse(lastUserMessage: string): Promise<string> {
     if (isTypingFunFactQuery(lastUserMessage)) {
       return this.isEnglish(lastUserMessage)
         ? "My typing speed on [10FastFingers](https://10fastfingers.com/user/alfian-nur-usyaid) is **100++ WPM** with **90%++ accuracy** 🔥"
         : "Kecepatan ngetikku di [10FastFingers](https://10fastfingers.com/user/alfian-nur-usyaid) mencapai **100++ WPM** dengan **akurasi 90%++** 🔥";
     }
 
-    const response = this.getBaseResponse(lastUserMessage);
+    const response = await this.getBaseResponse(lastUserMessage);
 
     if (!shouldIncludeTypingFunFact(lastUserMessage)) {
       return response;
@@ -809,22 +778,13 @@ export class MockFallbackProvider implements AiProvider {
 
   async generateResponse(messages: ChatMessage[]): Promise<string> {
     const lastUserMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
-    await new Promise((resolve) => setTimeout(resolve, 300));
     return this.getFullResponse(lastUserMessage);
   }
 
-  generateStream(messages: ChatMessage[]): ReadableStream<Uint8Array> {
+  async generateStream(messages: ChatMessage[]): Promise<ReadableStream<Uint8Array>> {
     const lastUserMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
-    const fullText = this.getFullResponse(lastUserMessage);
-
-    // Split text into tokens / word chunks for smooth natural streaming
-    const chunks: string[] = [];
-    const words = fullText.split(/(\s+)/);
-    for (let i = 0; i < words.length; i += 2) {
-      chunks.push((words[i] || "") + (words[i + 1] || ""));
-    }
-
-    return createTextStream(chunks, 22);
+    const fullText = await this.getFullResponse(lastUserMessage);
+    return createTextStream([fullText], 0);
   }
 }
 
