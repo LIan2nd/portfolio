@@ -7,6 +7,7 @@ import {
 } from "./knowledge";
 import { getRelevantContext } from "./rag";
 import { isCurrentActivityQuery, readCurrentActivity } from "./current-activity";
+import type { AiGateway } from "@/features/ai-config/domain/types";
 
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -152,7 +153,7 @@ export class GeminiProvider implements AiProvider {
     return text;
   }
 
-  async generateStream(messages: ChatMessage[]): Promise<ReadableStream<Uint8Array>> {
+  async generateStream(messages: ChatMessage[], signal = AbortSignal.timeout(45_000)): Promise<ReadableStream<Uint8Array>> {
     const lastUserQuery = messages.filter((m) => m.role === "user").pop()?.content || "";
     const encoder = new TextEncoder();
     const contents = this.formatContents(messages);
@@ -167,6 +168,7 @@ export class GeminiProvider implements AiProvider {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal,
         body: JSON.stringify({
           system_instruction: { parts: [{ text: systemInstruction }] },
           contents,
@@ -296,7 +298,7 @@ export class OpenAiProvider implements AiProvider {
     return text;
   }
 
-  async generateStream(messages: ChatMessage[]): Promise<ReadableStream<Uint8Array>> {
+  async generateStream(messages: ChatMessage[], signal = AbortSignal.timeout(45_000)): Promise<ReadableStream<Uint8Array>> {
     const lastUserQuery = messages.filter((m) => m.role === "user").pop()?.content || "";
     const encoder = new TextEncoder();
     const apiKey = this.apiKey;
@@ -313,6 +315,7 @@ export class OpenAiProvider implements AiProvider {
 
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: "POST",
+      signal,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
@@ -790,46 +793,56 @@ export class MockFallbackProvider implements AiProvider {
 
 import { loadAiConfig } from "@/features/ai-config/infrastructure/data-repository";
 
+export function createGatewayProvider(gateway: AiGateway, model: string) {
+  const isNara = gateway === "nara";
+  const apiKey = isNara ? process.env.NARA_API_KEY : process.env.SUMOPOD_API_KEY;
+  if (!apiKey) return null;
+
+  return new OpenAiProvider(
+    apiKey,
+    isNara
+      ? process.env.NARA_BASE_URL || "https://router.bynara.id/v1"
+      : process.env.SUMOPOD_BASE_URL || "https://ai.sumopod.com/v1",
+    model,
+    isNara ? "Nara AI" : "SumoPod AI",
+    isNara ? 2048 : 1500,
+  );
+}
+
 /**
  * Factory to get the active AI Provider based on configuration and environment variables
  */
-export function getAiProvider(): {
+export async function getAiProvider(): Promise<{
   provider: AiProvider;
   mode: "live" | "simulated";
-} {
-  const aiConfig = loadAiConfig();
+}> {
+  const aiConfig = await loadAiConfig();
 
   // If user selected SumoPod as active provider
   if (aiConfig.activeProvider === "sumopod") {
-    const sumopodKey = process.env.SUMOPOD_API_KEY;
-    if (sumopodKey) {
-      const baseUrl = process.env.SUMOPOD_BASE_URL || "https://ai.sumopod.com/v1";
-      const model = aiConfig.sumopodModel || process.env.SUMOPOD_MODEL || "mimo-v2.5";
+    const provider = createGatewayProvider("sumopod", aiConfig.sumopodModel);
+    if (provider) {
       return {
-        provider: new OpenAiProvider(sumopodKey, baseUrl, model, "SumoPod AI", 1500),
+        provider,
         mode: "live",
       };
     }
   }
 
   // Primary default or selected: Nara AI Gateway
-  const naraKey = process.env.NARA_API_KEY;
-  if (naraKey) {
-    const baseUrl = process.env.NARA_BASE_URL || "https://router.bynara.id/v1";
-    const model = aiConfig.naraModel || process.env.NARA_MODEL || "muse-spark-1.3-contributor-free";
+  const naraProvider = createGatewayProvider("nara", aiConfig.naraModel);
+  if (naraProvider) {
     return {
-      provider: new OpenAiProvider(naraKey, baseUrl, model, "Nara AI", 2048),
+      provider: naraProvider,
       mode: "live",
     };
   }
 
   // Fallback to SumoPod AI Gateway if Nara key is absent
-  const sumopodKey = process.env.SUMOPOD_API_KEY;
-  if (sumopodKey) {
-    const baseUrl = process.env.SUMOPOD_BASE_URL || "https://ai.sumopod.com/v1";
-    const model = aiConfig.sumopodModel || process.env.SUMOPOD_MODEL || "mimo-v2.5";
+  const sumopodProvider = createGatewayProvider("sumopod", aiConfig.sumopodModel);
+  if (sumopodProvider) {
     return {
-      provider: new OpenAiProvider(sumopodKey, baseUrl, model, "SumoPod AI", 1500),
+      provider: sumopodProvider,
       mode: "live",
     };
   }

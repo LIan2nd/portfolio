@@ -6,6 +6,7 @@ import {
   POPULAR_SUMOPOD_MODELS,
 } from "../infrastructure/data-repository";
 import type { AiGateway } from "../domain/types";
+import { createGatewayProvider } from "@/lib/ai/provider";
 
 function json(body: unknown, status = 200) {
   return Response.json(body, {
@@ -33,8 +34,7 @@ function authenticate(request: Request, token: string | undefined) {
   const supplied = authorization.startsWith("Bearer ")
     ? authorization.slice(7)
     : "";
-  const digest = (value: string) =>
-    createHash("sha256").update(value).digest();
+  const digest = (value: string) => createHash("sha256").update(value).digest();
   if (!supplied || !timingSafeEqual(digest(supplied), digest(token))) {
     const response = json(
       {
@@ -73,7 +73,7 @@ export function createAiConfigHandlers(readToken: () => string | undefined) {
   return {
     getConfig: (request: Request) =>
       handle(request, async () => {
-        const config = loadAiConfig();
+        const config = await loadAiConfig();
         return json({
           config,
           popularModels: {
@@ -98,12 +98,40 @@ export function createAiConfigHandlers(readToken: () => string | undefined) {
           body = await request.json();
         } catch {
           return json(
-            { error: { code: "INVALID_REQUEST", message: "Invalid JSON body." } },
+            {
+              error: { code: "INVALID_REQUEST", message: "Invalid JSON body." },
+            },
             400,
           );
         }
 
-        const updated = saveAiConfig({
+        if (
+          !body ||
+          typeof body !== "object" ||
+          (body.activeProvider !== undefined &&
+            body.activeProvider !== "nara" &&
+            body.activeProvider !== "sumopod") ||
+          [body.naraModel, body.sumopodModel].some(
+            (model) =>
+              model !== undefined &&
+              (typeof model !== "string" ||
+                !model.trim() ||
+                model.length > 200),
+          )
+        ) {
+          return json(
+            {
+              error: {
+                code: "INVALID_REQUEST",
+                message:
+                  "A valid gateway and non-empty model IDs are required.",
+              },
+            },
+            400,
+          );
+        }
+
+        const updated = await saveAiConfig({
           activeProvider: body.activeProvider,
           naraModel: body.naraModel,
           sumopodModel: body.sumopodModel,
@@ -122,15 +150,21 @@ export function createAiConfigHandlers(readToken: () => string | undefined) {
           body = await request.json();
         } catch {
           return json(
-            { error: { code: "INVALID_REQUEST", message: "Invalid JSON body." } },
+            {
+              error: { code: "INVALID_REQUEST", message: "Invalid JSON body." },
+            },
             400,
           );
         }
 
-        const providerType = body.provider;
-        const model = body.model?.trim();
+        const providerType = body?.provider;
+        const model = typeof body?.model === "string" ? body.model.trim() : "";
 
-        if (!providerType || !model) {
+        if (
+          (providerType !== "nara" && providerType !== "sumopod") ||
+          !model ||
+          model.length > 200
+        ) {
           return json(
             {
               error: {
@@ -142,17 +176,8 @@ export function createAiConfigHandlers(readToken: () => string | undefined) {
           );
         }
 
-        const apiKey =
-          providerType === "nara"
-            ? process.env.NARA_API_KEY
-            : process.env.SUMOPOD_API_KEY;
-
-        const baseUrl =
-          providerType === "nara"
-            ? process.env.NARA_BASE_URL || "https://router.bynara.id/v1"
-            : process.env.SUMOPOD_BASE_URL || "https://ai.sumopod.com/v1";
-
-        if (!apiKey) {
+        const provider = createGatewayProvider(providerType, model);
+        if (!provider) {
           return json(
             {
               success: false,
@@ -164,36 +189,24 @@ export function createAiConfigHandlers(readToken: () => string | undefined) {
 
         const startTime = Date.now();
         try {
-          const res = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-              model,
-              messages: [
-                { role: "user", content: "Reply with the exact word 'READY' and nothing else." },
-              ],
-              max_tokens: 30,
-              temperature: 0.1,
-            }),
-            signal: AbortSignal.timeout(15_000),
-          });
-
+          const stream = await provider.generateStream(
+            [
+              {
+                role: "user",
+                content: "Reply with the exact word 'READY' and nothing else.",
+              },
+            ],
+            AbortSignal.timeout(15_000),
+          );
+          const reply = (await new Response(stream).text()).trim();
           const latencyMs = Date.now() - startTime;
-
-          if (!res.ok) {
-            const errJson = await res.json().catch(() => ({}));
+          if (!reply) {
             return json({
               success: false,
               latencyMs,
-              error: errJson.error?.message || `Gateway returned HTTP ${res.status}: ${res.statusText}`,
+              error: "The model returned no streaming content.",
             });
           }
-
-          const data = await res.json();
-          const reply = data.choices?.[0]?.message?.content?.trim() || "OK";
 
           return json({
             success: true,
@@ -203,7 +216,8 @@ export function createAiConfigHandlers(readToken: () => string | undefined) {
           });
         } catch (fetchErr: unknown) {
           const latencyMs = Date.now() - startTime;
-          const msg = fetchErr instanceof Error ? fetchErr.message : "Connection failed";
+          const msg =
+            fetchErr instanceof Error ? fetchErr.message : "Connection failed";
           return json({
             success: false,
             latencyMs,

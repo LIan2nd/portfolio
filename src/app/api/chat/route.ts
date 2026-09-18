@@ -163,7 +163,7 @@ export async function POST(req: NextRequest) {
     const startTime = Date.now();
 
     try {
-      const { provider, mode } = getAiProvider();
+      const { provider, mode } = await getAiProvider();
       const rawStream = await provider.generateStream(sanitizedMessages);
 
       if (latestUserQuery) {
@@ -241,7 +241,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const { provider, mode } = getAiProvider();
+    const { provider, mode } = await getAiProvider();
     return NextResponse.json({
       status: "ok",
       provider: provider.name,
