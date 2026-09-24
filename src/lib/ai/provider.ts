@@ -1,12 +1,6 @@
-import {
-  buildPortfolioKnowledge,
-  isIntroductionQuery,
-  isSocialIdentityQuery,
-  isTypingFunFactQuery,
-  shouldIncludeTypingFunFact,
-} from "./knowledge";
-import { getRelevantContext } from "./rag";
-import { isCurrentActivityQuery, readCurrentActivity } from "./current-activity";
+import { loadSystemPrompt } from "./prompt";
+import { getRelevantChunks } from "./rag";
+import { knowledgeRepository } from "@/features/knowledge/composition";
 import type { AiGateway } from "@/features/ai-config/domain/types";
 
 export interface ChatMessage {
@@ -23,7 +17,10 @@ export interface AiProvider {
 /**
  * Helper to encode text chunks into Uint8Array stream
  */
-function createTextStream(chunks: string[], delayMs = 25): ReadableStream<Uint8Array> {
+function createTextStream(
+  chunks: string[],
+  delayMs = 25,
+): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder();
   return new ReadableStream({
     async start(controller) {
@@ -38,37 +35,79 @@ function createTextStream(chunks: string[], delayMs = 25): ReadableStream<Uint8A
   });
 }
 
-function appendTypingFunFact(response: string, isEnglish: boolean): string {
-  const funFact = isEnglish
-    ? "Fun fact: I also have a 100++ WPM typing speed with 90%++ accuracy on [10FastFingers](https://10fastfingers.com/user/alfian-nur-usyaid) 🔥"
-    : "Oh iya, fun fact: kecepatan ngetikku di [10FastFingers](https://10fastfingers.com/user/alfian-nur-usyaid) mencapai 100++ WPM dengan akurasi 90%++ 🔥";
-  const navigationMarker = response.match(/\n\n(\[NAV:[^\n]+\])$/);
-
-  if (!navigationMarker) {
-    return `${response}\n\n${funFact}`;
-  }
-
-  const responseBody = response.slice(0, -navigationMarker[0].length);
-  return `${responseBody}\n\n${funFact}\n\n${navigationMarker[1]}`;
-}
-
 /**
  * Helper to detect whether a message or context is primarily English
  */
 export function isEnglishText(msg: string): boolean {
   const englishKeywords = [
-    "tell me", "how can", "how to", "what is", "what are", "hire", "contact",
-    "skills", "publication", "paper", "about", "who are", "why", "where",
-    "can you", "project", "projects", "work", "experience", "resume", "cv",
-    "salary", "grading", "navigation", "storage", "hello", "hi", "hey",
-    "english", "indonesian", "answer in", "speak", "everything", "all about",
-    "full story", "details"
+    "tell me",
+    "how can",
+    "how to",
+    "what is",
+    "what are",
+    "hire",
+    "contact",
+    "skills",
+    "publication",
+    "paper",
+    "about",
+    "who are",
+    "why",
+    "where",
+    "can you",
+    "project",
+    "projects",
+    "work",
+    "experience",
+    "resume",
+    "cv",
+    "salary",
+    "grading",
+    "navigation",
+    "storage",
+    "hello",
+    "hi",
+    "hey",
+    "english",
+    "indonesian",
+    "answer in",
+    "speak",
+    "everything",
+    "all about",
+    "full story",
+    "details",
   ];
   const indonesianKeywords = [
-    "kamu", "aku", "proyek", "cewek", "pacar", "kontak", "kesibukan",
-    "ngapain", "kuliah", "jalan", "bahasa", "hubungi", "sarkas", "siapa",
-    "kenapa", "dimana", "bisa", "halo", "hai", "ngoding", "lagi apa", "sekarang", "udah",
-    "keseluruhan", "tentang kamu", "semua", "kelewat", "jelasin", "ceritain", "lengkap"
+    "kamu",
+    "aku",
+    "proyek",
+    "cewek",
+    "pacar",
+    "kontak",
+    "kesibukan",
+    "ngapain",
+    "kuliah",
+    "jalan",
+    "bahasa",
+    "hubungi",
+    "sarkas",
+    "siapa",
+    "kenapa",
+    "dimana",
+    "bisa",
+    "halo",
+    "hai",
+    "ngoding",
+    "lagi apa",
+    "sekarang",
+    "udah",
+    "keseluruhan",
+    "tentang kamu",
+    "semua",
+    "kelewat",
+    "jelasin",
+    "ceritain",
+    "lengkap",
   ];
 
   const lower = msg.toLowerCase().trim();
@@ -76,7 +115,18 @@ export function isEnglishText(msg: string): boolean {
   const hasEng = englishKeywords.some((w) => lower.includes(w));
 
   if (hasEng && !hasIndo) return true;
-  if (!hasIndo && /[a-z]/i.test(lower) && (lower.includes("how") || lower.includes("what") || lower.includes("why") || lower.includes("tell") || lower.includes("hire") || lower.includes("contact") || lower.includes("everything") || lower.includes("all"))) {
+  if (
+    !hasIndo &&
+    /[a-z]/i.test(lower) &&
+    (lower.includes("how") ||
+      lower.includes("what") ||
+      lower.includes("why") ||
+      lower.includes("tell") ||
+      lower.includes("hire") ||
+      lower.includes("contact") ||
+      lower.includes("everything") ||
+      lower.includes("all"))
+  ) {
     return true;
   }
   return false;
@@ -115,9 +165,9 @@ export class GeminiProvider implements AiProvider {
   }
 
   async generateResponse(messages: ChatMessage[]): Promise<string> {
-    const lastUserQuery = messages.filter((m) => m.role === "user").pop()?.content || "";
-    const ragContext = await getRelevantContext(lastUserQuery);
-    const systemInstruction = `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`;
+    const lastUserQuery =
+      messages.filter((m) => m.role === "user").pop()?.content || "";
+    const systemInstruction = await loadSystemPrompt(lastUserQuery);
     const contents = this.formatContents(messages);
 
     const response = await fetch(
@@ -130,13 +180,13 @@ export class GeminiProvider implements AiProvider {
           contents,
           generationConfig: { temperature: 0.35, maxOutputTokens: 900 },
         }),
-      }
+      },
     );
 
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       throw new Error(
-        `Gemini API error (${response.status}): ${err.error?.message || response.statusText}`
+        `Gemini API error (${response.status}): ${err.error?.message || response.statusText}`,
       );
     }
 
@@ -153,15 +203,18 @@ export class GeminiProvider implements AiProvider {
     return text;
   }
 
-  async generateStream(messages: ChatMessage[], signal = AbortSignal.timeout(45_000)): Promise<ReadableStream<Uint8Array>> {
-    const lastUserQuery = messages.filter((m) => m.role === "user").pop()?.content || "";
+  async generateStream(
+    messages: ChatMessage[],
+    signal = AbortSignal.timeout(45_000),
+  ): Promise<ReadableStream<Uint8Array>> {
+    const lastUserQuery =
+      messages.filter((m) => m.role === "user").pop()?.content || "";
     const encoder = new TextEncoder();
     const contents = this.formatContents(messages);
     const apiKey = this.apiKey;
     const model = this.model;
 
-    const ragContext = await getRelevantContext(lastUserQuery);
-    const systemInstruction = `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`;
+    const systemInstruction = await loadSystemPrompt(lastUserQuery);
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}&alt=sse`,
@@ -174,11 +227,13 @@ export class GeminiProvider implements AiProvider {
           contents,
           generationConfig: { temperature: 0.35, maxOutputTokens: 900 },
         }),
-      }
+      },
     );
 
     if (!response.ok || !response.body) {
-      throw new Error("Gemini streaming request failed (HTTP " + response.status + ").");
+      throw new Error(
+        "Gemini streaming request failed (HTTP " + response.status + ").",
+      );
     }
     const responseBody = response.body;
 
@@ -204,17 +259,18 @@ export class GeminiProvider implements AiProvider {
                   try {
                     const parsed = JSON.parse(jsonStr);
                     const candidate = parsed.candidates?.[0];
-                    const text =
-                      candidate?.content?.parts?.[0]?.text || "";
+                    const text = candidate?.content?.parts?.[0]?.text || "";
                     if (text) {
                       controller.enqueue(encoder.encode(text));
                     }
                     if (candidate?.finishReason === "MAX_TOKENS") {
                       controller.enqueue(
-                        encoder.encode(getCutoffNotice(isEnglishText(lastUserQuery)))
+                        encoder.encode(
+                          getCutoffNotice(isEnglishText(lastUserQuery)),
+                        ),
                       );
                     }
-                  } catch (e) {
+                  } catch {
                     // Ignore SSE json parse errors on partial chunks
                   }
                 }
@@ -246,7 +302,7 @@ export class OpenAiProvider implements AiProvider {
     baseUrl = process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
     model = process.env.OPENAI_MODEL || "gpt-4o-mini",
     name = "OpenAI Compatible",
-    maxTokens = 2048
+    maxTokens = 2048,
   ) {
     this.name = name;
     this.apiKey = apiKey;
@@ -256,11 +312,11 @@ export class OpenAiProvider implements AiProvider {
   }
 
   async generateResponse(messages: ChatMessage[]): Promise<string> {
-    const lastUserQuery = messages.filter((m) => m.role === "user").pop()?.content || "";
-    const ragContext = await getRelevantContext(lastUserQuery);
+    const lastUserQuery =
+      messages.filter((m) => m.role === "user").pop()?.content || "";
     const systemPrompt: ChatMessage = {
       role: "system",
-      content: `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`,
+      content: await loadSystemPrompt(lastUserQuery),
     };
     const formattedMessages = [systemPrompt, ...messages];
 
@@ -281,15 +337,14 @@ export class OpenAiProvider implements AiProvider {
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       throw new Error(
-        `OpenAI API error (${response.status}): ${err.error?.message || response.statusText}`
+        `OpenAI API error (${response.status}): ${err.error?.message || response.statusText}`,
       );
     }
 
     const data = await response.json();
     const choice = data.choices?.[0];
     let text =
-      choice?.message?.content ||
-      "Maaf, tidak ada respon yang diterima.";
+      choice?.message?.content || "Maaf, tidak ada respon yang diterima.";
 
     if (choice?.finish_reason === "length") {
       text += getCutoffNotice(isEnglishText(lastUserQuery));
@@ -298,18 +353,21 @@ export class OpenAiProvider implements AiProvider {
     return text;
   }
 
-  async generateStream(messages: ChatMessage[], signal = AbortSignal.timeout(45_000)): Promise<ReadableStream<Uint8Array>> {
-    const lastUserQuery = messages.filter((m) => m.role === "user").pop()?.content || "";
+  async generateStream(
+    messages: ChatMessage[],
+    signal = AbortSignal.timeout(45_000),
+  ): Promise<ReadableStream<Uint8Array>> {
+    const lastUserQuery =
+      messages.filter((m) => m.role === "user").pop()?.content || "";
     const encoder = new TextEncoder();
     const apiKey = this.apiKey;
     const baseUrl = this.baseUrl;
     const model = this.model;
     const maxTokens = this.maxTokens;
 
-    const ragContext = await getRelevantContext(lastUserQuery);
     const systemPrompt: ChatMessage = {
       role: "system",
-      content: `${buildPortfolioKnowledge(lastUserQuery)}\n\n### RELEVANT RETRIEVED CONTEXT (RAG):\n${ragContext}`,
+      content: await loadSystemPrompt(lastUserQuery),
     };
     const formattedMessages = [systemPrompt, ...messages];
 
@@ -330,7 +388,9 @@ export class OpenAiProvider implements AiProvider {
     });
 
     if (!response.ok || !response.body) {
-      throw new Error("OpenAi streaming request failed (HTTP " + response.status + ").");
+      throw new Error(
+        "OpenAi streaming request failed (HTTP " + response.status + ").",
+      );
     }
     const responseBody = response.body;
 
@@ -362,10 +422,12 @@ export class OpenAiProvider implements AiProvider {
                   }
                   if (choice?.finish_reason === "length") {
                     controller.enqueue(
-                      encoder.encode(getCutoffNotice(isEnglishText(lastUserQuery)))
+                      encoder.encode(
+                        getCutoffNotice(isEnglishText(lastUserQuery)),
+                      ),
                     );
                   }
-                } catch (e) {
+                } catch {
                   // Ignore partial SSE chunk errors
                 }
               }
@@ -381,413 +443,46 @@ export class OpenAiProvider implements AiProvider {
   }
 }
 
-/**
- * Intelligent Fallback Mock Provider with real-time streaming and bilingual support
- */
 export class MockFallbackProvider implements AiProvider {
   name = "Simulated Portfolio AI";
 
-  private isEnglish(msg: string): boolean {
-    return isEnglishText(msg);
-  }
-
-  private async getBaseResponse(lastUserMessage: string): Promise<string> {
-    const msg = lastUserMessage.toLowerCase().trim();
-    const isEn = this.isEnglish(msg);
-
-    // Comprehensive "tell me everything" question handler
-    if (
-      msg.includes("keseluruhan") ||
-      (msg.includes("semua") && (msg.includes("kamu") || msg.includes("tentang") || msg.includes("cerita") || msg.includes("jelasin") || msg.includes("profil") || msg.includes("diri") || msg.includes("hidup"))) ||
-      msg.includes("kelewat") ||
-      msg.includes("everything") ||
-      msg.includes("all about you") ||
-      msg.includes("tell me all") ||
-      msg.includes("full detail")
-    ) {
-      return isEn
-        ? "👋 I am **Alfian Nur Usyaid (LIand)**, a Computer Science graduate (**Cumlaude, GPA 3.94**) from STT Terpadu Nurul Fikri, currently specializing in **Fullstack Web Development, AI Integration, and QA/QC** at Pantona Bootcamp!\n\n" +
-          "- **Flagship Research:** Built **ESAO** (AI automated essay grading) and **DigiArc** (Web3 decentralized storage).\n" +
-          "- **Publications:** Author of a student retention prediction paper in *MIND Journal*.\n\n" +
-          "*(...eitss, berhubung kloningan ini mode hemat token biar ramah kuota & server nggak boncos 🚀)*, info selengkapnya gak mungkin ku-spill semua di satu chat ini! Yuk langsung **scroll portofolio ini** buat kepoin karya-karyaku, atau intip [Resume / CV-ku di sini](/resume) ya! 😉\n\n" +
-          "[NAV:about:📍 View About & Skills]"
-        : "👋 Aku **Alfian Nur Usyaid (LIand)**, Sarjana Komputer (**Cumlaude, IPK 3.94**) dari STT Terpadu Nurul Fikri yang fokus di **Fullstack Web Development, Integrasi AI, dan QA/QC** di Bootcamp Pantona!\n\n" +
-          "- **Proyek Unggulan:** Pengembang **ESAO** (Platform AI koreksi esai) & **DigiArc** (Penyimpanan Web3 terdesentralisasi).\n" +
-          "*(...eitss, berhubung kloningan AI ini hemat token biar ramah kuota & server nggak boncos 🚀)*, info super detailnya gak mungkin ku-spill semua di satu chat ini! Yuk langsung **scroll portofolio ini** buat kepoin proyek & pengalamanku, atau intip [Resume / CV-ku di sini](/resume) ya! 😉\n\n" +
-          "[NAV:about:📍 View About & Skills]";
-    }
-
-    if (isIntroductionQuery(msg)) {
-      return isEn
-        ? "I'm **Alfian Nur Usyaid (LIand)**, a Computer Science graduate with honors (GPA 3.94) focused on Fullstack Development, AI Integration, and Web3. You can find me on [LinkedIn](https://linkedin.com/in/alfian-nur-usyaid/), [GitHub](https://github.com/LIan2nd/), [Instagram](https://www.instagram.com/wonder__liand), or email me at [alfiannurusyaid19@gmail.com](mailto:alfiannurusyaid19@gmail.com).\n\n[NAV:about:📍 View About & Skills]"
-        : "Aku **Alfian Nur Usyaid (LIand)**, lulusan S.Kom Cumlaude (IPK 3.94) yang fokus di Fullstack Development, Integrasi AI, dan Web3. Kamu bisa nemuin aku lewat [LinkedIn](https://linkedin.com/in/alfian-nur-usyaid/), [GitHub](https://github.com/LIan2nd/), [Instagram](https://www.instagram.com/wonder__liand), atau email ke [alfiannurusyaid19@gmail.com](mailto:alfiannurusyaid19@gmail.com).\n\n[NAV:about:📍 View About & Skills]";
-    }
-
-    // Language explanation / inquiry
-    if (
-      msg.includes("indonesian") ||
-      msg.includes("english") ||
-      msg.includes("bahasa") && (msg.includes("why") || msg.includes("kenapa")) ||
-      msg.includes("speak english")
-    ) {
-      return isEn
-        ? "My apologies! I default to Alfian's native Indonesian persona, but I'm completely fluent in English too. How can I help you today? Feel free to ask about my projects like ESAO and RoadSense, my tech stack, or how to contact me! 😊"
-        : "Waduh sori! Aku bisa bahasa Inggris dan bahasa Indonesia kok. Mau nanya apa nih seputar proyek, tech stack, atau pengalamanku? Bebas tanyain ya! 😊";
-    }
-
-    if (
-      msg.includes("roadsense") ||
-      msg.includes("gis") ||
-      msg.includes("jalan") ||
-      msg.includes("navigasi") ||
-      msg.includes("navigation") ||
-      msg.includes("road")
-    ) {
-      return isEn
-        ? "🗺️ **RoadSense (Smart Road Safety Navigation)** is a participatory GIS platform I built to crowdsource road damage and hazard points.\n\n" +
-          "- **Tech Stack:** T3 Stack (Next.js 15, tRPC, Prisma), Leaflet, Flask (Shapely), and OSRM.\n" +
-          "- **Key Features:** Interactive hazard density map, crowdsourced hazard reporting (4 severity levels), and safe route calculation.\n" +
-          "- **Repository:** [github.com/LIan2nd/RoadSense](https://github.com/LIan2nd/RoadSense)\n\n" +
-          "[NAV:project:📍 View Projects]"
-        : "🗺️ **RoadSense (Smart Road Safety Navigation)** adalah platform GIS partisipatif yang kubangun untuk memetakan titik kerusakan jalan secara crowdsourcing.\n\n" +
-          "- **Tech Stack:** T3 Stack (Next.js 15, tRPC, Prisma), Leaflet, Flask (Shapely), dan OSRM.\n" +
-          "- **Fitur Utama:** Peta sebaran bahaya jalan interaktif, crowdsourced hazard reporting (4 level keparahan), dan kalkulasi navigasi rute aman (safe routing).\n" +
-          "- **Repository:** [github.com/LIan2nd/RoadSense](https://github.com/LIan2nd/RoadSense)\n\n" +
-          "[NAV:project:📍 View Projects]";
-    }
-
-    if (
-      msg.includes("hrd") ||
-      msg.includes("uas") ||
-      msg.includes("employee") ||
-      msg.includes("express")
-    ) {
-      return isEn
-        ? "⚙️ **HRD RESTful API** is an employee management backend project I developed for the Backend Programming exam at STT NF.\n\n" +
-          "- **Architecture & Concepts:** Modular MVC architecture and OOP concepts (Class-based Controllers & DAO Models) using **Node.js, Express.js, and MySQL**.\n" +
-          "- **Features:** Full employee CRUD, status filtering (active/inactive/terminated), name search, parameterized SQL queries, and standard HTTP REST codes.\n" +
-          "- **Repository:** [github.com/LIan2nd/uas-pemrograman-backend](https://github.com/LIan2nd/uas-pemrograman-backend)\n\n" +
-          "[NAV:project:📍 View Projects]"
-        : "⚙️ **HRD RESTful API** adalah proyek backend manajemen kepegawaian yang kubuat untuk UAS Pemrograman Backend di STT NF.\n\n" +
-          "- **Arsitektur & Konsep:** Arsitektur modular MVC dan konsep OOP (Class-based Controllers & DAO Models) menggunakan **Node.js, Express.js, dan MySQL**.\n" +
-          "- **Fitur:** Full CRUD pegawai, filter status (active/inactive/terminated), name search, parameterized SQL queries, dan standar HTTP RESTful codes.\n" +
-          "- **Repository:** [github.com/LIan2nd/uas-pemrograman-backend](https://github.com/LIan2nd/uas-pemrograman-backend)\n\n" +
-          "[NAV:project:📍 View Projects]";
-    }
-
-    if (
-      msg.includes("esao") ||
-      msg.includes("ai grading") ||
-      msg.includes("essay") ||
-      msg.includes("langchain")
-    ) {
-      return isEn
-        ? "🤖 **ESAO (Essay Analytic Online)** is my flagship academic AI research project developed with faculty at STT Terpadu Nurul Fikri (completed).\n\n" +
-          "- **Core Function:** Automated AI essay grading platform for educators that evaluates open-ended responses in seconds (saving up to 80% grading time).\n" +
-          "- **Architecture:** Decoupled Architecture with **Next.js** for the dashboard and **Flask (Python) + LangChain** for rubric-based NLP evaluation.\n" +
-          "- **Live URL:** [esao.nurulfikri.ac.id](https://esao.nurulfikri.ac.id)\n\n" +
-          "[NAV:project:📍 View Projects]"
-        : "🤖 **ESAO (Essay Analytic Online)** adalah proyek riset akademik unggulan yang kubangun bersama dosen di STT Terpadu Nurul Fikri (sudah selesai).\n\n" +
-          "- **Fungsi Utama:** Platform koreksi soal esai otomatis berbasis AI untuk dosen yang mampu menilai jawaban uraian dalam hitungan detik (hemat 80% waktu koreksi).\n" +
-          "- **Arsitektur:** Decoupled Architecture menggunakan **Next.js** untuk dashboard dan **Flask (Python) + LangChain** untuk evaluasi NLP berbasis rubrik.\n" +
-          "- **Live URL:** [esao.nurulfikri.ac.id](https://esao.nurulfikri.ac.id)\n\n" +
-          "[NAV:project:📍 View Projects]";
-    }
-
-    if (
-      msg.includes("digiarc") ||
-      msg.includes("blockchain") ||
-      msg.includes("web3") ||
-      msg.includes("ipfs") ||
-      msg.includes("storage")
-    ) {
-      return isEn
-        ? "🛡️ **DigiArc (Web3 Storage)** is a decentralized file storage platform inspired by Google Drive (completed).\n\n" +
-          "- **Tech Stack:** Next.js, Wagmi, Solidity Smart Contracts, and IPFS.\n" +
-          "- **Features:** Distributed file storage with blockchain-verified data integrity (proof-of-storage).\n" +
-          "- **Live Demo:** [digiarc.vercel.app](https://digiarc.vercel.app)\n\n" +
-          "[NAV:project:📍 View Projects]"
-        : "🛡️ **DigiArc (Web3 Storage)** adalah platform penyimpanan file terdesentralisasi yang terinspirasi dari Google Drive (sudah selesai dikembangkan).\n\n" +
-          "- **Tech Stack:** Next.js, Wagmi, Solidity Smart Contracts, dan IPFS.\n" +
-          "- **Fitur:** Penyimpanan file terdistribusi dengan verifikasi integritas data berbasis blockchain (proof-of-storage).\n" +
-          "- **Live Demo:** [digiarc.vercel.app](https://digiarc.vercel.app)\n\n" +
-          "[NAV:project:📍 View Projects]";
-    }
-
-    if (
-      msg.includes("lmovie") ||
-      msg.includes("l-movie") ||
-      msg.includes("movie") ||
-      msg.includes("film") ||
-      msg.includes("tmdb") ||
-      msg.includes("imdb")
-    ) {
-      return isEn
-        ? "🎬 **L-Movie (Cinema & Movie Discovery)** is a frontend web application I built for the Frontend Programming midterm exam (UTS) at STT NF.\n\n" +
-          "- **Core Learning:** Client-side asynchronous REST API fetching and dynamic JSON catalog rendering (using movie database APIs).\n" +
-          "- **Live Demo:** [lmovie.liand.web.id](https://lmovie.liand.web.id)\n\n" +
-          "[NAV:project:📍 View Projects]"
-        : "🎬 **L-Movie (Cinema & Movie Discovery)** adalah web eksplorasi film yang kubuat untuk UTS mata kuliah Pemrograman Frontend di STT NF.\n\n" +
-          "- **Fokus Utama:** Belajar integrasi & *data fetching* asinkron dari REST API backend/third-party (katalog database film) ke tampilan antarmuka secara dinamis.\n" +
-          "- **Live Demo:** [lmovie.liand.web.id](https://lmovie.liand.web.id)\n\n" +
-          "[NAV:project:📍 View Projects]";
-    }
-
-    if (
-      msg.includes("msib") ||
-      msg.includes("studi independen") ||
-      msg.includes("chicken yasaka") ||
-      msg.includes("yasaka") ||
-      msg.includes("learning x") ||
-      msg.includes("learningx")
-    ) {
-      return isEn
-        ? "🍗 **MSIB Batch 7 — Software Engineering Participant:**\n\n" +
-          "- **Role & Organization:** Software Engineering Participant at PT Global Investment Institusi (Learning X Academy), Sep – Dec 2024.\n" +
-          "- **Learnings & Project:** Mastered full-stack fundamentals (Flask, jQuery AJAX, MongoDB) and developed **Chicken Yasaka** (poultry e-commerce).\n" +
-          "- **Official Certificate:** [View MSIB Certificate](/file/work/msib.pdf) 📄\n\n" +
-          "[NAV:experience:📍 View Experience]"
-        : "🍗 **MSIB Batch 7 — Software Engineering Participant:**\n\n" +
-          "- **Program & Mitra:** Magang & Studi Independen Bersertifikat (MSIB) Batch 7 di PT Global Investment Institusi (Learning X Academy), Sep – Des 2024.\n" +
-          "- **Materi & Final Project:** Belajar full-stack web dev (Flask, jQuery AJAX, MongoDB) dan menyelesaikan proyek web e-commerce **Chicken Yasaka**.\n" +
-          "- **Bukti Sertifikat:** [Lihat Sertifikat MSIB](/file/work/msib.pdf) 📄\n\n" +
-          "[NAV:experience:📍 View Experience]";
-    }
-
-    if (isCurrentActivityQuery(msg)) {
-      const activity = await readCurrentActivity();
-      if (!activity) {
-        return isEn
-          ? "The AI service is unavailable, and I cannot confirm my current activities. Please try again later."
-          : "Layanan AI sedang tidak tersedia, dan aku belum bisa memastikan aktivitas terkiniku. Coba lagi nanti, ya.";
-      }
-      const notice = isEn
-        ? "The AI service is unavailable. Here is an excerpt from my current knowledge (in its original language):"
-        : "Layanan AI sedang tidak tersedia. Ini kutipan dari knowledge terkiniku:";
-      return `${notice}\n\n${activity}`;
-    }
-
-    if (
-      msg.includes("babymonster") ||
-      msg.includes("ahyeon") ||
-      msg.includes("asa") ||
-      msg.includes("chiquita")
-    ) {
-      if (
-        msg.includes("distia") ||
-        msg.includes("cewek") ||
-        msg.includes("pacar") ||
-        msg.includes("pasangan") ||
-        msg.includes("lebih suka") ||
-        msg.includes("pilih") ||
-        msg.includes("prefer") ||
-        msg.includes("mana")
-      ) {
-        return isEn
-          ? "Distia, without a doubt! 😄 BABYMONSTER is just my favorite K-Pop group, but Distia is 100% my one and only beloved life partner! 💙"
-          : "Ya jelas Distia lah! 😄 BABYMONSTER tuh emang girl group favoritku, tapi kalau urusan cinta dan di hati ya 100% mutlak cuma cewekku Distia seorang, ga ada tandingannya! 💙";
-      }
-
-      return isEn
-        ? "I'm a big fan of **BABYMONSTER**! Ahyeon's powerful vocals, Asa's insane rap & aura, and Chiquita's visual are all amazing. But in real life, my heart belongs 100% to my girlfriend Distia! ✨"
-        : "Suka banget sama **BABYMONSTER**! Vokalnya Ahyeon yang powerful, rap Asa yang gokil, dan visualnya Chiquita emang mantap. Tapi kalau urusan hati ya 100% tetap cuma buat cewekku Distia tercinta! ✨";
-    }
-
-    if (
-      msg.includes("boong") ||
-      msg.includes("bohong") ||
-      msg.includes("affh") ||
-      msg.includes("gebetan") ||
-      msg.includes("mantan") ||
-      msg.includes("masa lalu")
-    ) {
-      return isEn
-        ? "Haha, for real, I'm completely serious! 😄 No need to bring up past things—what matters is that my girlfriend Distia is the only one in my heart right now! 💙"
-        : "Haha suer beneran, ngapain bohong! 😄 Ga usah bahas-bahas soal masa lalu lagi hehe, yang jelas di hatiku sekarang ya cuma ada cewekku Distia seorang! 💙";
-    }
-
-    if (
-      msg.includes("cewek") ||
-      msg.includes("pacar") ||
-      msg.includes("pasangan") ||
-      msg.includes("partner") ||
-      msg.includes("girlfriend") ||
-      msg.includes("distia")
-    ) {
-      const isWho = msg.includes("who") || msg.includes("siapa") || msg.includes("nama") || msg.includes("name");
-      if (isWho) {
-        return isEn
-          ? "My girlfriend (life partner) is **Distia Fajar Familiati**. She is also an Informatics alumna from STT Terpadu Nurul Fikri! 💙"
-          : "Cewekku (pasangan hidupku) namanya **Distia Fajar Familiati**. Dia juga alumni Teknik Informatika di STT Terpadu Nurul Fikri! 💙";
-      }
-
-      const isStatus = msg.includes("single") || msg.includes("punya") || msg.includes("udah") || msg.includes("have");
-      if (isStatus) {
-        return isEn
-          ? "Yes, I have a life partner! Her name is **Distia Fajar Familiati**, an Informatics alumna from STT NF. ✨"
-          : "Udah punya, cewekku namanya **Distia Fajar Familiati**! Dia juga alumni Teknik Informatika di STT NF. ✨";
-      }
-
-      return isEn
-        ? "Distia Fajar Familiati is my life partner / girlfriend. She is an Informatics alumna from STT Terpadu Nurul Fikri! ✨"
-        : "Distia Fajar Familiati itu cewekku / pasangan hidupku. Dia juga lulusan Teknik Informatika di STT Terpadu Nurul Fikri! ✨";
-    }
-
-    if (
-      msg.includes("skill") ||
-      msg.includes("tech") ||
-      msg.includes("bahasa") ||
-      msg.includes("stack")
-    ) {
-      return isEn
-        ? "💻 **My Tech Stack & Key Skills:**\n\n" +
-          "- **Languages:** TypeScript, JavaScript, PHP, Python, Solidity, SQL\n" +
-          "- **Frontend & Frameworks:** Next.js 15 (React), Tailwind CSS v4, HTML5/CSS3\n" +
-          "- **Backend & Architecture:** Laravel (PHP), Flask (Python), Express.js (Node.js), RESTful APIs, MVC & OOP\n" +
-          "- **Databases:** PostgreSQL, MySQL, Supabase\n" +
-          "- **AI & Web3:** LangChain, LLM APIs, Wagmi, IPFS, Smart Contracts\n\n" +
-          "[NAV:about:📍 View About & Skills]"
-        : "💻 **Tech Stack & Keahlian Utamaku:**\n\n" +
-          "- **Languages:** JavaScript, TypeScript, PHP, Python, Solidity, SQL\n" +
-          "- **Frontend & Frameworks:** Next.js 15 (React), Tailwind CSS v4, HTML5/CSS3\n" +
-          "- **Backend & Architecture:** Laravel (PHP), Flask (Python), Express.js (Node.js), RESTful API, MVC & OOP\n" +
-          "- **Databases:** PostgreSQL, MySQL, Supabase\n" +
-          "- **AI & Web3:** LangChain, LLM APIs, Wagmi, IPFS, Smart Contracts\n\n" +
-          "[NAV:about:📍 View About & Skills]";
-    }
-
-    if (
-      msg.includes("kuliah") ||
-      msg.includes("kampus") ||
-      msg.includes("pendidikan") ||
-      msg.includes("education") ||
-      msg.includes("gpa") ||
-      msg.includes("ipk") ||
-      msg.includes("asdos") ||
-      msg.includes("asisten dosen") ||
-      msg.includes("kepanitiaan") ||
-      msg.includes("skripsi") ||
-      msg.includes("jurnal") ||
-      msg.includes("publication") ||
-      msg.includes("paper")
-    ) {
-      return isEn
-        ? "🎓 **Campus Life, Education & Academic Research:**\n\n" +
-          "- **STT Terpadu Nurul Fikri (2022 - 2026):** Bachelor of Computer Science (S.Kom) in Informatics — **Cumlaude (GPA 3.94 / 4.00)**.\n" +
-          "- **Teaching Assistant:** Data Structures & Algorithms (Tree, Graph, Sorting, Big-O), Databases (MySQL, ERD, Query Optimization), and Backend Laravel.\n" +
-          "- **Faculty Research & Publications:** Built ESAO (AI grading) & DigiArc (Web3 storage); published machine learning paper in *MIND Journal (Itenas Bandung)*.\n" +
-          "- **Campus Activities:** Active in internal student event committees and academic competitions.\n\n" +
-          "[NAV:experience:📍 View Experience]"
-        : "🎓 **Pengalaman Kuliah, Pendidikan & Riset Kampus:**\n\n" +
-          "- **STT Terpadu Nurul Fikri (2022 - 2026):** Sarjana Komputer (S.Kom) Teknik Informatika — **Cumlaude (IPK 3.94 / 4.00)**.\n" +
-          "- **Asisten Dosen (Teaching Assistant):** Mengajar Struktur Data & Algoritma, Basis Data (MySQL/ERD), dan Lab Backend (Laravel).\n" +
-          "- **Riset Dosen & Publikasi:** Mengembangkan riset AI ESAO & Web3 DigiArc; menerbitkan paper machine learning di *MIND Journal (Itenas Bandung)*.\n" +
-          "- **Kepanitiaan:** Aktif sebagai panitia berbagai event lomba teknologi dan kegiatan akademik mahasiswa di kampus.\n\n" +
-          "[NAV:experience:📍 View Experience]";
-    }
-
-    if (
-      msg.includes("kontak") ||
-      msg.includes("email") ||
-      msg.includes("hubungi") ||
-      msg.includes("contact") ||
-      msg.includes("hire") ||
-      isSocialIdentityQuery(msg)
-    ) {
-      return isEn
-        ? "📫 **Contact & Hiring Information:**\n\n" +
-          "- **Email:** [alfiannurusyaid19@gmail.com](mailto:alfiannurusyaid19@gmail.com)\n" +
-          "- **LinkedIn:** [linkedin.com/in/alfian-nur-usyaid](https://linkedin.com/in/alfian-nur-usyaid/)\n" +
-          "- **GitHub:** [github.com/LIan2nd](https://github.com/LIan2nd/)\n" +
-          "- **Instagram:** [@wonder__liand](https://www.instagram.com/wonder__liand)\n\n" +
-          "I am **open for work**—available for full-time, freelance, and project-based opportunities. Let's connect! 🚀\n\n" +
-          "[NAV:contact:📍 Go to Contact Section]"
-        : "📫 **Informasi Kontakku:**\n\n" +
-          "- **Email:** [alfiannurusyaid19@gmail.com](mailto:alfiannurusyaid19@gmail.com)\n" +
-          "- **LinkedIn:** [linkedin.com/in/alfian-nur-usyaid](https://linkedin.com/in/alfian-nur-usyaid/)\n" +
-          "- **GitHub:** [github.com/LIan2nd](https://github.com/LIan2nd/)\n" +
-          "- **Instagram:** [@wonder__liand](https://www.instagram.com/wonder__liand)\n\n" +
-          "Aku *open for work*—baik full-time, freelance, maupun project-based. Yuk diskusi lebih lanjut! 🚀\n\n" +
-          "[NAV:contact:📍 Go to Contact Section]";
-    }
-
-    if (
-      msg.includes("google") ||
-      msg.includes("pencarian") ||
-      (msg.includes("portfolio") && (msg.includes("keren") || msg.includes("bagus") || msg.includes("nongol") || msg.includes("nemu") || msg.includes("found")))
-    ) {
-      return isEn
-        ? "Thank you so much! 😎 I'm thrilled to see my portfolio showing up on Google. Feel free to scroll down to explore projects like ESAO, DigiArc, or RoadSense on this page! 🚀\n\n[NAV:project:📍 View Projects]"
-        : "Wah makasih bro/sis! 😎 Seneng banget portofolioku udah mulai nongol di Google. Kamu bisa langsung scroll ke bawah buat eksplor proyek-proyek kayak ESAO, DigiArc, atau RoadSense di web ini ya hehe 🚀\n\n[NAV:project:📍 View Projects]";
-    }
-
-    if (
-      (msg.includes("buka") || msg.includes("tips") || msg.includes("open") || msg.includes("akses")) &&
-      (msg.includes("windows") || msg.includes("mac") || msg.includes("hp") || msg.includes("browser") || msg.includes("portfolio") || msg.includes("web"))
-    ) {
-      return isEn
-        ? "Haha, you've actually already opened it and are chatting with my clone right now! 😄\n\n" +
-          "If you'd like some tips to explore my portfolio:\n" +
-          "- Toggle **Dark / Light mode** in the top-right navbar\n" +
-          "- Scroll down to check out **ESAO**, **DigiArc**, and **RoadSense**\n" +
-          "- Click on project cards to see live demos and repositories!\n\n" +
-          "[NAV:project:📍 View Projects]"
-        : "Loh, kan sekarang kamu udah berhasil membukanya dan lagi ngobrol sama klon-ku di sini haha! 😄\n\n" +
-          "Kalau mau tips eksplor portofolio ini:\n" +
-          "- Coba ganti tema **Dark / Light mode** di navbar kanan atas\n" +
-          "- Scroll ke bawah buat kepoin detail proyek kayak **ESAO**, **DigiArc**, dan **RoadSense**\n" +
-          "- Klik kartu proyek untuk lihat demo langsung atau repository di GitHub!\n\n" +
-          "[NAV:project:📍 View Projects]";
-    }
-
-    if (
-      msg.includes("halo") ||
-      msg.includes("hai") ||
-      msg.includes("hello") ||
-      msg.includes("hi") ||
-      msg.includes("hey") ||
-      msg.includes("p") ||
-      msg.includes("tes") ||
-      msg.includes("test")
-    ) {
-      return isEn
-        ? "Hello! I am the digital AI clone of **Alfian Nur Usyaid (LIand)**.\n\n" +
-          "Feel free to ask about my AI research **ESAO**, Web3 project **DigiArc**, GIS platform **RoadSense**, backend **HRD API**, journal publication, or my tech stack. What would you like to explore? 😎"
-        : "Halo! Aku kloningan digital dari **Alfian Nur Usyaid (LIand)**.\n\n" +
-          "Kamu bisa tanya-tanya seputar riset AI **ESAO**, Web3 **DigiArc**, GIS **RoadSense**, backend **HRD API**, publikasi jurnal, atau tech stack-ku. Mau kepoin yang mana nih? 😎";
-    }
-
-    // Default witty / sarcastic out-of-context response
-    return isEn
-      ? "Hey! I'm only trained to answer questions about Alfian's portfolio, projects, and skills (like ESAO, RoadSense, or DigiArc) 🗿\n\nFeel free to ask anything about my tech stack and experience!"
-      : "Dih, si tau tuh aku... Tanya yang berbobot seputar proyek atau portofolioku kek, misal ESAO, RoadSense, atau DigiArc 🗿\n\nAtau mau tanya seputar tech stack dan pengalamanku? Tanyain aja ya!";
-  }
-
-  private async getFullResponse(lastUserMessage: string): Promise<string> {
-    if (isTypingFunFactQuery(lastUserMessage)) {
-      return this.isEnglish(lastUserMessage)
-        ? "My typing speed on [10FastFingers](https://10fastfingers.com/user/alfian-nur-usyaid) is **100++ WPM** with **90%++ accuracy** 🔥"
-        : "Kecepatan ngetikku di [10FastFingers](https://10fastfingers.com/user/alfian-nur-usyaid) mencapai **100++ WPM** dengan **akurasi 90%++** 🔥";
-    }
-
-    const response = await this.getBaseResponse(lastUserMessage);
-
-    if (!shouldIncludeTypingFunFact(lastUserMessage)) {
-      return response;
-    }
-
-    return appendTypingFunFact(response, this.isEnglish(lastUserMessage));
-  }
-
   async generateResponse(messages: ChatMessage[]): Promise<string> {
-    const lastUserMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
-    return this.getFullResponse(lastUserMessage);
+    const query =
+      messages.filter(({ role }) => role === "user").pop()?.content ?? "";
+    const isEn = isEnglishText(query);
+    if (
+      /gebetan|mantan|masa lalu|past (?:relationship|crush)|boong|bohong|affh/i.test(
+        query,
+      )
+    ) {
+      return isEn
+        ? "The AI service is unavailable. Private relationship history is not shared here. Please ask about the portfolio."
+        : "Layanan AI sedang tidak tersedia. Cerita hubungan pribadi di masa lalu tidak dibagikan di sini. Silakan tanya tentang portofolio.";
+    }
+    const facts = (
+      await getRelevantChunks(
+        query,
+        await knowledgeRepository.loadKnowledgeDocuments(),
+        2,
+      )
+    )
+      .map(({ content }) => content)
+      .join("\n\n");
+    if (!facts) {
+      return isEn
+        ? "The AI service is unavailable, and I cannot confirm that information. Please try again later or explore this portfolio."
+        : "Layanan AI sedang tidak tersedia, dan aku belum bisa memastikan informasi itu. Coba lagi nanti atau jelajahi portofolio ini, ya.";
+    }
+    const notice = isEn
+      ? "The AI service is unavailable. Here is an excerpt from my current knowledge (in its original language):"
+      : "Layanan AI sedang tidak tersedia. Ini kutipan dari knowledge terkiniku:";
+    return `${notice}\n\n${facts}`;
   }
 
-  async generateStream(messages: ChatMessage[]): Promise<ReadableStream<Uint8Array>> {
-    const lastUserMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
-    const fullText = await this.getFullResponse(lastUserMessage);
-    return createTextStream([fullText], 0);
+  async generateStream(
+    messages: ChatMessage[],
+  ): Promise<ReadableStream<Uint8Array>> {
+    return createTextStream([await this.generateResponse(messages)], 0);
   }
 }
 
@@ -795,7 +490,9 @@ import { loadAiConfig } from "@/features/ai-config/infrastructure/data-repositor
 
 export function createGatewayProvider(gateway: AiGateway, model: string) {
   const isNara = gateway === "nara";
-  const apiKey = isNara ? process.env.NARA_API_KEY : process.env.SUMOPOD_API_KEY;
+  const apiKey = isNara
+    ? process.env.NARA_API_KEY
+    : process.env.SUMOPOD_API_KEY;
   if (!apiKey) return null;
 
   return new OpenAiProvider(
@@ -839,7 +536,10 @@ export async function getAiProvider(): Promise<{
   }
 
   // Fallback to SumoPod AI Gateway if Nara key is absent
-  const sumopodProvider = createGatewayProvider("sumopod", aiConfig.sumopodModel);
+  const sumopodProvider = createGatewayProvider(
+    "sumopod",
+    aiConfig.sumopodModel,
+  );
   if (sumopodProvider) {
     return {
       provider: sumopodProvider,

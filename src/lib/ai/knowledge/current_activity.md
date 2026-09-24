@@ -1,31 +1,24 @@
-# Aktivitas & Status Proyek Terkini
+# Karier & Aktivitas
 
-## 📌 Status Terkini (Saat Ini)
-- **Pendidikan:** Sudah lulus S.Kom (Cumlaude, IPK 3.94) dari STT Terpadu Nurul Fikri.
-- **Aktivitas Sehari-hari Saat Ini:** 
-  - Sedang mengikuti program Pelatihan/Bootcamp Fullstack Web Development selama 6 bulan di **Pantona**, dan saat ini sedang berada di **tahap belajar QA & QC (Quality Assurance & Quality Control)**.
-    - masuk ke kelompok bernama Chair, dan aku sebagai ketuanya, yang beranggotakan; 
-      - Afif Raihan
-      - Furqon
-      - Faiz
-      - Arya
-  - Cari kesempatan, ntah itu magang, full-time, atau freelance
-  - Fokus mengembangkan diri ; fisik, mental, otak
-- **Kesiapan Karir:** Siap bergabung untuk pekerjaan Full-time / Freelance (*Immediately Available*).
+## Status Terkini (Saat Ini)
+- **Aktivitas Sehari-hari Saat Ini:**
+  - Mengikuti **Bootcamp Fullstack Web Development di Pantona** selama enam bulan; saat ini berada pada tahap **QA & QC (Quality Assurance & Quality Control)**.
+  - Ketua kelompok **Chair**, bersama anggota **Afif Raihan, Furqon, Faiz, dan Arya**.
+  - Mencari kesempatan kerja dan mengembangkan diri dari sisi fisik, mental, serta kemampuan berpikir.
 
----
+## Kesiapan Kerja & Preferensi
+- **Ketersediaan:** available immediately / bisa langsung bergabung.
+- **Jenis kesempatan:** magang, full-time, contract, freelance / project-based; terbuka pula untuk konsultasi atau part-time.
+- **Model kerja:** remote, hybrid, atau onsite di Jabodetabek.
+- **Role yang diminati:** Fullstack Developer, Frontend Engineer (Next.js / React), Backend Developer (Laravel / Python), AI / LLM Application Developer.
+- Mengutamakan kecocokan budaya kerja, dampak proyek, dan peluang berkembang.
 
-## 🚀 Status Lifecycle Proyek & Riset
-- **ESAO (AI Essay Grading):** **SUDAH SELESAI** (Feb 2025 – Jul 2025) — *Lihat detail di `esao_research.md`*.
-- **DigiArc (Web3 Cloud Storage):** **SUDAH SELESAI** (Aug 2025 – Sep 2025) — *Lihat detail di `digiarc.md`*.
-- **Paper MIND Journal (ML Retention):** **SUDAH TERPUBLIKASI** (Vol. 11, No. 1, 2026) — *Lihat detail di `thesis_and_education.md`*.
-- **Asisten Dosen (Teaching Assistant):** **SUDAH SELESAI** (Struktur Data & Algoritma, Basis Data, Backend Laravel) — *Lihat detail di `campus_experience.md`*.
-- **MSIB Batch 7 & Chicken Yasaka:** **SUDAH SELESAI** (Sep 2024 – Des 2024) — *Lihat detail di `campus_experience.md` & `chicken_yasaka.md`*.
-- **RoadSense (GIS Navigation):** **SUDAH SELESAI** — *Lihat detail di `roadsense.md`*.
+## Expected Salary & Rate
+- **Full-time:** IDR 7.000.000–12.000.000 per bulan, negotiable sesuai benefit, kompleksitas proyek, dan model kerja.
+- **Freelance / project-based:** mengikuti scope of work, kompleksitas arsitektur, dan timeline.
+- **Konsultasi / part-time:** terbuka untuk negosiasi.
+- Kontak untuk diskusi tersedia di [Profil](about_alfian.md), bagian Identitas & Kontak.
 
----
-
-## 💡 Instruksi Menjawab untuk AI Clone:
-- Jika ditanya *"lagi ngapain sekarang?"*, *"apa kesibukan saat ini?"*, atau *"lagi ngerjain apa?"*:
-  Jawab bahwa kamu **sedang fokus mengikuti Bootcamp Fullstack Web Development di Pantona yang sekarang lagi di tahap QA & QC**, dan sudah **lulus kuliah S.Kom dari STT NF**.
-- JANGAN PERNAH mengatakan sedang mengembangkan/mendevelop ESAO atau DigiArc saat ini, karena kedua proyek tersebut **sudah selesai dikembangkan di masa kuliah lalu**.
+## Cita-Cita / Impian Karir
+- Berkembang menjadi Software Engineer / AI Solutions Architect yang membangun produk digital inovatif dan bermanfaat.
+- Bekerja di Jepang dan melanjutkan pendidikan di luar negeri.

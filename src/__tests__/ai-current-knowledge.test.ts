@@ -128,6 +128,75 @@ describe("current knowledge in chatbot answers", () => {
     );
   });
 
+  it.each([
+    ["openai", "generateResponse"],
+    ["openai", "generateStream"],
+    ["gemini", "generateResponse"],
+    ["gemini", "generateStream"],
+  ] as const)(
+    "uses saved behavior and one knowledge snapshot for %s %s",
+    async (gateway, method) => {
+      loadDocuments.mockResolvedValue([
+        activity,
+        {
+          ...activity,
+          id: "ai-system-prompt",
+          category: "AI Behavior",
+          content: "# Voice\nUse the owner's updated concise voice.",
+        },
+      ]);
+      const response =
+        gateway === "openai"
+          ? { choices: [{ message: { content: "Fresh reply" } }] }
+          : { candidates: [{ content: { parts: [{ text: "Fresh reply" }] } }] };
+      const fetchMock = vi.fn().mockResolvedValue(Response.json(response));
+      vi.stubGlobal("fetch", fetchMock);
+      const provider =
+        gateway === "openai"
+          ? new OpenAiProvider(
+              "test-key",
+              "https://ai.example/v1",
+              "test-model",
+            )
+          : new GeminiProvider("test-key", "test-model");
+
+      await provider[method](messages);
+
+      const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+      const prompt =
+        gateway === "openai"
+          ? body.messages[0].content
+          : body.system_instruction.parts[0].text;
+      expect(prompt).toContain("owner's updated concise voice");
+      expect(prompt).toContain("Phase2: Web Developer");
+      expect(prompt).not.toContain("QA & QC");
+      expect(prompt).not.toContain("3.94");
+      expect(loadDocuments).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it("reads edited profile facts in fallback answers without a stale hardcoded copy", async () => {
+    const profile = {
+      ...activity,
+      id: "about_alfian",
+      category: "Profile",
+      content: "# Profile\n\n## Kontak\nEmail: updated@example.test",
+    };
+    loadDocuments.mockResolvedValue([profile]);
+    const provider = new MockFallbackProvider();
+    const question = [{ role: "user" as const, content: "Apa email kamu?" }];
+    expect(await provider.generateResponse(question)).toContain(
+      "updated@example.test",
+    );
+    loadDocuments.mockResolvedValue([
+      { ...profile, content: profile.content.replace("updated@", "newest@") },
+    ]);
+    const response = await provider.generateResponse(question);
+    expect(response).toContain("newest@example.test");
+    expect(response).not.toContain("updated@example.test");
+    expect(response).not.toContain("alfiannurusyaid19");
+  });
+
   it("propagates Gemini HTTP failures before returning a stream", async () => {
     vi.stubGlobal(
       "fetch",

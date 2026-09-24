@@ -67,9 +67,9 @@ describe("MongoDB knowledge repository", () => {
     const documents = await repository.loadKnowledgeDocuments();
 
     expect(documents).toHaveLength(3);
-    expect(documents.find(({ id }) => id === "current_activity")?.content).toContain(
-      "Updated from the dashboard",
-    );
+    expect(
+      documents.find(({ id }) => id === "current_activity")?.content,
+    ).toContain("Updated from the dashboard");
     expect(documents.find(({ id }) => id === "about_alfian")).toEqual(seeds[1]);
     expect(documents.find(({ id }) => id === "custom-note")).toBeDefined();
   });
@@ -90,13 +90,14 @@ describe("MongoDB knowledge repository", () => {
 
     expect(saved.id).toBe("current_activity");
     expect(saved.content).toContain("# Current Activity");
-    expect(saved.content).toContain("- **Kategori:** Activities");
+    expect(saved.content).toContain("- **Kategori:** Career & Activity");
     expect(database.updateOne).toHaveBeenCalledWith(
       { _id: "current_activity" },
       expect.objectContaining({
         $set: expect.objectContaining({
           title: "Current Activity",
-          category: "Activities",
+          category: "Career & Activity",
+          knowledgeSchemaVersion: 2,
         }),
       }),
       { upsert: true },

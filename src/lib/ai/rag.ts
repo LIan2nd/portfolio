@@ -1,9 +1,12 @@
 import { knowledgeRepository } from "@/features/knowledge/composition";
 import { isCurrentActivityQuery } from "./current-activity";
 import {
-  buildKnowledgeChunks,
-  type KnowledgeChunk,
-} from "./knowledge-chunks";
+  isIntroductionQuery,
+  isSocialIdentityQuery,
+  shouldIncludeTypingFunFact,
+} from "./knowledge";
+import type { KnowledgeDocument } from "@/features/knowledge/domain/types";
+import { buildKnowledgeChunks, type KnowledgeChunk } from "./knowledge-chunks";
 
 export { buildKnowledgeChunks } from "./knowledge-chunks";
 export type { KnowledgeChunk } from "./knowledge-chunks";
@@ -32,7 +35,8 @@ export function cosineSimilarity(vecA: number[], vecB: number[]): number {
  * with graceful fallback to keyword & semantic scoring.
  */
 export async function getEmbedding(text: string): Promise<number[]> {
-  const embeddingKey = process.env.SUMOPOD_API_KEY || process.env.OPENAI_API_KEY;
+  const embeddingKey =
+    process.env.SUMOPOD_API_KEY || process.env.OPENAI_API_KEY;
   const baseUrl =
     process.env.SUMOPOD_BASE_URL ||
     process.env.OPENAI_BASE_URL ||
@@ -114,104 +118,175 @@ export async function loadAllKnowledgeChunks(): Promise<KnowledgeChunk[]> {
   }
 }
 
-function isIntroductionQuery(text: string): boolean {
-  const introPatterns =
-    /^(halo|hi|hai|pagi|siang|sore|malam|assalamu'alaikum|assalam|p)[\s!.]*$/i;
-  return introPatterns.test(text);
+const QUERY_SYNONYMS: Record<string, string[]> = {
+  cewek: ["pasangan", "girlfriend"],
+  girlfriend: ["pasangan", "cewek"],
+  partner: ["pasangan"],
+  relationship: ["pasangan", "cewek"],
+  jomblo: ["pasangan", "cewek"],
+  menikah: ["pasangan"],
+  salary: ["gaji", "salary", "rate"],
+  gaji: ["salary", "rate"],
+  hire: ["kerja", "kontak"],
+  availability: ["kesiapan", "kerja"],
+  available: ["kesiapan", "kerja"],
+  contact: ["kontak", "email"],
+  skills: ["skill", "prinsip", "setup"],
+  stack: ["skill", "setup"],
+  education: ["akademik", "pendidikan"],
+  kelulusan: ["akademik", "lulus"],
+  lulusan: ["akademik", "lulus"],
+  graduation: ["akademik", "lulus"],
+  graduated: ["akademik", "lulus"],
+  degree: ["akademik", "gelar"],
+  kuliah: ["akademik", "asisten", "kampus"],
+  experience: ["pengalaman", "asisten", "riset"],
+  work: ["kerja", "pengalaman"],
+  project: ["proyek"],
+  projects: ["proyek"],
+  proyek: ["proyek"],
+  typing: ["mengetik", "10fastfingers"],
+  ngetik: ["mengetik"],
+  hobbies: ["hobi", "personal"],
+  hobby: ["hobi", "personal"],
+  certificate: ["sertifikasi", "sertifikat"],
+  certifications: ["sertifikasi"],
+  research: ["riset", "penelitian", "publikasi"],
+  paper: ["jurnal", "publikasi"],
+};
+
+const STOP_WORDS = new Set(
+  "apa itu kamu aku saya tentang ceritakan jelaskan bagaimana siapa mana berapa kapan semua yang dan dengan bisa dong what who where when is are your you the me tell about how can do my of a an to now saat ini sekarang status".split(
+    " ",
+  ),
+);
+
+function expandedQueryWords(query: string): string[] {
+  const words = query
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}_-]+/u)
+    .map((word) => (word.length > 4 ? word.replace(/(?:mu|ku)$/, "") : word))
+    .filter((word) => word.length >= 2 && !STOP_WORDS.has(word));
+  return [
+    ...new Set(
+      words.flatMap((word) => [word, ...(QUERY_SYNONYMS[word] ?? [])]),
+    ),
+  ];
 }
 
-/**
- * Retrieves the Top-K most relevant knowledge chunks for a user query
- */
+function topicScore(
+  query: string,
+  chunk: KnowledgeChunk,
+  projectMatches: ReadonlySet<string>,
+): number {
+  const title = chunk.content.split("\n")[0].toLowerCase();
+  const source = chunk.source;
+  if (projectMatches.has(chunk.id)) return 60;
+  if (
+    source === "projects.md" &&
+    /\b(proyek|projects?)(?:mu|ku)?\b/i.test(query)
+  )
+    return 20;
+  if (
+    !projectMatches.size &&
+    isCurrentActivityQuery(query) &&
+    source === "current_activity.md"
+  )
+    return 20;
+  if (
+    isIntroductionQuery(query) &&
+    source === "about_alfian.md" &&
+    /identitas|skill/.test(title)
+  )
+    return 20;
+  if (isSocialIdentityQuery(query) && /identitas|kontak/.test(title)) return 20;
+  if (
+    shouldIncludeTypingFunFact(query) &&
+    /10fastfingers|mengetik/i.test(title)
+  )
+    return 15;
+  return 0;
+}
+
+export async function getRelevantChunks(
+  query: string,
+  documents: readonly KnowledgeDocument[],
+  topK = 5,
+): Promise<KnowledgeChunk[]> {
+  if (
+    topK <= 0 ||
+    !query.trim() ||
+    /^(halo|hi|hai|hello|hey|pagi|siang|sore|malam|assalamu'alaikum|assalam|p)[\s!.]*$/i.test(
+      query.trim(),
+    )
+  )
+    return [];
+  const words = expandedQueryWords(query);
+  const chunks = buildKnowledgeChunks(documents).filter((chunk) => {
+    const title = chunk.content.split("\n")[0];
+    if (
+      /10fastfingers|mengetik/i.test(title) &&
+      !shouldIncludeTypingFunFact(query)
+    )
+      return false;
+    if (
+      /pasangan|life partner/i.test(title) &&
+      !/pasangan|cewek|girlfriend|partner|relationship|distia|single|pacar|jomblo|menikah/i.test(
+        query,
+      )
+    )
+      return false;
+    return true;
+  });
+  const projectMatches = new Set(
+    chunks
+      .filter(
+        (chunk) =>
+          chunk.source === "projects.md" &&
+          words.some(
+            (word) =>
+              word.length >= 3 &&
+              chunk.content.split("\n")[0].toLowerCase().includes(word),
+          ),
+      )
+      .map(({ id }) => id),
+  );
+  const hasEmbeddings = chunks.some((chunk) => chunk.embedding?.length);
+  const embedding = hasEmbeddings ? await getEmbedding(query) : [];
+  return chunks
+    .map((chunk) => {
+      const text = chunk.content.toLowerCase();
+      const title = text.split("\n")[0];
+      const keywordScore = words.reduce(
+        (score, word) =>
+          score + (title.includes(word) ? 5 : text.includes(word) ? 2 : 0),
+        0,
+      );
+      const vectorScore =
+        embedding.length && chunk.embedding
+          ? cosineSimilarity(embedding, chunk.embedding)
+          : 0;
+      return {
+        chunk,
+        score:
+          keywordScore + topicScore(query, chunk, projectMatches) + vectorScore,
+      };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topK)
+    .map(({ chunk }) => chunk);
+}
+
 export async function getRelevantContext(
   query: string,
   topK = 5,
+  documents?: readonly KnowledgeDocument[],
 ): Promise<string> {
-  const trimmed = query.trim();
-  if (isIntroductionQuery(trimmed) || trimmed.length <= 3) {
-    return "";
-  }
-
-  const chunks = await loadAllKnowledgeChunks();
-  if (chunks.length === 0) return "";
-
-  if (isCurrentActivityQuery(trimmed)) {
-    const activity = chunks.find(({ id }) => id === "current_activity.md-full");
-    if (activity) return `Source: current_activity (current knowledge)\n${activity.content}`;
-  }
-
-  // If any chunks have precomputed embeddings, try vector search
-  const hasPrecomputed = chunks.some(
-    (chunk) => Array.isArray(chunk.embedding) && chunk.embedding.length > 0,
-  );
-  if (hasPrecomputed) {
-    try {
-      const queryEmbedding = await getEmbedding(trimmed);
-      if (queryEmbedding.length > 0) {
-        const scored = chunks
-          .filter((c) => Array.isArray(c.embedding) && c.embedding.length > 0)
-          .map((chunk) => ({
-            chunk,
-            score: cosineSimilarity(queryEmbedding, chunk.embedding!),
-          }));
-        scored.sort((a, b) => b.score - a.score);
-        const topChunks = scored.slice(0, topK).map((s) => s.chunk.content);
-        if (topChunks.length > 0) {
-          return topChunks.join("\n\n---\n\n");
-        }
-      }
-    } catch {
-      // Fallback to fast keyword scoring
-    }
-  }
-
-  // Fast Keyword & Semantic Scoring with synonym expansion
-  const normalizedQuery = trimmed.toLowerCase();
-  const queryWords = normalizedQuery.split(/\s+/).filter((w) => w.length >= 2);
-
-  // Common synonym expansion for Indonesian conversational queries
-  const synonyms: Record<string, string[]> = {
-    ngapain: [
-      "aktivitas",
-      "sehari-hari",
-      "kegiatan",
-      "bootcamp",
-      "belajar",
-      "pantona",
-      "saat ini",
-      "sekarang",
-    ],
-    sekarang: ["saat ini", "terakhir", "sehari-hari", "aktivitas", "sedang"],
-    cewek: ["pasangan", "distia", "girlfriend", "hubungan"],
-    gaji: ["salary", "rate", "penghasilan", "harga"],
-    kuliah: [
-      "pendidikan",
-      "stt",
-      "nurul fikri",
-      "skripsi",
-      "jurnal",
-      "ipk",
-      "cumlaude",
-    ],
-  };
-
-  const expandedWords = new Set<string>(queryWords);
-  for (const word of queryWords) {
-    if (synonyms[word]) {
-      synonyms[word].forEach((syn) => expandedWords.add(syn));
-    }
-  }
-
-  const scored = chunks.map((chunk) => {
-    const text = chunk.content.toLowerCase();
-    let score = 0;
-    for (const word of expandedWords) {
-      if (text.includes(word)) score += 2;
-    }
-    return { chunk, score };
-  });
-
-  scored.sort((a, b) => b.score - a.score);
-  const selected = scored.slice(0, topK).map((s) => s.chunk.content);
-  return selected.join("\n\n---\n\n");
+  const currentDocuments =
+    documents ?? (await knowledgeRepository.loadKnowledgeDocuments());
+  const chunks = await getRelevantChunks(query, currentDocuments, topK);
+  return chunks
+    .map((chunk) => `Source: ${chunk.source}\n${chunk.content}`)
+    .join("\n\n---\n\n");
 }

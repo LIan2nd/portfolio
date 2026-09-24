@@ -1,24 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
-import { buildPortfolioKnowledge } from "@/lib/ai/knowledge";
+import { DEFAULT_AI_BEHAVIOR } from "@/lib/ai/knowledge";
 import type { KnowledgeDocument } from "../domain/types";
+import { isKnowledgeGroup, KNOWLEDGE_GROUPS } from "../domain/groups";
 
 let cachedDocuments: KnowledgeDocument[] | null = null;
-
-const CATEGORY_MAP: Record<string, string> = {
-  about_alfian: "Profile",
-  "another-about-me": "Profile & FAQ",
-  campus_experience: "Education & Campus",
-  chicken_yasaka: "Projects",
-  current_activity: "Activities",
-  digiarc: "Projects",
-  esao_research: "Research & Projects",
-  hrd_api: "Projects",
-  l_movie: "Projects",
-  leath_notes: "Projects",
-  roadsense: "Projects",
-  thesis_and_education: "Education & Research",
-};
 
 function parseTitle(content: string, filename: string): string {
   const match = content.match(/^#\s+(.+)$/m);
@@ -29,8 +15,8 @@ function parseTitle(content: string, filename: string): string {
 }
 
 function parseCategory(content: string, docId: string): string {
-  if (CATEGORY_MAP[docId]) {
-    return CATEGORY_MAP[docId];
+  if (isKnowledgeGroup(docId)) {
+    return KNOWLEDGE_GROUPS[docId].category;
   }
   const match = content.match(/-\s+\*\*Kategori:\*\*\s*(.+)$/m);
   if (match) {
@@ -45,7 +31,10 @@ export function parseKnowledgeDescription(content: string): string {
     /##\s+[^\n]*(?:Ringkasan|Overview)[^\n]*\n+([\s\S]*?)(?=\n\n|\n##|\n---|$)/i,
   );
   if (summaryMatch && summaryMatch[1].trim()) {
-    return summaryMatch[1].replace(/[*_#`]/g, "").trim().split("\n")[0];
+    return summaryMatch[1]
+      .replace(/[*_#`]/g, "")
+      .trim()
+      .split("\n")[0];
   }
 
   // Fallback: look for the first non-bullet, non-header paragraph
@@ -58,7 +47,10 @@ export function parseKnowledgeDescription(content: string): string {
       !trimmed.startsWith("-") &&
       !trimmed.startsWith("---")
     ) {
-      return trimmed.replace(/[*_#`]/g, "").trim().split("\n")[0];
+      return trimmed
+        .replace(/[*_#`]/g, "")
+        .trim()
+        .split("\n")[0];
     }
   }
 
@@ -86,8 +78,12 @@ export function loadSeedKnowledgeDocuments(): KnowledgeDocument[] {
         if (rawText.length > 0) {
           documents.push({
             id: docId,
-            title: parseTitle(rawText, docId),
-            description: parseKnowledgeDescription(rawText),
+            title: isKnowledgeGroup(docId)
+              ? KNOWLEDGE_GROUPS[docId].title
+              : parseTitle(rawText, docId),
+            description: isKnowledgeGroup(docId)
+              ? KNOWLEDGE_GROUPS[docId].description
+              : parseKnowledgeDescription(rawText),
             category: parseCategory(rawText, docId),
             content: rawText,
             updatedAt: stats.mtime.toISOString(),
@@ -99,15 +95,13 @@ export function loadSeedKnowledgeDocuments(): KnowledgeDocument[] {
     console.error("Error reading markdown knowledge directory:", error);
   }
 
-  // Add system prompt / AI persona document from knowledge.ts
-  const systemPromptContent = buildPortfolioKnowledge();
   documents.push({
     id: "ai-system-prompt",
-    title: "AI Persona & System Guidelines",
+    title: KNOWLEDGE_GROUPS["ai-system-prompt"].title,
     description:
-      "Core system instructions, persona definition, guardrails, and knowledge synthesis from data.ts.",
+      "Aturan gaya bicara, privasi, navigasi, dan penggunaan fakta oleh AI.",
     category: "AI Behavior",
-    content: systemPromptContent,
+    content: DEFAULT_AI_BEHAVIOR,
     updatedAt: new Date().toISOString(),
   });
 

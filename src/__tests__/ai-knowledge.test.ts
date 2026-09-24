@@ -5,101 +5,161 @@ import {
 } from "@/lib/ai/knowledge";
 import { MockFallbackProvider } from "@/lib/ai/provider";
 import { buildKnowledgeChunks } from "@/lib/ai/knowledge-chunks";
+import { getRelevantContext } from "@/lib/ai/rag";
 import { loadSeedKnowledgeDocuments } from "@/features/knowledge/infrastructure/markdown-repository";
 
-describe("AI Knowledge & Anti-Hallucination Guardrails", () => {
-  it("buildPortfolioKnowledge contains explicit loyalty and anti-hallucination rules", () => {
-    const knowledge = buildPortfolioKnowledge();
-
-    // Check Distia & Loyalty rules
-    expect(knowledge).toContain("Distia Fajar Familiati");
-    expect(knowledge).toContain("BATASAN PRIVASI");
-    expect(knowledge).toContain("gebetan masa lalu");
-    expect(knowledge).toContain("ZERO-TOLERANCE");
-
-    // Check anti-boong and idol comparison rules
-    expect(knowledge).toContain("BABYMONSTER");
-    expect(knowledge).toContain("Ya jelas Distia lah");
-    expect(knowledge).toContain("ga perlu dibahas");
+describe("grouped AI knowledge", () => {
+  it("separates behavior from facts that are edited in other groups", () => {
+    const behavior = buildPortfolioKnowledge();
+    expect(behavior).toContain("Privasi & Pasangan");
+    expect(behavior).toContain("gebetan masa lalu");
+    expect(behavior).toContain("prioritaskan pasangan saat ini");
+    expect(behavior).not.toContain("Distia Fajar Familiati");
+    expect(behavior).not.toContain("3.94");
+    expect(behavior).not.toContain("7.000.000");
+    expect(behavior).not.toContain("100++ WPM");
   });
 
-  it("MockFallbackProvider prioritizes Distia when comparing with BABYMONSTER / idols", async () => {
-    const mock = new MockFallbackProvider();
-
-    const resIndo = await mock.generateResponse([
-      { role: "user", content: "lebih suka ahyeon apa distia?" },
+  it("loads only the five canonical seed groups", () => {
+    const documents = loadSeedKnowledgeDocuments();
+    expect(documents.map(({ id }) => id).sort()).toEqual([
+      "about_alfian",
+      "ai-system-prompt",
+      "current_activity",
+      "education_experience",
+      "projects",
     ]);
-    expect(resIndo.toLowerCase()).toContain("distia");
-    expect(resIndo.toLowerCase()).not.toContain("gebetan");
-
-    const resEn = await mock.generateResponse([
-      { role: "user", content: "do you prefer ahyeon or your girlfriend distia?" },
-    ]);
-    expect(resEn.toLowerCase()).toContain("distia");
+    expect(new Set(documents.map(({ category }) => category)).size).toBe(5);
+    const chunks = buildKnowledgeChunks(documents);
+    expect(
+      chunks.some(
+        ({ source }) =>
+          source === "ai-system-prompt.md" || source === "data.ts",
+      ),
+    ).toBe(false);
+    expect(
+      chunks.filter(({ content }) =>
+        content.includes("Distia Fajar Familiati"),
+      ),
+    ).toHaveLength(1);
+    expect(
+      chunks.filter(({ content }) => content.includes("7.000.000")),
+    ).toHaveLength(1);
   });
 
-  it("MockFallbackProvider defends truth without inventing past crush when teased", async () => {
-    const mock = new MockFallbackProvider();
-
-    const resBoong = await mock.generateResponse([
-      { role: "user", content: "halah boong" },
+  it("chunks each section once without also indexing a duplicate full document", () => {
+    const chunks = buildKnowledgeChunks([
+      {
+        id: "sample",
+        title: "Sample",
+        category: "Profile",
+        description: "",
+        updatedAt: "",
+        content:
+          "# Sample\n\n## Identity\nUnique profile fact.\n\n## Skills\nUnique skill fact.",
+      },
     ]);
-    expect(resBoong.toLowerCase()).toContain("distia");
-    expect(resBoong.toLowerCase()).not.toContain("memang sempat ada");
-
-    const resAffh = await mock.generateResponse([
-      { role: "user", content: "affh ingyhhh" },
-    ]);
-    expect(resAffh.toLowerCase()).toContain("distia");
-    expect(resAffh.toLowerCase()).not.toContain("memang sempat ada");
+    expect(chunks).toHaveLength(2);
+    expect(
+      chunks.filter(({ content }) => content.includes("Unique profile fact")),
+    ).toHaveLength(1);
   });
 
-  it("loads all knowledge chunks including another-about-me without errors", () => {
-    const chunks = buildKnowledgeChunks(loadSeedKnowledgeDocuments());
-    expect(chunks.length).toBeGreaterThan(0);
+  it("only enables typing facts for introductions, social identity, or direct questions", () => {
+    for (const query of [
+      "Tolong perkenalkan diri kamu",
+      "Di mana aku bisa mencari kamu?",
+      "Where can I find you?",
+      "Berapa typing speed kamu?",
+    ]) {
+      expect(shouldIncludeTypingFunFact(query)).toBe(true);
+      expect(buildPortfolioKnowledge(query)).toContain(
+        "FUN FACT YANG DIIZINKAN",
+      );
+    }
+    for (const query of [
+      "Apa proyek unggulanmu?",
+      "Apa email kamu?",
+      "Kamu lagi sibuk apa?",
+      "Portofoliomu keren",
+    ]) {
+      expect(shouldIncludeTypingFunFact(query)).toBe(false);
+    }
+  });
 
-    const partnerChunk = chunks.find(
-      (c) => c.content.includes("Distia") && c.content.includes("Kesetiaan")
+  it("retrieves typing facts from Profile only for allowed queries", async () => {
+    const documents = loadSeedKnowledgeDocuments();
+    const project = await getRelevantContext(
+      "Ceritakan proyek ESAO",
+      5,
+      documents,
     );
-    expect(partnerChunk).toBeDefined();
+    const intro = await getRelevantContext("Perkenalkan dirimu", 5, documents);
+    expect(project).not.toContain("100++ WPM");
+    expect(project).not.toContain("10fastfingers.com");
+    expect(intro).toContain("100++ WPM");
+    expect(intro).toContain("10fastfingers.com");
+    expect(intro).not.toContain("Distia");
   });
 
-  it("only enables the typing fact for introductions, broad social identity, or direct questions", () => {
-    expect(shouldIncludeTypingFunFact("Tolong perkenalkan diri kamu")).toBe(true);
-    expect(shouldIncludeTypingFunFact("Di mana aku bisa mencari kamu?")).toBe(true);
-    expect(shouldIncludeTypingFunFact("Where can I find you?")).toBe(true);
-    expect(shouldIncludeTypingFunFact("Berapa typing speed kamu?")).toBe(true);
-    expect(shouldIncludeTypingFunFact("Apa proyek unggulanmu?")).toBe(false);
-    expect(shouldIncludeTypingFunFact("Apa email kamu?")).toBe(false);
-    expect(shouldIncludeTypingFunFact("Kamu lagi sibuk apa?")).toBe(false);
-    expect(shouldIncludeTypingFunFact("Portofoliomu keren")).toBe(false);
+  it("retrieves project status from Projects even when asked about current status", async () => {
+    const context = await getRelevantContext(
+      "Apa status RoadSense sekarang?",
+      1,
+      loadSeedKnowledgeDocuments(),
+    );
+    expect(context).toContain("projects.md");
+    expect(context).toContain("RoadSense");
+    expect(context).not.toContain("In Development");
+    expect(context).not.toContain("Pantona");
   });
 
-  it("only exposes 10FastFingers data to the live model for an allowed query", () => {
-    const unrelatedKnowledge = buildPortfolioKnowledge("Ceritakan proyek ESAO");
-    const introductionKnowledge = buildPortfolioKnowledge("Perkenalkan dirimu");
-
-    expect(unrelatedKnowledge).not.toContain("100++ WPM");
-    expect(unrelatedKnowledge).not.toContain("10fastfingers.com");
-    expect(introductionKnowledge).toContain("100++ WPM");
-    expect(introductionKnowledge).toContain("10fastfingers.com");
+  it.each([
+    ["Ceritakan semua proyekmu", "projects.md", "Proyek"],
+    ["What are your projects?", "projects.md", "Proyek"],
+    ["Siapa cewekmu?", "about_alfian.md", "Distia"],
+    ["Berapa gajimu?", "current_activity.md", "7.000.000"],
+    ["Apa status kelulusanmu?", "education_experience.md", "3.94"],
+    ["What is your relationship status?", "about_alfian.md", "Distia"],
+  ])("retrieves the owning group for %s", async (query, source, fact) => {
+    const context = await getRelevantContext(
+      query,
+      1,
+      loadSeedKnowledgeDocuments(),
+    );
+    expect(context).toContain(source);
+    if (fact !== "Proyek") expect(context).toContain(fact);
   });
 
-  it("keeps the fallback typing fun fact out of unrelated and single-detail answers", async () => {
-    const mock = new MockFallbackProvider();
-    const projectResponse = await mock.generateResponse([
-      { role: "user", content: "Apa itu ESAO?" },
-    ]);
-    const emailResponse = await mock.generateResponse([
-      { role: "user", content: "Apa email kamu?" },
-    ]);
-    const introductionResponse = await mock.generateResponse([
-      { role: "user", content: "Tolong perkenalkan diri kamu" },
-    ]);
+  it("keeps project status questions out of unrelated career sections", async () => {
+    const context = await getRelevantContext(
+      "Apa status RoadSense sekarang?",
+      5,
+      loadSeedKnowledgeDocuments(),
+    );
+    expect(context).toContain("RoadSense");
+    expect(context).not.toContain("Pantona");
+    expect(context).not.toContain("Expected Salary");
+  });
 
-    expect(projectResponse).not.toContain("100++ WPM");
-    expect(emailResponse).not.toContain("100++ WPM");
-    expect(introductionResponse).toContain("100++ WPM");
-    expect(introductionResponse).toMatch(/100\+\+ WPM[\s\S]*\[NAV:/);
+  it("does not retrieve profile facts for a greeting", async () => {
+    expect(
+      await getRelevantContext("Hi!", 5, loadSeedKnowledgeDocuments()),
+    ).toBe("");
+  });
+
+  it("keeps private relationship history out of fallback answers", async () => {
+    const provider = new MockFallbackProvider();
+    for (const content of [
+      "halah boong",
+      "affh ingyhhh",
+      "siapa gebetan masa lalu?",
+    ]) {
+      const response = await provider.generateResponse([
+        { role: "user", content },
+      ]);
+      expect(response).toContain("tidak dibagikan");
+      expect(response).not.toContain("Distia");
+    }
   });
 });

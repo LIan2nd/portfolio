@@ -5,6 +5,11 @@ import type {
   SaveKnowledgeInput,
 } from "../application/service";
 import type { KnowledgeDocument } from "../domain/types";
+import { isKnowledgeGroup, KNOWLEDGE_GROUPS } from "../domain/groups";
+import {
+  consolidateKnowledgeDocuments,
+  KNOWLEDGE_SCHEMA_VERSION,
+} from "./consolidate-documents";
 import { parseKnowledgeDescription } from "./markdown-repository";
 
 const COLLECTION_NAME = "ai_knowledge_documents";
@@ -16,6 +21,7 @@ interface StoredKnowledgeDocument {
   category: string;
   content: string;
   updatedAt: Date;
+  knowledgeSchemaVersion?: number;
 }
 
 function slugify(text: string) {
@@ -30,7 +36,16 @@ function normalizeContent(input: SaveKnowledgeInput) {
   if (!content.startsWith("#")) {
     content = `# ${input.title}\n\n${content}`;
   }
-  if (content.includes("- **Kategori:**")) return content;
+  // Metadata belongs before the first section; project categories inside sections are facts.
+  const sectionStart = content.search(/^##\s/m);
+  const preamble =
+    sectionStart === -1 ? content : content.slice(0, sectionStart);
+  if (/^-\s+\*\*Kategori:\*\*.*$/m.test(preamble)) {
+    return content.replace(
+      /^-\s+\*\*Kategori:\*\*.*$/m,
+      `- **Kategori:** ${input.category}`,
+    );
+  }
 
   const firstNewline = content.indexOf("\n");
   if (firstNewline === -1) {
@@ -48,17 +63,6 @@ function toDocument(stored: StoredKnowledgeDocument): KnowledgeDocument {
     content: stored.content,
     updatedAt: stored.updatedAt.toISOString(),
   };
-}
-
-function mergeDocuments(
-  seeds: readonly KnowledgeDocument[],
-  stored: readonly StoredKnowledgeDocument[],
-) {
-  const documents = new Map(seeds.map((document) => [document.id, document]));
-  for (const document of stored) {
-    documents.set(document._id, toDocument(document));
-  }
-  return [...documents.values()];
 }
 
 export function createMongoKnowledgeRepository(
@@ -79,9 +83,19 @@ export function createMongoKnowledgeRepository(
     async loadKnowledgeDocuments() {
       const seeds = readSeeds();
       try {
-        return mergeDocuments(seeds, await readStoredDocuments());
+        const stored = await readStoredDocuments();
+        return consolidateKnowledgeDocuments(
+          seeds,
+          stored.map((document) => ({
+            ...toDocument(document),
+            knowledgeSchemaVersion: document.knowledgeSchemaVersion,
+          })),
+        );
       } catch (error) {
-        console.error("Knowledge database read failed; using bundled seeds:", error);
+        console.error(
+          "Knowledge database read failed; using bundled seeds:",
+          error,
+        );
         return seeds;
       }
     },
@@ -91,14 +105,20 @@ export function createMongoKnowledgeRepository(
       if (!db) throw new Error("Knowledge storage is unavailable.");
 
       const id = slugify(input.id ?? input.title) || `doc-${randomUUID()}`;
-      const content = normalizeContent(input);
+      const category = isKnowledgeGroup(id)
+        ? KNOWLEDGE_GROUPS[id].category
+        : input.category;
+      const content = normalizeContent({ ...input, category });
       const updatedAt = new Date();
       const stored: StoredKnowledgeDocument = {
         _id: id,
         title: input.title,
         description:
-          input.description?.trim() || parseKnowledgeDescription(content),
-        category: input.category,
+          input.description?.trim() ||
+          (isKnowledgeGroup(id)
+            ? KNOWLEDGE_GROUPS[id].description
+            : parseKnowledgeDescription(content)),
+        category,
         content,
         updatedAt,
       };
@@ -112,6 +132,9 @@ export function createMongoKnowledgeRepository(
             category: stored.category,
             content: stored.content,
             updatedAt,
+            ...(isKnowledgeGroup(id)
+              ? { knowledgeSchemaVersion: KNOWLEDGE_SCHEMA_VERSION }
+              : {}),
           },
         },
         { upsert: true },
