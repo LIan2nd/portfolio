@@ -2,9 +2,9 @@ import { SKY_COMPOSITE_SHADER, SKY_FRAGMENT_SHADER, SKY_VERTEX_SHADER } from "./
 import { createSkyTarget } from "./renderTarget";
 
 const MAX_PIXEL_RATIO = 1.5;
-const MAX_RENDER_PIXELS = 2_000_000;
+const MAX_RENDER_PIXELS = 2560 * 1440;
 // Smooth atmospheric fields need fewer samples; the composite keeps stars sharp.
-const ATMOSPHERE_SCALE = 0.5;
+const ATMOSPHERE_SCALE = 0.6;
 
 export interface SkyFrame {
   time: number;
@@ -17,6 +17,24 @@ export interface SkyRenderer {
   resize: () => boolean;
   draw: (frame: SkyFrame) => void;
   dispose: () => void;
+}
+
+export function getSkyRenderSize(
+  width: number,
+  height: number,
+  devicePixelRatio: number,
+) {
+  const safeWidth = Math.max(1, width);
+  const safeHeight = Math.max(1, height);
+  const ratio = Math.min(
+    devicePixelRatio || 1,
+    MAX_PIXEL_RATIO,
+    Math.sqrt(MAX_RENDER_PIXELS / (safeWidth * safeHeight)),
+  );
+  return {
+    width: Math.max(1, Math.floor(safeWidth * ratio)),
+    height: Math.max(1, Math.floor(safeHeight * ratio)),
+  };
 }
 
 function compileShader(gl: WebGL2RenderingContext, type: number, source: string) {
@@ -85,7 +103,7 @@ export function createSkyRenderer(canvas: HTMLCanvasElement): SkyRenderer | null
       antialias: false,
       depth: false,
       stencil: false,
-      powerPreference: "low-power",
+      powerPreference: "high-performance",
     });
   } catch {
     return null;
@@ -112,15 +130,13 @@ export function createSkyRenderer(canvas: HTMLCanvasElement): SkyRenderer | null
     let atmosphereHeight = 0;
 
     const resize = () => {
-      const width = Math.max(1, canvas.clientWidth);
-      const height = Math.max(1, canvas.clientHeight);
-      const ratio = Math.min(
+      const renderSize = getSkyRenderSize(
+        canvas.clientWidth,
+        canvas.clientHeight,
         window.devicePixelRatio || 1,
-        MAX_PIXEL_RATIO,
-        Math.sqrt(MAX_RENDER_PIXELS / (width * height)),
       );
-      const renderWidth = Math.max(1, Math.floor(width * ratio));
-      const renderHeight = Math.max(1, Math.floor(height * ratio));
+      const renderWidth = renderSize.width;
+      const renderHeight = renderSize.height;
       if (canvas.width === renderWidth && canvas.height === renderHeight && atmosphereWidth > 0) {
         return false;
       }

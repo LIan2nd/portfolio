@@ -2,10 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import { useTheme } from "@/components/ThemeProvider";
+import { createFramePacer } from "./framePacing";
 import { createSkyRenderer, type SkyRenderer } from "./renderer";
 import styles from "./HeroBackground.module.css";
 
-const FRAME_INTERVAL = 1000 / 30;
 const STILL_TIME = 8;
 
 export function HeroBackground() {
@@ -18,6 +18,7 @@ export function HeroBackground() {
     if (!canvas) return;
 
     const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const framePacer = createFramePacer();
     const pointer = { x: 0.5, y: 0.5, targetX: 0.5, targetY: 0.5 };
     let renderer: SkyRenderer | null = null;
     let hasAttemptedRenderer = false;
@@ -27,7 +28,6 @@ export function HeroBackground() {
     let isVisible = false;
     let isContextLost = false;
     let frameId = 0;
-    let lastFrame = 0;
     let lastDrawTime = 0;
     let elapsed = 0;
 
@@ -60,11 +60,9 @@ export function HeroBackground() {
         draw();
         return;
       }
-      const delta = now - lastFrame;
-      if (delta >= FRAME_INTERVAL) {
+      if (framePacer.shouldDraw(now)) {
         draw(Math.min(now - lastDrawTime, 100));
         lastDrawTime = now;
-        lastFrame = now - (delta % FRAME_INTERVAL);
       }
       frameId = requestAnimationFrame(tick);
     }
@@ -79,8 +77,8 @@ export function HeroBackground() {
       if (!renderer) return;
       draw();
       if (motionPreference.matches) return;
-      lastFrame = performance.now();
-      lastDrawTime = lastFrame;
+      framePacer.reset();
+      lastDrawTime = performance.now();
       frameId = requestAnimationFrame(tick);
     }
 

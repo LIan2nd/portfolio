@@ -89,7 +89,10 @@ describe("HeroBackground rendering lifecycle", () => {
     expect(mocks.createRenderer).toHaveBeenCalledTimes(1);
     expect(frames.size).toBe(1);
     advanceFrame(16);
-    expect(mocks.draw).toHaveBeenCalledTimes(1);
+    expect(mocks.draw).toHaveBeenCalledTimes(2);
+    expect(mocks.draw).toHaveBeenLastCalledWith(
+      expect.objectContaining({ time: 0.016, motionEnabled: true }),
+    );
     advanceFrame(34);
     expect(mocks.draw).toHaveBeenLastCalledWith(expect.objectContaining({ time: 0.05, motionEnabled: true }));
     advanceFrame(20);
