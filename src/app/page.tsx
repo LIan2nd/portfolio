@@ -29,7 +29,9 @@ import {
 
 export const revalidate = 3600;
 
-function buildJsonLd(projects: ReturnType<typeof loadPortfolioProjects>) {
+function buildJsonLd(
+  projects: Awaited<ReturnType<typeof loadPortfolioProjects>>,
+) {
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -105,10 +107,9 @@ function buildJsonLd(projects: ReturnType<typeof loadPortfolioProjects>) {
   };
 }
 
-export default function Home() {
-  const { work: workEntries, education: educationEntries } =
-    loadTimelineEntries();
-  const projects = loadPortfolioProjects();
+export default async function Home() {
+  const [{ work: workEntries, education: educationEntries }, projects] =
+    await Promise.all([loadTimelineEntries(), loadPortfolioProjects()]);
   const jsonLd = buildJsonLd(projects);
 
   return (

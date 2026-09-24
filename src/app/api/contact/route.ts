@@ -105,7 +105,14 @@ export async function POST(request: NextRequest) {
         message: message.trim(),
       });
     } catch (saveErr) {
-      console.error("[Contact API] Failed to save message to local store:", saveErr);
+      console.error("[Contact API] Failed to save message:", saveErr);
+      return NextResponse.json(
+        {
+          status: "error",
+          error: "Message storage is unavailable. Please try again later.",
+        },
+        { status: 503 },
+      );
     }
 
     // ---- Forward to Google Apps Script (if configured) ----
@@ -126,7 +133,9 @@ export async function POST(request: NextRequest) {
         console.error("[Contact API] Failed to forward to Google Apps Script:", scriptErr);
       }
     } else {
-      console.warn("[Contact API] CONTACT_SCRIPT_URL not set; message saved locally to dashboard store.");
+      console.warn(
+        "[Contact API] CONTACT_SCRIPT_URL not set; message saved to the portfolio database.",
+      );
     }
 
     return NextResponse.json({ status: "success" });

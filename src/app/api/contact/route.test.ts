@@ -44,4 +44,21 @@ describe("contact submission rate limit", () => {
     expect(saveContactMessage).toHaveBeenCalledTimes(7);
     expect(vi.getTimerCount()).toBe(0);
   });
+
+  it("reports a storage outage instead of returning false success", async () => {
+    vi.stubEnv("CONTACT_SCRIPT_URL", "");
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(saveContactMessage).mockRejectedValueOnce(
+      new Error("Contact storage is unavailable."),
+    );
+    const { POST } = await import("./route");
+
+    const response = await POST(request("192.0.2.50"));
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({
+      status: "error",
+      error: "Message storage is unavailable. Please try again later.",
+    });
+  });
 });

@@ -1,8 +1,15 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import ResumePage, { metadata } from "@/app/resume/page";
 import sitemap from "@/app/sitemap";
 import { PUBLICATION, SKILLS } from "@/lib/data";
+
+vi.mock("@/features/experience/infrastructure/data-repository", () => ({
+  loadTimelineEntries: vi.fn(async () => ({ work: [], education: [] })),
+}));
+vi.mock("@/features/project/infrastructure/data-repository", () => ({
+  loadPortfolioProjects: vi.fn(async () => []),
+}));
 
 describe("Resume page", () => {
   it("defines unique metadata and a self-referencing canonical", () => {
@@ -20,8 +27,8 @@ describe("Resume page", () => {
     });
   });
 
-  it("renders crawlable resume content and preserves the PDF download", () => {
-    render(<ResumePage />);
+  it("renders crawlable resume content and preserves the PDF download", async () => {
+    render(await ResumePage());
 
     expect(
       screen.getByRole("heading", {
@@ -49,8 +56,8 @@ describe("Resume page", () => {
     });
   });
 
-  it("links the ProfilePage schema to the stable Person entity", () => {
-    const { container } = render(<ResumePage />);
+  it("links the ProfilePage schema to the stable Person entity", async () => {
+    const { container } = render(await ResumePage());
     const schema = container.querySelector('script[type="application/ld+json"]');
 
     expect(schema).not.toBeNull();

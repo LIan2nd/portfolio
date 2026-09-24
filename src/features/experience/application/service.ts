@@ -1,7 +1,7 @@
 import type { ExperienceEntry } from "../domain/types";
 
 export interface ExperienceRepository {
-  loadExperienceEntries(): ExperienceEntry[];
+  loadExperienceEntries(): Promise<ExperienceEntry[]> | ExperienceEntry[];
   saveExperienceEntry?(
     input: {
       id?: string;
@@ -14,8 +14,8 @@ export interface ExperienceRepository {
       logo?: string;
     },
     isEdit?: boolean,
-  ): ExperienceEntry;
-  deleteExperienceEntry?(id: string): boolean;
+  ): Promise<ExperienceEntry> | ExperienceEntry;
+  deleteExperienceEntry?(id: string): Promise<boolean> | boolean;
 }
 
 export interface ExperienceService {
@@ -51,7 +51,7 @@ export function createExperienceService(
 ): ExperienceService {
   return {
     async list(searchParams) {
-      const entries = repository.loadExperienceEntries();
+      const entries = await repository.loadExperienceEntries();
       if (!searchParams) {
         return { items: entries };
       }
@@ -75,7 +75,7 @@ export function createExperienceService(
     },
 
     async find(id) {
-      const entries = repository.loadExperienceEntries();
+      const entries = await repository.loadExperienceEntries();
       return entries.find((entry) => entry.id === id) ?? null;
     },
 
@@ -93,7 +93,7 @@ export function createExperienceService(
       if (!repository.saveExperienceEntry) {
         throw new Error("Repository does not support saving experience.");
       }
-      return repository.saveExperienceEntry(
+      return await repository.saveExperienceEntry(
         {
           id: input.id?.trim() || undefined,
           title: input.title.trim(),
@@ -122,16 +122,15 @@ export function createExperienceService(
       ) {
         throw new Error("Invalid experience data provided.");
       }
-      const existing = repository
-        .loadExperienceEntries()
-        .find((e) => e.id === id);
+      const entries = await repository.loadExperienceEntries();
+      const existing = entries.find((entry) => entry.id === id);
       if (!existing) {
         throw new Error("ENTRY_NOT_FOUND");
       }
       if (!repository.saveExperienceEntry) {
         throw new Error("Repository does not support saving experience.");
       }
-      return repository.saveExperienceEntry(
+      return await repository.saveExperienceEntry(
         {
           id: id.trim(),
           title: input.title.trim(),
@@ -150,16 +149,15 @@ export function createExperienceService(
       if (!id?.trim()) {
         throw new Error("Entry ID is required.");
       }
-      const existing = repository
-        .loadExperienceEntries()
-        .find((e) => e.id === id);
+      const entries = await repository.loadExperienceEntries();
+      const existing = entries.find((entry) => entry.id === id);
       if (!existing) {
         return false;
       }
       if (!repository.deleteExperienceEntry) {
         throw new Error("Repository does not support deleting experience.");
       }
-      return repository.deleteExperienceEntry(id);
+      return await repository.deleteExperienceEntry(id);
     },
   };
 }

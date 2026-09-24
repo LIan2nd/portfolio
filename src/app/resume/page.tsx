@@ -71,10 +71,10 @@ const resumeJsonLd = {
     personJsonLd,
   ],
 };
-export default function ResumePage() {
-  const { work: workEntries, education: educationEntries } =
-    loadTimelineEntries();
-  const selectedProjects = loadPortfolioProjects().slice(0, 4);
+export default async function ResumePage() {
+  const [{ work: workEntries, education: educationEntries }, projects] =
+    await Promise.all([loadTimelineEntries(), loadPortfolioProjects()]);
+  const selectedProjects = projects.slice(0, 4);
 
   return (
     <>

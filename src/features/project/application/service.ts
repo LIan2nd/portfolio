@@ -1,7 +1,7 @@
 import type { ProjectEntry } from "../domain/types";
 
 export interface ProjectRepository {
-  loadProjectEntries(): ProjectEntry[];
+  loadProjectEntries(): Promise<ProjectEntry[]> | ProjectEntry[];
   saveProjectEntry?(
     input: {
       id?: string;
@@ -12,8 +12,8 @@ export interface ProjectRepository {
       image?: string;
     },
     isEdit?: boolean,
-  ): ProjectEntry;
-  deleteProjectEntry?(id: string): boolean;
+  ): Promise<ProjectEntry> | ProjectEntry;
+  deleteProjectEntry?(id: string): Promise<boolean> | boolean;
 }
 
 export interface ProjectService {
@@ -45,7 +45,7 @@ export function createProjectService(
 ): ProjectService {
   return {
     async list(searchParams) {
-      const entries = repository.loadProjectEntries();
+      const entries = await repository.loadProjectEntries();
       if (!searchParams) {
         return { items: entries };
       }
@@ -65,7 +65,7 @@ export function createProjectService(
     },
 
     async find(id) {
-      const entries = repository.loadProjectEntries();
+      const entries = await repository.loadProjectEntries();
       return entries.find((entry) => entry.id === id) ?? null;
     },
 
@@ -76,7 +76,7 @@ export function createProjectService(
       if (!repository.saveProjectEntry) {
         throw new Error("Repository does not support saving project.");
       }
-      return repository.saveProjectEntry(
+      return await repository.saveProjectEntry(
         {
           id: input.id?.trim() || undefined,
           title: input.title.trim(),
@@ -96,16 +96,15 @@ export function createProjectService(
       if (!input.title?.trim() || !input.description?.trim()) {
         throw new Error("Invalid project data provided.");
       }
-      const existing = repository
-        .loadProjectEntries()
-        .find((e) => e.id === id);
+      const entries = await repository.loadProjectEntries();
+      const existing = entries.find((entry) => entry.id === id);
       if (!existing) {
         throw new Error("ENTRY_NOT_FOUND");
       }
       if (!repository.saveProjectEntry) {
         throw new Error("Repository does not support saving project.");
       }
-      return repository.saveProjectEntry(
+      return await repository.saveProjectEntry(
         {
           id: id.trim(),
           title: input.title.trim(),
@@ -122,16 +121,15 @@ export function createProjectService(
       if (!id?.trim()) {
         throw new Error("Project ID is required.");
       }
-      const existing = repository
-        .loadProjectEntries()
-        .find((e) => e.id === id);
+      const entries = await repository.loadProjectEntries();
+      const existing = entries.find((entry) => entry.id === id);
       if (!existing) {
         return false;
       }
       if (!repository.deleteProjectEntry) {
         throw new Error("Repository does not support deleting project.");
       }
-      return repository.deleteProjectEntry(id);
+      return await repository.deleteProjectEntry(id);
     },
   };
 }

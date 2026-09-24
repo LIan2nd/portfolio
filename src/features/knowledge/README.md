@@ -16,7 +16,7 @@ Contoh: perubahan fase bootcamp cukup di Career & Activity; status RoadSense cuk
 
 Empat file Markdown di `src/lib/ai/knowledge` dan `DEFAULT_AI_BEHAVIOR` di `src/lib/ai/knowledge.ts` menyediakan nilai bawaan. Perubahan dari Dashboard disimpan di koleksi MongoDB `ai_knowledge_documents` dan menjadi sumber utama untuk dokumen tersebut. Setelah tersimpan di Dashboard, perubahan seed tidak menimpa versi MongoDB. Gunakan Dashboard untuk mengubah knowledge live; file seed mengatur nilai bawaan deployment.
 
-Konten halaman portofolio dari `data.ts` tetap dikelola oleh fitur halaman masing-masing. Konten tersebut tidak lagi disisipkan sebagai salinan fakta tersembunyi ke prompt AI. Perubahan knowledge AI tidak otomatis mengubah isi halaman portofolio.
+Project serta work/education pada halaman portofolio dikelola lewat modul Dashboard masing-masing dan disimpan di MongoDB. `data.ts` menyediakan nilai bawaan serta konten yang belum memiliki editor Dashboard, seperti profil, skill, sosial, publikasi, dan sertifikasi. Konten halaman tidak disisipkan sebagai salinan fakta tersembunyi ke prompt AI; perubahan knowledge AI tidak otomatis mengubah isi halaman portofolio.
 
 Alur pembaruan:
 
