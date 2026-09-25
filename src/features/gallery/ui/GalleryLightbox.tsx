@@ -64,7 +64,7 @@ export function GalleryLightbox({ item, onClose }: GalleryLightboxProps) {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <article className="animate-tab-slide relative grid max-h-[94dvh] w-full max-w-[1240px] overflow-y-auto rounded-2xl border border-white/10 bg-[#071421] shadow-2xl shadow-black/60 lg:grid-cols-[minmax(0,1fr)_360px] lg:overflow-hidden">
+      <article className="animate-tab-slide relative grid max-h-[94dvh] w-full max-w-[1240px] overflow-y-auto rounded-2xl border border-[var(--color-bg-tertiary)] bg-[var(--color-bg-primary)] shadow-2xl shadow-black/60 lg:grid-cols-[minmax(0,1fr)_360px] lg:overflow-hidden">
         <button
           ref={closeButtonRef}
           type="button"
@@ -87,7 +87,7 @@ export function GalleryLightbox({ item, onClose }: GalleryLightboxProps) {
           />
         </div>
 
-        <div className="flex flex-col justify-end border-t border-white/10 p-6 text-white lg:border-l lg:border-t-0 lg:p-8">
+        <div className="flex flex-col justify-end border-t border-[var(--color-bg-tertiary)] p-6 text-[var(--color-text-primary)] lg:border-l lg:border-t-0 lg:p-8">
           <span className="mb-auto hidden text-[10px] font-semibold uppercase tracking-[0.24em] text-accent lg:block">
             Through my lens
           </span>
@@ -99,11 +99,11 @@ export function GalleryLightbox({ item, onClose }: GalleryLightboxProps) {
           </h2>
           <p
             id={descriptionId}
-            className="mt-4 whitespace-pre-wrap font-serif text-sm leading-7 text-slate-300 sm:text-base"
+            className="mt-4 whitespace-pre-wrap font-serif text-sm leading-7 text-[var(--color-text-secondary)] sm:text-base"
           >
             {item.description}
           </p>
-          <p className="mt-6 flex items-center gap-2 border-t border-white/10 pt-5 text-xs text-slate-400">
+          <p className="mt-6 flex items-center gap-2 border-t border-[var(--color-bg-tertiary)] pt-5 text-xs text-[var(--color-text-secondary)]">
             <CalendarDays size={14} aria-hidden="true" />
             {dateLabel} {formatDate(date)}
           </p>
