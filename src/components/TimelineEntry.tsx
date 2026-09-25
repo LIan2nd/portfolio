@@ -62,8 +62,8 @@ export function TimelineEntry({ entry }: TimelineEntryProps) {
     : null;
 
   return (
-    <li className="flex gap-4 items-start mb-8 last:mb-0 text-left">
-      <div className="w-12 h-12 rounded-xl bg-[var(--color-bg-tertiary)]/60 border border-[var(--color-bg-tertiary)] flex items-center justify-center shrink-0 overflow-hidden p-2 mt-0.5 shadow-xs">
+    <li className="relative flex gap-4 items-start mb-8 last:mb-0 text-left before:absolute before:left-6 before:top-[3.125rem] before:-bottom-8 before:w-px before:-translate-x-1/2 before:bg-accent/45 last:before:hidden">
+      <div className="relative z-10 w-12 h-12 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-bg-tertiary)] flex items-center justify-center shrink-0 overflow-hidden p-2 mt-0.5 shadow-xs">
         {imageSrc ? (
           <Image
             src={imageSrc}

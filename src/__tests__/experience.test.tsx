@@ -26,12 +26,37 @@ describe("ExperienceSection & TimelineEntry", () => {
 
     expect(workTab).toHaveAttribute("aria-selected", "true");
     expect(eduTab).toHaveAttribute("aria-selected", "false");
+    expect(
+      screen.getByRole("list", { name: "Work experience timeline" })
+    ).toBeInTheDocument();
     expect(screen.getByText("Frontend & Blockchain Researcher")).toBeInTheDocument();
 
     await user.click(eduTab);
     expect(workTab).toHaveAttribute("aria-selected", "false");
     expect(eduTab).toHaveAttribute("aria-selected", "true");
+    expect(
+      screen.getByRole("list", { name: "Education timeline" })
+    ).toBeInTheDocument();
     expect(screen.getByText(/Teknik Informatika/i)).toBeInTheDocument();
+  });
+
+  it("connects every timeline entry except the final node", () => {
+    const { container } = render(
+      <ExperienceSection
+        workEntries={WORK_ENTRIES}
+        educationEntries={EDUCATION_ENTRIES}
+      />
+    );
+
+    const timelineEntries = container.querySelectorAll(
+      '[aria-label="Work experience timeline"] > li'
+    );
+
+    expect(timelineEntries.length).toBeGreaterThan(1);
+    timelineEntries.forEach((entry) => {
+      expect(entry).toHaveClass("before:bg-accent/45");
+      expect(entry).toHaveClass("last:before:hidden");
+    });
   });
 
   it("supports keyboard navigation with arrow keys", () => {

@@ -93,13 +93,27 @@ export function ExperienceSection({
             tabIndex={0}
             className="border border-[var(--color-bg-tertiary)]/60 bg-[var(--color-bg-secondary)]/30 rounded-xl p-6 max-md:p-4 shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            <ul key={activeTab} className="list-none p-0 m-0 animate-tab-slide">
+            <ul
+              key={activeTab}
+              aria-label={
+                activeTab === "work"
+                  ? "Work experience timeline"
+                  : "Education timeline"
+              }
+              className="list-none p-0 m-0 animate-tab-slide"
+            >
               {activeTab === "work"
-                ? workEntries.map((entry, i) => (
-                    <TimelineEntry key={i} entry={entry} />
+                ? workEntries.map((entry) => (
+                    <TimelineEntry
+                      key={`${entry.title}-${entry.dateRange}`}
+                      entry={entry}
+                    />
                   ))
-                : educationEntries.map((entry, i) => (
-                    <TimelineEntry key={i} entry={entry} />
+                : educationEntries.map((entry) => (
+                    <TimelineEntry
+                      key={`${entry.title}-${entry.dateRange}`}
+                      entry={entry}
+                    />
                   ))}
             </ul>
           </div>
