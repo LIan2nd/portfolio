@@ -81,6 +81,22 @@ describe("persistent experience repository", () => {
     expect(entries[1]).toEqual(created);
   });
 
+  it("places a newly added latest entry at the top", async () => {
+    const repository = createRepository();
+    const created = await repository.saveExperienceEntry!({
+      title: "Newest Role",
+      organization: "Example Organization",
+      kind: "work",
+      dateRange: "Jan 2027 - Present",
+      description: "Created after every seed",
+      highlights: [],
+    });
+
+    const entries = await repository.loadExperienceEntries();
+    expect(entries[0]).toEqual(created);
+    expect(entries[1].id).toBe("work-seed-role");
+  });
+
   it("persists seed tombstones and removes custom entries", async () => {
     const repository = createRepository();
     const created = await repository.saveExperienceEntry!({

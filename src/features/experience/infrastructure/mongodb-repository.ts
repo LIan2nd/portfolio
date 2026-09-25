@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { Db } from "mongodb";
 import type { ExperienceRepository } from "../application/service";
+import { sortExperienceEntriesByNewest } from "../domain/sort-entries";
 import type { ExperienceEntry } from "../domain/types";
 
 const COLLECTION_NAME = "portfolio_experience";
@@ -70,7 +71,7 @@ function mergeExperiences(
     .filter((entry) => !entry.deleted && !seedIds.has(entry._id))
     .map(toExperience);
 
-  return [...mergedSeeds, ...customEntries];
+  return sortExperienceEntriesByNewest([...mergedSeeds, ...customEntries]);
 }
 
 async function requireDatabase(readDb: () => Promise<Db | null>) {
@@ -88,7 +89,7 @@ export function createMongoExperienceRepository(
       const seeds = readSeeds();
       try {
         const db = await readDb();
-        if (!db) return seeds;
+        if (!db) return sortExperienceEntriesByNewest(seeds);
         const stored = await db
           .collection<StoredExperience>(COLLECTION_NAME)
           .find({}, { maxTimeMS: 4_000 })
@@ -100,7 +101,7 @@ export function createMongoExperienceRepository(
           "Experience database read failed; using bundled seeds:",
           error,
         );
-        return seeds;
+        return sortExperienceEntriesByNewest(seeds);
       }
     },
 
