@@ -3,7 +3,7 @@ import { Camera } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LazyAiAssistant } from "@/components/LazyAiAssistant";
-import { GalleryCard } from "@/features/gallery/ui/GalleryCard";
+import { GalleryGrid } from "@/features/gallery/ui/GalleryGrid";
 import { loadGalleryItems } from "@/features/gallery";
 import {
   ADDITIONAL_NAV_LINKS,
@@ -53,14 +53,7 @@ export default async function GalleryPage() {
         </header>
 
         {items.length > 0 ? (
-          <section
-            aria-label="Photo collection"
-            className="mx-auto max-w-[1120px] columns-1 gap-5 sm:columns-2 lg:columns-3"
-          >
-            {items.map((item) => (
-              <GalleryCard key={item.id} item={item} />
-            ))}
-          </section>
+          <GalleryGrid items={items} />
         ) : (
           <section className="mx-auto flex max-w-xl flex-col items-center rounded-2xl border border-dashed border-[var(--color-bg-tertiary)]/70 bg-[var(--color-bg-secondary)]/35 px-6 py-16 text-center">
             <span className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10 text-accent">
