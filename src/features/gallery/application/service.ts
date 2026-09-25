@@ -42,6 +42,13 @@ export interface GalleryService {
   discardUpload(objectKey: string): Promise<void>;
 }
 
+export class GalleryObjectDeletionError extends Error {
+  constructor(cause: unknown) {
+    super("R2_DELETE_FAILED", { cause });
+    this.name = "GalleryObjectDeletionError";
+  }
+}
+
 function cleanRequired(
   value: string | undefined,
   field: string,
@@ -158,14 +165,12 @@ export function createGalleryService(
     async delete(id) {
       const item = await repository.find(id);
       if (!item) return false;
-      const deleted = await repository.delete(id);
-      if (!deleted) return false;
       try {
         await storage.deleteObject(item.objectKey);
       } catch (error) {
-        console.error("Gallery object cleanup failed:", error);
+        throw new GalleryObjectDeletionError(error);
       }
-      return true;
+      return repository.delete(id);
     },
 
     async createUploadTicket(input) {

@@ -73,6 +73,18 @@ function encodeObjectKey(objectKey: string) {
   return objectKey.split("/").map(encodeURIComponent).join("/");
 }
 
+export function isMissingR2Object(error: unknown) {
+  if (!error || typeof error !== "object") return false;
+  const candidate = error as {
+    name?: string;
+    $metadata?: { httpStatusCode?: number };
+  };
+  return (
+    candidate.name === "NoSuchKey" ||
+    candidate.$metadata?.httpStatusCode === 404
+  );
+}
+
 export const r2GalleryStorage: GalleryObjectStorage = {
   async createUploadTicket(input) {
     const config = readConfig();
@@ -104,8 +116,12 @@ export const r2GalleryStorage: GalleryObjectStorage = {
 
   async deleteObject(objectKey) {
     const config = readConfig();
-    await createClient(config).send(
-      new DeleteObjectCommand({ Bucket: config.bucket, Key: objectKey }),
-    );
+    try {
+      await createClient(config).send(
+        new DeleteObjectCommand({ Bucket: config.bucket, Key: objectKey }),
+      );
+    } catch (error) {
+      if (!isMissingR2Object(error)) throw error;
+    }
   },
 };

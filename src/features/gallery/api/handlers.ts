@@ -1,6 +1,9 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { revalidatePath } from "next/cache";
-import type { GalleryService } from "../application/service";
+import {
+  GalleryObjectDeletionError,
+  type GalleryService,
+} from "../application/service";
 
 function json(body: unknown, status = 200) {
   return Response.json(body, {
@@ -77,6 +80,7 @@ export function createGalleryHandlers(
     } catch (error) {
       console.error("Gallery handler error:", error);
       const message = errorMessage(error);
+      const objectDeletionFailed = error instanceof GalleryObjectDeletionError;
       const configurationMessage =
         message === "R2_NOT_CONFIGURED"
           ? "Cloudflare R2 is not configured."
@@ -90,22 +94,28 @@ export function createGalleryHandlers(
         message.includes("too long") ||
         message.includes("Invalid") ||
         message.includes("dimensions");
+
+      let code = "GALLERY_UNAVAILABLE";
+      let responseMessage = "Gallery is temporarily unavailable. Please retry.";
+      let status = 503;
+      if (configurationMessage) {
+        code = "R2_CONFIGURATION_ERROR";
+        responseMessage = configurationMessage;
+      } else if (objectDeletionFailed) {
+        code = "OBJECT_DELETE_FAILED";
+        responseMessage =
+          "Cloudflare R2 did not confirm the deletion. The gallery entry was kept so you can retry.";
+      } else if (invalid) {
+        code = "INVALID_REQUEST";
+        responseMessage = message;
+        status = 400;
+      }
+
       return json(
         {
-          error: {
-            code: configurationMessage
-              ? "R2_CONFIGURATION_ERROR"
-              : invalid
-                ? "INVALID_REQUEST"
-                : "GALLERY_UNAVAILABLE",
-            message: configurationMessage
-              ? configurationMessage
-              : invalid
-                ? message
-                : "Gallery is temporarily unavailable. Please retry.",
-          },
+          error: { code, message: responseMessage },
         },
-        invalid && !configurationMessage ? 400 : 503,
+        status,
       );
     }
   }

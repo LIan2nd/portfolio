@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { createGalleryService } from "./service";
+import {
+  createGalleryService,
+  GalleryObjectDeletionError,
+} from "./service";
 import type { GalleryItem } from "../domain/types";
 
 const item: GalleryItem = {
@@ -74,11 +77,31 @@ describe("gallery service", () => {
     expect(storage.createUploadTicket).not.toHaveBeenCalled();
   });
 
-  it("removes metadata and its R2 object", async () => {
+  it("removes the R2 object before its metadata", async () => {
     const { repository, storage, service } = setup();
+    const order: string[] = [];
+    storage.deleteObject.mockImplementation(async () => {
+      order.push("object");
+    });
+    repository.delete.mockImplementation(async () => {
+      order.push("metadata");
+      return true;
+    });
+
     await expect(service.delete(item.id)).resolves.toBe(true);
     expect(repository.delete).toHaveBeenCalledWith(item.id);
     expect(storage.deleteObject).toHaveBeenCalledWith(item.objectKey);
+    expect(order).toEqual(["object", "metadata"]);
+  });
+
+  it("keeps metadata when R2 does not confirm deletion", async () => {
+    const { repository, storage, service } = setup();
+    storage.deleteObject.mockRejectedValue(new Error("R2 unavailable"));
+
+    await expect(service.delete(item.id)).rejects.toBeInstanceOf(
+      GalleryObjectDeletionError,
+    );
+    expect(repository.delete).not.toHaveBeenCalled();
   });
 
   it("discards an uploaded object when metadata cannot be saved", async () => {
