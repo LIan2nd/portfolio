@@ -6,7 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AiVisibilityProvider } from "@/components/AiVisibilityContext";
 import { useActiveSection } from "@/hooks/useActiveSection";
-import { NAV_LINKS } from "@/lib/data";
+import { ADDITIONAL_NAV_LINKS, NAV_LINKS } from "@/lib/data";
 
 describe("Navbar & useActiveSection", () => {
   beforeEach(() => {
@@ -66,6 +66,24 @@ describe("Navbar & useActiveSection", () => {
 
     await user.click(toggleBtn);
     expect(toggleBtn).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("opens the Explore menu and links to the gallery", async () => {
+    const user = userEvent.setup();
+    render(
+      <ThemeProvider>
+        <AiVisibilityProvider>
+          <Navbar links={NAV_LINKS} additionalLinks={ADDITIONAL_NAV_LINKS} />
+        </AiVisibilityProvider>
+      </ThemeProvider>
+    );
+
+    const exploreButtons = screen.getAllByRole("button", { name: "Explore" });
+    await user.click(exploreButtons[0]);
+    expect(exploreButtons[0]).toHaveAttribute("aria-expanded", "true");
+    expect(
+      screen.getAllByRole("link", { name: "Gallery" })[0]
+    ).toHaveAttribute("href", "/gallery");
   });
 
   it("closes mobile menu when a drawer navigation link is clicked", async () => {

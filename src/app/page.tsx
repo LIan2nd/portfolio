@@ -8,6 +8,7 @@ import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { LazyAiAssistant } from "@/components/LazyAiAssistant";
 import {
+  ADDITIONAL_NAV_LINKS,
   NAV_LINKS,
   SKILLS,
   PERSONAL_DETAILS,
@@ -124,7 +125,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Navbar links={NAV_LINKS} />
+      <Navbar links={NAV_LINKS} additionalLinks={ADDITIONAL_NAV_LINKS} />
       <main id="main-content">
         <HeroSection />
         <AboutSection

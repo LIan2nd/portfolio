@@ -1,3 +1,19 @@
+function r2RemotePattern() {
+  try {
+    const url = new URL(process.env.R2_PUBLIC_BASE_URL);
+    return {
+      protocol: url.protocol.replace(":", ""),
+      hostname: url.hostname,
+      port: url.port,
+      pathname: `${url.pathname.replace(/\/$/, "")}/**`,
+    };
+  } catch {
+    return null;
+  }
+}
+
+const r2Pattern = r2RemotePattern();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -10,6 +26,7 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      ...(r2Pattern ? [r2Pattern] : []),
     ],
   },
   async rewrites() {

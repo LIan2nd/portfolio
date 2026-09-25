@@ -6,6 +6,7 @@ import { useActiveSection } from "@/hooks/useActiveSection";
 import { useTheme } from "@/components/ThemeProvider";
 import { useAiVisibility } from "@/components/AiVisibilityContext";
 import { Bot, BotOff } from "lucide-react";
+import { NavigationDropdown } from "@/components/NavigationDropdown";
 import {
   NAVBAR_BRAND_CLASS,
   NAVBAR_CONTENT_CLASS,
@@ -15,6 +16,12 @@ import {
 
 interface NavbarProps {
   links: NavLink[];
+  additionalLinks?: NavLink[];
+  homeHref?: string;
+}
+
+function getSectionId(href: string) {
+  return href.includes("#") ? href.split("#").at(-1) ?? "" : "";
 }
 
 function AnimatedThemeIcon({ isDark }: { isDark: boolean }) {
@@ -72,10 +79,14 @@ function AnimatedThemeIcon({ isDark }: { isDark: boolean }) {
   );
 }
 
-export function Navbar({ links }: NavbarProps) {
+export function Navbar({
+  links,
+  additionalLinks = [],
+  homeHref = "#home",
+}: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const sectionIds = links.map((l) => l.href.replace("#", ""));
+  const sectionIds = links.map((link) => getSectionId(link.href)).filter(Boolean);
   const activeSection = useActiveSection(sectionIds);
   const { theme, toggleTheme } = useTheme();
   const { isAiVisible, toggleAiVisibility } = useAiVisibility();
@@ -94,10 +105,10 @@ export function Navbar({ links }: NavbarProps) {
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
-    e.preventDefault();
-    const id = href.replace("#", "");
+    const id = getSectionId(href);
     const el = document.getElementById(id);
     if (el) {
+      e.preventDefault();
       el.scrollIntoView({ behavior: "smooth" });
     }
     setMenuOpen(false);
@@ -151,8 +162,8 @@ export function Navbar({ links }: NavbarProps) {
             </button>
 
             <a
-              href="#home"
-              onClick={(e) => handleLinkClick(e, "#home")}
+              href={homeHref}
+              onClick={(e) => handleLinkClick(e, homeHref)}
               className={`${NAVBAR_BRAND_CLASS} hidden md:inline`}
               aria-label="LIand home"
             >
@@ -166,7 +177,7 @@ export function Navbar({ links }: NavbarProps) {
             className="hidden md:flex items-center justify-center gap-6 list-none m-0 p-0"
           >
             {links.map((link) => {
-              const isActive = activeSection === link.href.replace("#", "");
+              const isActive = activeSection === getSectionId(link.href);
               return (
                 <li key={link.href}>
                   <a
@@ -183,6 +194,9 @@ export function Navbar({ links }: NavbarProps) {
                 </li>
               );
             })}
+            {additionalLinks.length > 0 && (
+              <NavigationDropdown label="Explore" links={additionalLinks} />
+            )}
           </ul>
 
           {/* Right side: AI Chat Toggle & Theme Toggle (Clean & Borderless) */}
@@ -192,8 +206,8 @@ export function Navbar({ links }: NavbarProps) {
             className="col-start-3 flex items-center justify-self-end gap-2.5"
           >
             <a
-              href="#home"
-              onClick={(e) => handleLinkClick(e, "#home")}
+              href={homeHref}
+              onClick={(e) => handleLinkClick(e, homeHref)}
               className={`${NAVBAR_BRAND_CLASS} md:hidden`}
               aria-label="LIand home"
             >
@@ -248,7 +262,7 @@ export function Navbar({ links }: NavbarProps) {
       >
         <ul className="flex flex-col gap-1.5 list-none m-0 p-0">
           {links.map((link) => {
-            const isActive = activeSection === link.href.replace("#", "");
+            const isActive = activeSection === getSectionId(link.href);
             return (
               <li key={link.href}>
                 <a
@@ -265,6 +279,14 @@ export function Navbar({ links }: NavbarProps) {
               </li>
             );
           })}
+          {additionalLinks.length > 0 && (
+            <NavigationDropdown
+              label="Explore"
+              links={additionalLinks}
+              variant="mobile"
+              onNavigate={() => setMenuOpen(false)}
+            />
+          )}
         </ul>
 
         <div className="pt-6 border-t border-[var(--color-bg-tertiary)]/60 text-xs text-[var(--color-text-secondary)]">

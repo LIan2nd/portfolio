@@ -17,6 +17,15 @@ export const NAV_LINKS: NavLink[] = [
   { label: "Contact", href: "#contact" },
 ];
 
+export const ROOT_NAV_LINKS: NavLink[] = NAV_LINKS.map((link) => ({
+  ...link,
+  href: `/${link.href}`,
+}));
+
+export const ADDITIONAL_NAV_LINKS: NavLink[] = [
+  { label: "Gallery", href: "/gallery" },
+];
+
 export const SKILLS: Skill[] = [
   { name: "JavaScript" },
   { name: "TypeScript" },
