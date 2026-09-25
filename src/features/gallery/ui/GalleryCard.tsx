@@ -24,7 +24,7 @@ export function GalleryCard({ item, onOpen }: GalleryCardProps) {
           width={item.width}
           height={item.height}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="h-auto w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.035] group-focus-visible:scale-[1.035]"
+          className="h-auto w-full"
         />
 
         <span className="absolute inset-0 bg-gradient-to-t from-[#010913]/95 via-[#010913]/25 to-transparent opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100" />
