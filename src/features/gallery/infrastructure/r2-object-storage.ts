@@ -23,18 +23,39 @@ interface R2Config {
   publicBaseUrl: string;
 }
 
+function normalizePublicBaseUrl(value: string) {
+  try {
+    const url = new URL(value);
+    if (
+      url.protocol !== "https:" ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash
+    ) {
+      throw new Error();
+    }
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    throw new Error("R2_PUBLIC_URL_INVALID");
+  }
+}
+
 function readConfig(): R2Config {
   const config = {
     accountId: process.env.R2_ACCOUNT_ID?.trim(),
     accessKeyId: process.env.R2_ACCESS_KEY_ID?.trim(),
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY?.trim(),
     bucket: process.env.R2_BUCKET_NAME?.trim(),
-    publicBaseUrl: process.env.R2_PUBLIC_BASE_URL?.trim().replace(/\/$/, ""),
+    publicBaseUrl: process.env.R2_PUBLIC_BASE_URL?.trim(),
   };
   if (Object.values(config).some((value) => !value)) {
     throw new Error("R2_NOT_CONFIGURED");
   }
-  return config as R2Config;
+  return {
+    ...(config as R2Config),
+    publicBaseUrl: normalizePublicBaseUrl(config.publicBaseUrl!),
+  };
 }
 
 function createClient(config: R2Config) {

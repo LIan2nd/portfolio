@@ -77,6 +77,12 @@ export function createGalleryHandlers(
     } catch (error) {
       console.error("Gallery handler error:", error);
       const message = errorMessage(error);
+      const configurationMessage =
+        message === "R2_NOT_CONFIGURED"
+          ? "Cloudflare R2 is not configured."
+          : message === "R2_PUBLIC_URL_INVALID"
+            ? "R2_PUBLIC_BASE_URL must be a complete HTTPS URL."
+            : null;
       const invalid =
         message.includes("required") ||
         message.includes("supported") ||
@@ -87,16 +93,19 @@ export function createGalleryHandlers(
       return json(
         {
           error: {
-            code: invalid ? "INVALID_REQUEST" : "GALLERY_UNAVAILABLE",
-            message:
-              message === "R2_NOT_CONFIGURED"
-                ? "Cloudflare R2 is not configured."
-                : invalid
-                  ? message
-                  : "Gallery is temporarily unavailable. Please retry.",
+            code: configurationMessage
+              ? "R2_CONFIGURATION_ERROR"
+              : invalid
+                ? "INVALID_REQUEST"
+                : "GALLERY_UNAVAILABLE",
+            message: configurationMessage
+              ? configurationMessage
+              : invalid
+                ? message
+                : "Gallery is temporarily unavailable. Please retry.",
           },
         },
-        invalid ? 400 : 503,
+        invalid && !configurationMessage ? 400 : 503,
       );
     }
   }
