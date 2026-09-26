@@ -212,12 +212,6 @@ export function Navbar({
               LIand
             </a>
 
-            {/* Desktop divider between navigation links and utility actions */}
-            <div
-              className="hidden md:block h-4 w-px bg-[var(--color-bg-tertiary)]/70 mx-1.5"
-              aria-hidden="true"
-            />
-
             {additionalLinks.length > 0 && (
               <div className="hidden md:block">
                 <NavigationDropdown label="Explore" links={additionalLinks} />
