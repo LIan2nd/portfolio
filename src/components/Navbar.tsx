@@ -10,6 +10,7 @@ import { NavigationDropdown } from "@/components/NavigationDropdown";
 import {
   NAVBAR_BRAND_CLASS,
   NAVBAR_CONTENT_CLASS,
+  NAVBAR_LINK_CLASS,
   NAVBAR_ROW_CLASS,
   NAVBAR_TOP_SPACING_CLASS,
 } from "@/lib/navigationStyles";
@@ -179,15 +180,15 @@ export function Navbar({
             {links.map((link) => {
               const isActive = activeSection === getSectionId(link.href);
               return (
-                <li key={link.href}>
+                <li key={link.href} className="flex items-center">
                   <a
                     href={link.href}
                     onClick={(e) => handleLinkClick(e, link.href)}
-                    className={`text-sm font-medium tracking-wide transition-colors duration-200 no-underline py-1 relative ${
+                    className={`${NAVBAR_LINK_CLASS} ${
                       isActive
                         ? "text-accent font-semibold after:w-full"
                         : "text-[var(--color-text-primary)]/80 hover:text-accent after:w-0 hover:after:w-full"
-                    } after:content-[''] after:absolute after:bg-accent after:h-[2px] after:left-0 after:bottom-[-4px] after:rounded-full after:transition-all after:duration-200`}
+                    }`}
                   >
                     {link.label}
                   </a>
