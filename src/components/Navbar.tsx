@@ -212,6 +212,12 @@ export function Navbar({
               LIand
             </a>
 
+            {/* Desktop divider between navigation links and utility actions */}
+            <div
+              className="hidden md:block h-4 w-px bg-[var(--color-bg-tertiary)]/70 mx-1.5"
+              aria-hidden="true"
+            />
+
             {additionalLinks.length > 0 && (
               <div className="hidden md:block">
                 <NavigationDropdown label="Explore" links={additionalLinks} />
@@ -284,12 +290,19 @@ export function Navbar({
             );
           })}
           {additionalLinks.length > 0 && (
-            <NavigationDropdown
-              label="Explore"
-              links={additionalLinks}
-              variant="mobile"
-              onNavigate={() => setMenuOpen(false)}
-            />
+            <>
+              <li
+                className="my-1.5 border-t border-[var(--color-bg-tertiary)]/50"
+                role="separator"
+                aria-hidden="true"
+              />
+              <NavigationDropdown
+                label="Explore"
+                links={additionalLinks}
+                variant="mobile"
+                onNavigate={() => setMenuOpen(false)}
+              />
+            </>
           )}
         </ul>
 
