@@ -81,6 +81,7 @@ export function GalleryLightbox({ item, onClose }: GalleryLightboxProps) {
             alt={item.alt}
             width={item.width}
             height={item.height}
+            quality={100}
             sizes="(max-width: 1024px) 100vw, 880px"
             priority
             className="max-h-[64dvh] h-auto w-auto max-w-full object-contain lg:max-h-[88dvh]"

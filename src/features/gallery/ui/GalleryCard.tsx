@@ -23,6 +23,7 @@ export function GalleryCard({ item, onOpen }: GalleryCardProps) {
           alt={item.alt}
           width={item.width}
           height={item.height}
+          quality={90}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="h-auto w-full"
         />
