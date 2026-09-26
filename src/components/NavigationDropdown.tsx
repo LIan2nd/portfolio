@@ -2,6 +2,7 @@
 
 import { useId, useRef, useState } from "react";
 import { ArrowRight, ChevronDown, Compass, Images } from "lucide-react";
+import Link from "next/link";
 import type { NavLink } from "@/lib/types";
 
 interface NavigationDropdownProps {
@@ -75,7 +76,7 @@ export function NavigationDropdown({
           <ul className="min-h-0 overflow-hidden list-none p-0 m-0 flex flex-col gap-1">
             {links.map((link) => (
               <li key={link.href}>
-                <a
+                <Link
                   href={link.href}
                   onClick={() => {
                     setOpen(false);
@@ -90,7 +91,7 @@ export function NavigationDropdown({
                     aria-hidden="true"
                     className="ml-auto text-accent opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                   />
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -142,7 +143,7 @@ export function NavigationDropdown({
         <ul className="m-0 list-none rounded-xl border border-[var(--color-bg-tertiary)]/50 bg-[var(--color-bg-primary)]/95 p-1.5 shadow-[0_12px_32px_-12px_rgba(0,0,0,0.35)] backdrop-blur-xl">
           {links.map((link) => (
             <li key={link.href}>
-              <a
+              <Link
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className="group flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium leading-5 text-[var(--color-text-primary)]/80 no-underline transition-colors duration-200 hover:bg-accent/10 hover:text-accent focus-visible:bg-accent/10 focus-visible:text-accent focus-visible:outline-accent"
@@ -154,7 +155,7 @@ export function NavigationDropdown({
                   aria-hidden="true"
                   className="ml-auto -translate-x-1 opacity-0 transition-[opacity,transform] duration-200 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100 motion-reduce:transition-none"
                 />
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

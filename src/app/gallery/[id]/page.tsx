@@ -5,7 +5,6 @@ import { ArrowLeft, CalendarDays } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { LazyAiAssistant } from "@/components/LazyAiAssistant";
 import { galleryService } from "@/features/gallery";
 import {
   ADDITIONAL_NAV_LINKS,
@@ -110,7 +109,6 @@ export default async function GalleryDetailPage({
         </article>
       </main>
       <Footer socials={SOCIALS} />
-      <LazyAiAssistant />
     </>
   );
 }

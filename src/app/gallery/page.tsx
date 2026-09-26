@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Camera } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { LazyAiAssistant } from "@/components/LazyAiAssistant";
 import { GalleryGrid } from "@/features/gallery/ui/GalleryGrid";
 import { loadGalleryItems } from "@/features/gallery";
 import {
@@ -68,7 +67,6 @@ export default async function GalleryPage() {
         )}
       </main>
       <Footer socials={SOCIALS} />
-      <LazyAiAssistant />
     </>
   );
 }

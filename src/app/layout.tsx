@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Gowun_Batang } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AiVisibilityProvider } from "@/components/AiVisibilityContext";
+import { AiChatProvider } from "@/components/AiChatContext";
+import { LazyAiAssistant } from "@/components/LazyAiAssistant";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { HOME_DESCRIPTION, SITE_URL } from "@/lib/seo";
 import { PRIMARY_PROFILE_PHOTO } from "@/lib/profilePhotos";
@@ -105,7 +107,12 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <AiVisibilityProvider>{children}</AiVisibilityProvider>
+          <AiVisibilityProvider>
+            <AiChatProvider>
+              {children}
+              <LazyAiAssistant />
+            </AiChatProvider>
+          </AiVisibilityProvider>
         </ThemeProvider>
         <GoogleAnalytics />
       </body>

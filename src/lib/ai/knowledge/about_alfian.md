@@ -39,3 +39,9 @@
 - Sudah memiliki cewek / pasangan hidup: **Distia Fajar Familiati**, panggilan **Distia / Fajar**; lulusan S1 Teknik Informatika STT Terpadu Nurul Fikri dan teman sekelas Alfian semasa kuliah.
 - Alfian menyukai software engineering dan koding, sedangkan Distia sangat tidak menyukai koding.
 - Distia pernah mengambil peminatan **Cyber Security**, mendalami **Data Engineering & Data Visualization**, dan berfokus pada **QA-QC untuk pengujian Backend API Microservices** saat tugas akhir.
+
+## Gallery & Museum Visual Pribadi
+- **Halaman Gallery:** https://portfolio.liand.web.id/gallery (`/gallery`).
+- **Konsep & Makna:** Alfian menyebut halaman Gallery sebagai "museum" visual pribadinya — ruang arsip untuk mengabadikan langit (*skies*), lanskap alam (*landscapes*), setup meja koding (*coding workspace* dual monitor bernuansa cyan/blue), keyboard mekanik custom, serta momen-momen biasa (*ordinary moments*) yang berharga dan bermakna ("A small archive of skies, landscapes, and ordinary moments that felt worth keeping").
+- **Koleksi:** Menampilkan koleksi foto estetis seperti setup koding minimalis, workspace dual monitor, custom mechanical keyboard, suasana koding malam (*lofi night coding vibes*), dan pemandangan langit. Setiap karya foto memiliki cerita dan tanggal pemotretan.
+

@@ -7,6 +7,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { useAiVisibility } from "@/components/AiVisibilityContext";
 import { Bot, BotOff } from "lucide-react";
 import { NavigationDropdown } from "@/components/NavigationDropdown";
+import Link from "next/link";
 import {
   NAVBAR_BRAND_CLASS,
   NAVBAR_CONTENT_CLASS,
@@ -162,14 +163,14 @@ export function Navbar({
               </div>
             </button>
 
-            <a
+            <Link
               href={homeHref}
               onClick={(e) => handleLinkClick(e, homeHref)}
               className={`${NAVBAR_BRAND_CLASS} hidden md:inline`}
               aria-label="LIand home"
             >
               LIand
-            </a>
+            </Link>
           </div>
 
           {/* Center: desktop section navigation */}
@@ -181,7 +182,7 @@ export function Navbar({
               const isActive = activeSection === getSectionId(link.href);
               return (
                 <li key={link.href} className="flex items-center">
-                  <a
+                  <Link
                     href={link.href}
                     onClick={(e) => handleLinkClick(e, link.href)}
                     className={`${NAVBAR_LINK_CLASS} ${
@@ -191,7 +192,7 @@ export function Navbar({
                     }`}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               );
             })}
@@ -203,14 +204,14 @@ export function Navbar({
             aria-label="Navbar actions"
             className="col-start-3 flex items-center justify-self-end gap-1"
           >
-            <a
+            <Link
               href={homeHref}
               onClick={(e) => handleLinkClick(e, homeHref)}
               className={`${NAVBAR_BRAND_CLASS} md:hidden`}
               aria-label="LIand home"
             >
               LIand
-            </a>
+            </Link>
 
             {additionalLinks.length > 0 && (
               <div className="hidden md:block">
@@ -269,7 +270,7 @@ export function Navbar({
             const isActive = activeSection === getSectionId(link.href);
             return (
               <li key={link.href}>
-                <a
+                <Link
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
                   className={`block px-4 py-3 text-sm font-medium rounded-xl tracking-wide transition-all duration-200 no-underline ${
@@ -279,7 +280,7 @@ export function Navbar({
                   }`}
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             );
           })}

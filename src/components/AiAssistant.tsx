@@ -1,19 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { MessageSquareCode, ChevronUp, Send, Trash2, ShieldCheck, MapPin } from "lucide-react";
 import { PrivacyPolicyModal } from "./PrivacyPolicyModal";
 import { useAiVisibility } from "./AiVisibilityContext";
+import { useAiChat, type Message } from "./AiChatContext";
 import { useFloatingViewport } from "@/hooks/useFloatingViewport";
 import styles from "./AiAssistant.module.css";
-
-interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: string;
-  isStreaming?: boolean;
-}
 
 const INITIAL_SUGGESTIONS = [
   "Tell me about the ESAO research project 🤖",
@@ -141,10 +136,18 @@ import { LOADING_PHRASES, getRandomLoadingIndex } from "@/lib/loadingPhrases";
 
 export function AiAssistant() {
   const { isAiVisible } = useAiVisibility();
+  const {
+    messages,
+    setMessages,
+    isOpen,
+    setIsOpen,
+    inputValue,
+    setInputValue,
+    clearMessages,
+  } = useAiChat();
+  const router = useRouter();
+  const pathname = usePathname();
   const viewportStyle = useFloatingViewport(isAiVisible);
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingPhraseIndex, setLoadingPhraseIndex] = useState(0);
   const [aiStatus, setAiStatus] = useState<"active" | "error" | "offline">("active");
@@ -387,23 +390,13 @@ export function AiAssistant() {
   };
 
   const handleClearChat = () => {
-    setMessages([]);
+    clearMessages();
   };
 
-  // Navigation handler: minimize chat + smooth scroll to section
-  const handleNavAction = (sectionId: string) => {
-    const el = document.getElementById(sectionId);
-    if (el) {
-      setIsOpen(false);
-      // Delay scroll until close animation finishes (~300ms transition)
-      setTimeout(() => {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 350);
-    }
-  };
 
-  // Hide completely when toggled off via navbar
-  if (!isAiVisible) return null;
+
+  // Hide completely when toggled off via navbar or on resume page
+  if (!isAiVisible || pathname?.startsWith("/resume")) return null;
 
   return (
     <aside
@@ -551,14 +544,22 @@ export function AiAssistant() {
 
                       {/* Navigation Action Button (rendered below bubble after streaming completes) */}
                       {navAction && !msg.isStreaming && (
-                        <button
-                          onClick={() => handleNavAction(navAction.sectionId)}
+                        <Link
+                          href={navAction.sectionId === "gallery" ? "/gallery" : `/#${navAction.sectionId}`}
+                          onClick={(e) => {
+                            const el = document.getElementById(navAction.sectionId);
+                            if (el) {
+                              e.preventDefault();
+                              setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 350);
+                            }
+                            setIsOpen(false);
+                          }}
                           className="mt-1.5 ml-0.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent/10 border border-accent/30 text-accent text-[10px] sm:text-[11px] font-medium hover:bg-accent/20 hover:border-accent/50 active:scale-[0.97] transition-all duration-200 cursor-pointer shadow-xs animate-in fade-in slide-in-from-bottom-1 duration-300"
                           aria-label={`Navigate to ${navAction.sectionId} section`}
                         >
                           <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                           {navAction.label}
-                        </button>
+                        </Link>
                       )}
 
                       <span className="text-[9px] sm:text-[10px] text-[var(--color-text-secondary)]/60 px-1 mt-1">

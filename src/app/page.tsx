@@ -6,7 +6,6 @@ import { ProjectsSection } from "@/components/ProjectsSection";
 import { CertificationsSection } from "@/components/CertificationsSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
-import { LazyAiAssistant } from "@/components/LazyAiAssistant";
 import {
   ADDITIONAL_NAV_LINKS,
   NAV_LINKS,
@@ -142,7 +141,6 @@ export default async function Home() {
         <ContactSection />
       </main>
       <Footer socials={SOCIALS} />
-      <LazyAiAssistant />
     </>
   );
 }
