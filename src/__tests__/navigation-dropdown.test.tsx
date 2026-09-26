@@ -8,9 +8,13 @@ const links = [{ href: "/gallery", label: "Gallery" }];
 function renderDropdown(variant: "desktop" | "mobile" = "desktop") {
   render(
     <>
-      <ul>
-        <NavigationDropdown label="Explore" links={links} variant={variant} />
-      </ul>
+      {variant === "mobile" ? (
+        <ul>
+          <NavigationDropdown label="Explore" links={links} variant="mobile" />
+        </ul>
+      ) : (
+        <NavigationDropdown label="Explore" links={links} />
+      )}
       <button type="button">Outside navigation</button>
     </>
   );

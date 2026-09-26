@@ -1,4 +1,4 @@
-import { render, screen, renderHook, act, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, renderHook, act, cleanup, fireEvent, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as fc from "fast-check";
@@ -41,7 +41,7 @@ describe("Navbar & useActiveSection", () => {
     );
     expect(screen.getByRole("group", { name: "Navbar actions" })).toHaveClass(
       "col-start-3",
-      "gap-2.5"
+      "gap-1"
     );
     expect(screen.getByRole("list", { name: "Portfolio sections" })).toHaveClass(
       "justify-center"
@@ -79,6 +79,14 @@ describe("Navbar & useActiveSection", () => {
     );
 
     const exploreButtons = screen.getAllByRole("button", { name: "Explore" });
+    const sectionNavigation = screen.getByRole("list", {
+      name: "Portfolio sections",
+    });
+    const navbarActions = screen.getByRole("group", { name: "Navbar actions" });
+    expect(within(sectionNavigation).queryByRole("button", { name: "Explore" })).toBeNull();
+    expect(within(navbarActions).getByRole("button", { name: "Explore" })).toBe(
+      exploreButtons[0]
+    );
     await user.click(exploreButtons[0]);
     expect(exploreButtons[0]).toHaveAttribute("aria-expanded", "true");
     expect(

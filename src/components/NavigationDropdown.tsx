@@ -1,9 +1,8 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import { ArrowRight, ChevronDown, Images } from "lucide-react";
+import { ArrowRight, ChevronDown, Compass, Images } from "lucide-react";
 import type { NavLink } from "@/lib/types";
-import { NAVBAR_LINK_CLASS } from "@/lib/navigationStyles";
 
 interface NavigationDropdownProps {
   label: string;
@@ -22,11 +21,11 @@ export function NavigationDropdown({
   const menuId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const closeWhenFocusLeaves = (event: React.FocusEvent<HTMLLIElement>) => {
+  const closeWhenFocusLeaves = (event: React.FocusEvent<HTMLElement>) => {
     if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
   };
 
-  const closeOnEscape = (event: React.KeyboardEvent<HTMLLIElement>) => {
+  const closeOnEscape = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.key !== "Escape" || !open) return;
     event.stopPropagation();
     setOpen(false);
@@ -82,7 +81,7 @@ export function NavigationDropdown({
   }
 
   return (
-    <li
+    <div
       className="relative flex items-center"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={(event) => {
@@ -97,17 +96,19 @@ export function NavigationDropdown({
         aria-expanded={open}
         aria-controls={menuId}
         onClick={() => setOpen(true)}
-        className={`${NAVBAR_LINK_CLASS} cursor-pointer gap-1.5 bg-transparent ${
+        title={label}
+        className={`inline-flex h-11 w-11 cursor-pointer items-center justify-center gap-1.5 rounded-md border-0 bg-transparent px-0 text-sm font-medium leading-5 tracking-wide transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none lg:w-auto lg:px-3 ${
           open
-            ? "text-accent after:w-full"
-            : "text-[var(--color-text-primary)]/80 hover:text-accent after:w-0 hover:after:w-full"
+            ? "bg-accent/10 text-accent"
+            : "text-[var(--color-text-primary)]/75 hover:bg-[var(--color-bg-tertiary)]/45 hover:text-accent"
         }`}
       >
-        {label}
+        <Compass size={17} strokeWidth={1.8} aria-hidden="true" />
+        <span className="hidden lg:inline">{label}</span>
         <ChevronDown
           size={14}
           aria-hidden="true"
-          className={`shrink-0 transition-transform duration-200 motion-reduce:transition-none ${open ? "rotate-180" : ""}`}
+          className={`hidden shrink-0 transition-transform duration-200 motion-reduce:transition-none lg:block ${open ? "rotate-180" : ""}`}
         />
       </button>
       <div
@@ -140,6 +141,6 @@ export function NavigationDropdown({
           ))}
         </ul>
       </div>
-    </li>
+    </div>
   );
 }

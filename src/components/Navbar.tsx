@@ -32,7 +32,7 @@ function AnimatedThemeIcon({ isDark }: { isDark: boolean }) {
       viewBox="0 0 24 24"
       width="20"
       height="20"
-      className={`text-accent group-hover:text-white transition-transform duration-300 ease-out ${
+      className={`text-accent transition-transform duration-300 ease-out ${
         isDark ? "rotate-0" : "-rotate-45"
       }`}
       fill="currentColor"
@@ -175,7 +175,7 @@ export function Navbar({
           {/* Center: desktop section navigation */}
           <ul
             aria-label="Portfolio sections"
-            className="hidden md:flex items-center justify-center gap-6 list-none m-0 p-0"
+            className="hidden md:flex items-center justify-center gap-4 list-none m-0 p-0 lg:gap-6"
           >
             {links.map((link) => {
               const isActive = activeSection === getSectionId(link.href);
@@ -195,16 +195,13 @@ export function Navbar({
                 </li>
               );
             })}
-            {additionalLinks.length > 0 && (
-              <NavigationDropdown label="Explore" links={additionalLinks} />
-            )}
           </ul>
 
-          {/* Right side: AI Chat Toggle & Theme Toggle (Clean & Borderless) */}
+          {/* Right side: secondary navigation and display controls */}
           <div
             role="group"
             aria-label="Navbar actions"
-            className="col-start-3 flex items-center justify-self-end gap-2.5"
+            className="col-start-3 flex items-center justify-self-end gap-1"
           >
             <a
               href={homeHref}
@@ -215,10 +212,16 @@ export function Navbar({
               LIand
             </a>
 
+            {additionalLinks.length > 0 && (
+              <div className="hidden md:block">
+                <NavigationDropdown label="Explore" links={additionalLinks} />
+              </div>
+            )}
+
             {/* AI Assistant Visibility Toggle */}
             <button
               onClick={toggleAiVisibility}
-              className="bg-transparent border-none p-1 cursor-pointer text-accent hover:opacity-80 hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center shrink-0"
+              className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-accent transition-colors duration-200 hover:bg-accent/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none"
               aria-label={isAiVisible ? "Hide AI Assistant" : "Show AI Assistant"}
               title={isAiVisible ? "Hide AI Assistant" : "Show AI Assistant"}
             >
@@ -232,7 +235,7 @@ export function Navbar({
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="bg-transparent border-none p-1 -mr-1 cursor-pointer text-accent hover:opacity-75 hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center shrink-0"
+              className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-accent transition-colors duration-200 hover:bg-accent/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
               title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
             >
